@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
+from .serializers import UserSerializer
 
 class TestView(APIView):
-    def get(self, request):
+    def get(self, _):
         return Response({'message': 'Hello World!'})
 
 class LoginView(APIView):
@@ -26,4 +27,11 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response({'detail': 'Successfully logged out'})
-
+    
+class SignUpView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

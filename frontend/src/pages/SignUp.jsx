@@ -7,6 +7,8 @@ const SignUp = () => {
         username: '',
         password: '',
     });
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
     
     const handleChange = (e) => {
@@ -29,9 +31,11 @@ const SignUp = () => {
             const res2 = await axios.post(baseUrl + '/api/login/', formData);
             const user = res2.data.user;
 
-            navigate('/')
+            console.log(user)
+            // navigate('/')
         } catch (err) {
-            console.error(err);
+            setUsernameError(err.response.data.username);
+            setPasswordError(err.response.data.password);
         };
 
     };
@@ -48,6 +52,7 @@ const SignUp = () => {
                     value={formData.username}
                     onChange={handleChange}
                 />
+                {usernameError || ''}
             </label>
             <br />
             <label>
@@ -58,6 +63,7 @@ const SignUp = () => {
                     value={formData.password}
                     onChange={handleChange}
                 />
+                {passwordError || ''}
             </label>
             <br />
             <button type="submit">Sign Up</button>

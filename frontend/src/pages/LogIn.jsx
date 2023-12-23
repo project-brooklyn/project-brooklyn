@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const LogIn = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
     });
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { user, login, logout } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,14 +31,17 @@ const LogIn = () => {
             const user = res.data.user;
             // handle user in session
 
-            navigate('/')
+            console.log(user);
+            login(user)
+            // navigate('/')
         } catch (err) {
-            console.error(err);
+            setError(err.response.data.error);
         };
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            {user && user.username}
             <h2>Login</h2>
             <br />
             <label>
@@ -59,6 +65,7 @@ const LogIn = () => {
             </label>
             <br />
             <button type="submit">Login</button>
+            {error || ''}
         </form>
     );
 };

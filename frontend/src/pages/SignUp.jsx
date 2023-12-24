@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -9,7 +10,10 @@ const SignUp = () => {
     });
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const { login, logout } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(logout,[]);
     
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -27,12 +31,13 @@ const SignUp = () => {
 
         try {
             const res1 = await axios.post(baseUrl + '/api/signup/', formData);
+            if (res1.status===201) {
+                const res2 = await axios.post(baseUrl + '/api/login/', formData);
+                const user = res2.data.user;
 
-            const res2 = await axios.post(baseUrl + '/api/login/', formData);
-            const user = res2.data.user;
-
-            console.log(user)
-            // navigate('/')
+                login(user);
+                navigate('/');
+            }
         } catch (err) {
             setUsernameError(err.response.data.username);
             setPasswordError(err.response.data.password);

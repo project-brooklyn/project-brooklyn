@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -9,8 +9,10 @@ const LogIn = () => {
         password: '',
     });
     const [error, setError] = useState('');
+    const { login, logout } = useAuth();
     const navigate = useNavigate();
-    const { user, login, logout } = useAuth();
+
+    useEffect(logout,[]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,9 +33,8 @@ const LogIn = () => {
             const user = res.data.user;
             // handle user in session
 
-            console.log(user);
-            login(user)
-            // navigate('/')
+            login(user);
+            navigate('/');
         } catch (err) {
             setError(err.response.data.error);
         };
@@ -41,7 +42,6 @@ const LogIn = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            {user && user.username}
             <h2>Login</h2>
             <br />
             <label>

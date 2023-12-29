@@ -1,15 +1,19 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
+import GUI from 'lil-gui'
+import Stats from 'stats.js'
 
 /**
  * Debug
  */
-const gui = new dat.GUI()
+const gui = new GUI()
 
-const parameters = {
-    color: 0x12b464,
-}
+/**
+ * Stats
+ */
+const stats = new Stats()
+stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
 
 /**
  * Base
@@ -21,30 +25,60 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Object
+ * Map
  */
-const tileWidth = 1.0
-const tileHeight = 0.25
+const parameters = {
+    grassColor: 0x12b464,
+    dirtColor: 0xce8b55,
+}
 
-const geometry = new THREE.BoxGeometry(tileWidth, tileHeight, tileWidth)
-const material = new THREE.MeshBasicMaterial({ color: parameters.color })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+const tileConfig = {
+    width: 1.0,
+    height: 0.25,
+}
+
+let geometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width)
+const grassMaterial = new THREE.MeshBasicMaterial({ color: parameters.grassColor })
+const dirtMaterial = new THREE.MeshBasicMaterial({ color: parameters.dirtColor })
+
+const tileMap = []
+
+for (let x = 0; x < 10; x++) {
+    for (let z = 0; z < 10; z++) {
+        const mesh = new THREE.Mesh(geometry, (x == 4 || x == 5) ? dirtMaterial : grassMaterial)
+        mesh.position.x = 1 + x;
+        mesh.position.y = 0;
+        mesh.position.z = 1 + z;
+        scene.add(mesh)
+        tileMap.push(mesh)
+    }
+}
 
 // Debug
 const generalFolder = gui.addFolder("General")
-generalFolder.add(mesh, 'visible')
-generalFolder.add(material, 'wireframe')
-generalFolder.addColor(parameters, 'color')
+// generalFolder.add(mesh, 'visible')
+generalFolder.add(grassMaterial, 'wireframe')
+generalFolder.addColor(parameters, 'grassColor')
    .onChange(() => {
-        material.color.set(parameters.color)
+        grassMaterial.color.set(parameters.grassColor)
+   })
+generalFolder.addColor(parameters, 'dirtColor')
+   .onChange(() => {
+        dirtMaterial.color.set(parameters.dirtColor)
    })
 
 const tileFolder = gui.addFolder("Tile")
-tileFolder.add(mesh.scale, "y")
+tileFolder.add(tileConfig, "height")
     .min(0)
-    .max(10)
-    .name('height')
+    .max(1)
+    .step(0.25)
+    .onChange(() => {
+        geometry.dispose()
+        geometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width)
+        tileMap.forEach((mesh) => {
+            mesh.geometry = geometry
+        })
+    })
 
 generalFolder.open()
 tileFolder.open()
@@ -73,13 +107,19 @@ window.addEventListener('resize', () =>
 })
 
 /**
+ * Axes Helper
+ */
+const axesHelper = new THREE.AxesHelper(2)
+scene.add(axesHelper)
+
+/**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 10
+camera.position.x = 15
 camera.position.y = 10
-camera.position.z = 10
+camera.position.z = 15
 scene.add(camera)
 
 // Controls
@@ -96,13 +136,11 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
- * Animate
+ * Render
  */
-const clock = new THREE.Clock()
-
 const tick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
+    stats.begin()
 
     // Update controls
     controls.update()
@@ -112,6 +150,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+    stats.end()
 }
 
 tick()

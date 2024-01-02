@@ -1,15 +1,21 @@
-import './App.css'
+// import './App.css';
+// import HomePage from './pages/HomePage';
+// import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-function App() {
+// const App = () => {
+//     return (
+//       <Router>
+//         <div>
+//           <Route path="/" exact component={Home} />
+//           <Route path="/about" component={About} />
+//           <Route path="/contact" component={Contact} />
+//         </div>
+//       </Router>
+//     );
+//   }
+  
+// const Home = () => <h2>Home</h2>;
+// const About = () => <h2>About</h2>;
+// const Contact = () => <h2>Contact</h2>;
 
-  return (
-    <>
-      <h1>Project Broolyn</h1>
-      <div style={{width: 1200, height: 600, backgroundColor: 'gray'}}>
-        game
-      </div>
-    </>
-  )
-}
-
-export default App
+// export default App;

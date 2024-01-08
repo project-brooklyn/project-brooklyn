@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import Stats from 'stats.js'
+import DemoMap from '/src/map/DemoMap.js';
+import { TileType } from '/src/map/Tile.js';
 
 /**
  * Debug
@@ -30,6 +32,7 @@ const scene = new THREE.Scene()
 const parameters = {
     grassColor: 0x12b464,
     dirtColor: 0xce8b55,
+    unknownColor: 0xc23be8,
 }
 
 const tileConfig = {
@@ -40,19 +43,24 @@ const tileConfig = {
 let geometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width)
 const grassMaterial = new THREE.MeshBasicMaterial({ color: parameters.grassColor })
 const dirtMaterial = new THREE.MeshBasicMaterial({ color: parameters.dirtColor })
+const unknownMaterial = new THREE.MeshBasicMaterial({ color: parameters.unknownColor })
+const TileTypeMaterials = new Map([
+    [TileType.Grass, grassMaterial],
+    [TileType.Dirt, dirtMaterial],
+]);
 
-const tileMap = []
+const meshes = []
 
-for (let x = 0; x < 10; x++) {
-    for (let z = 0; z < 10; z++) {
-        const mesh = new THREE.Mesh(geometry, (x == 4 || x == 5) ? dirtMaterial : grassMaterial)
-        mesh.position.x = 1 + x;
-        mesh.position.y = 0;
-        mesh.position.z = 1 + z;
-        scene.add(mesh)
-        tileMap.push(mesh)
-    }
-}
+
+const demoMap = new DemoMap();
+demoMap.map().forEach((tile) => {
+    const mesh = new THREE.Mesh(geometry, TileTypeMaterials.get(tile.type) ?? unknownMaterial);
+    mesh.position.x = 1 + tile.x;
+    mesh.position.y = tile.z;
+    mesh.position.z = 1 + tile.y;
+    scene.add(mesh)
+    meshes.push(mesh)
+})
 
 // Debug
 const generalFolder = gui.addFolder("General")
@@ -75,7 +83,7 @@ tileFolder.add(tileConfig, "height")
     .onChange(() => {
         geometry.dispose()
         geometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width)
-        tileMap.forEach((mesh) => {
+        meshes.forEach((mesh) => {
             mesh.geometry = geometry
         })
     })

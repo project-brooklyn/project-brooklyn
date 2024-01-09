@@ -101,7 +101,7 @@ const TestMap = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    })
+    }, []);
 
 
     return <div ref={mapRef}/>

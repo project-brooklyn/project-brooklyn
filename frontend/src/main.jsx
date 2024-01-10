@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// import App from './App.jsx';
 import {
     createBrowserRouter,
     RouterProvider,
@@ -10,6 +9,9 @@ import HomePage from './pages/HomePage.jsx';
 import './index.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
+import TestA from './pages/TestA.jsx';
+import TestB from './pages/TestB.jsx';
+import TestC from './pages/TestC.jsx';
 
 const router = createBrowserRouter([
     {
@@ -23,6 +25,18 @@ const router = createBrowserRouter([
     {
         path: '/signup',
         element: <SignUp />,
+    },
+    {
+        path: '/testa',
+        element: <TestA />,
+    },
+    {
+        path: '/testb',
+        element: <TestB />,
+    },
+    {
+        path: '/testc',
+        element: <TestC />,
     },
 ]);
 

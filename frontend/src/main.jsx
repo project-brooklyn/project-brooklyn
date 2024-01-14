@@ -13,6 +13,9 @@ import TestA from './pages/TestA.jsx';
 import TestB from './pages/TestB.jsx';
 import TestC from './pages/TestC.jsx';
 
+import RandomMap from './map/RandomMap.js';
+const gameMap = new RandomMap();
+
 const router = createBrowserRouter([
     {
         path: '/',
@@ -36,7 +39,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/testc',
-        element: <TestC />,
+        element: <TestC gameMap={gameMap}/>,
     },
 ]);
 

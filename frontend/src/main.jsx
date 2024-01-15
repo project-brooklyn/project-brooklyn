@@ -12,6 +12,11 @@ import SignUp from './pages/SignUp.jsx';
 import TestA from './pages/TestA.jsx';
 import TestB from './pages/TestB.jsx';
 import TestC from './pages/TestC.jsx';
+import TestD from './pages/TestD.jsx';
+import TestE from './pages/TestE.jsx';
+import TestF from './pages/TestF.jsx';
+import TestG from './pages/TestG.jsx';
+
 
 import RandomMap from './map/RandomMap.js';
 const gameMap = new RandomMap();
@@ -40,6 +45,22 @@ const router = createBrowserRouter([
     {
         path: '/testc',
         element: <TestC gameMap={gameMap}/>,
+    },
+    {
+        path: '/testd',
+        element: <TestD />,
+    },
+    {
+        path: '/testea',
+        element: <TestE />,
+    },
+    {
+        path: '/testf',
+        element: <TestF />,
+    },
+    {
+        path: '/testg',
+        element: <TestG />,
     },
 ]);
 

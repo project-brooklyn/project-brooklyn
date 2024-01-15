@@ -3,17 +3,17 @@ import { Tile, TileType } from '/src/map/Tile.js';
 
 class RandomMap extends GameMap {
     constructor() {
-        const width = 10;
-        const depth = 10;
+        const width = 12;
+        const depth = 12;
         const height = 5;
         super(width, depth, height);
 
-        for (let x = 0; x < width; x++) {
-            for (let y = 0; y < depth; y++) {
+        for (let x = -width/2; x < width/2; x++) {
+            for (let y = -depth/2; y < depth/2; y++) {
                 const tileHeight = Math.floor(Math.random()*3);
 
-                for (let z = 0; z <= tileHeight; z+=0.25) {
-                    const tileType = z===tileHeight ? TileType.Grass : TileType.Dirt;
+                for (let z = -1.25; z <= tileHeight; z+=0.25) {
+                    const tileType = z===tileHeight ? TileType.Grass : (z<-1 ? TileType.Stone : TileType.Dirt);
                     this.mapData.push(new Tile(x, y, z, tileType));
                 }
             }

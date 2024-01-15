@@ -61,12 +61,6 @@ const TestMap = ({gameMap}) => {
             scene.add(mesh)
         }
 
-        // Set camera position
-        camera.position.x = 15
-        camera.position.y = 10
-        camera.position.z = 15
-        scene.add(camera)
-
         // Render the Map
         const tick = () => {
             stats.begin()
@@ -111,7 +105,7 @@ const TestMap = ({gameMap}) => {
 
 const TestC = ({gameMap}) => {
     return (<>
-        <h1>Test Page C</h1>
+        {/* <h1>Test Page C</h1> */}
         <TestMap gameMap={gameMap}/>
     </>)
 }

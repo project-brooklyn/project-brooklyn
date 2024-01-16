@@ -4,8 +4,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import RandomMap from "../map/RandomMap";
 
 
-const MapDisplay = ({gameMap}) => {
+const MapDisplay = ({gameMap, tileConfig}) => {
     const mapRef = useRef();
+    tileConfig ||= {
+        width: 1,
+        height: 0.25,
+    }
 
     useEffect(() => {
         const scene = new THREE.Scene();
@@ -23,15 +27,15 @@ const MapDisplay = ({gameMap}) => {
         controls.enableDamping = true;
 
         // Build the Map
-        const {mapData, tileConfig} = gameMap;
+        
+        const mapData = gameMap.map();
         const tileGeometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width);
         for (let tile of mapData) {
-            const {color} = tile.type;
-            const material = new THREE.MeshBasicMaterial({color});
+            const material = new THREE.MeshBasicMaterial(tile.type.material);
             const mesh = new THREE.Mesh(tileGeometry, material);
             
             mesh.position.x = tile.x + tileConfig.width/2;
-            mesh.position.y = tile.z;  // Switch y and z because we use z as height
+            mesh.position.y = tile.z * tileConfig.height;  // Switch y and z because we use z as height
             mesh.position.z = tile.y + tileConfig.width/2;
             scene.add(mesh);
         }

@@ -12,7 +12,9 @@ export class TileType {
 
     constructor(name) {
         this.name = name
-        this.color = colors[name]
+        this.material = {
+            color: colors[name] ?? colors['unknown']
+        }
     }
 };
 

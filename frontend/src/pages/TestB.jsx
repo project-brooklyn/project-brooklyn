@@ -60,12 +60,6 @@ const TestMap = () => {
             }
         }
 
-        // Set camera position
-        camera.position.x = 15
-        camera.position.y = 10
-        camera.position.z = 15
-        scene.add(camera)
-
         // Render the Map
         const tick = () => {
             stats.begin()

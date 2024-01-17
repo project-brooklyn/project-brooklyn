@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import RandomMap from "../map/RandomMap";
-
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const MapDisplay = ({gameMap, tileConfig}) => {
     const mapRef = useRef();
@@ -40,6 +39,27 @@ const MapDisplay = ({gameMap, tileConfig}) => {
             scene.add(mesh);
         }
 
+        //test
+        var light = new THREE.AmbientLight(0x404040);
+        light.intensity = 100;
+        scene.add(light);
+
+        const loader = new GLTFLoader();
+        loader.load('/castle_3d_model.glb', (gltf) => {
+            gltf.scene.scale.set(0.01,0.01,0.01);
+            gltf.scene.position.set(5.5,1,5.5);
+            const model = gltf.scene;
+
+
+            scene.add(model);
+        }, undefined, function (err) {console.error(err)});
+        loader.load('/portal1s.glb', (gltf) => {
+
+            gltf.scene.scale.set(0.2,0.2,0.2);
+            gltf.scene.position.set(-5.5,1,-5.5);
+
+            scene.add(gltf.scene)
+        });
         
         const tick = () => {    
             controls.update();

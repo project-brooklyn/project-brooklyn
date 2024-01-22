@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         element: <TestD />,
     },
     {
-        path: '/testea',
+        path: '/teste',
         element: <TestE />,
     },
     {

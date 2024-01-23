@@ -82,6 +82,7 @@ const MapDisplay = ({gameMap, tileConfig, path}) => {
                         (0.5 + gameMap.heightMap[x][z]) * tileConfig.height,
                         z + tileConfig.width/2 - center.z,
                     );
+                    gltf.scene.rotation.y = 5*Math.PI/4;
                     scene.add(gltf.scene);
                 })
             }

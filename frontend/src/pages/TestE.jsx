@@ -7,7 +7,7 @@ const TestE = () => {
     const path = djikstra(gameMap);
 
     return (<>
-        <h1>Test Page D</h1>
+        <h1>Test Page E</h1>
         <MapDisplay gameMap={gameMap} path={path} />
     </>)
 };

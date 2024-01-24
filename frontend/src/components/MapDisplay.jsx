@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-const MapDisplay = ({gameMap, tileConfig}) => {
+const MapDisplay = ({gameMap, tileConfig, path}) => {
     const mapRef = useRef();
     const center = new THREE.Vector3(gameMap.width/2,0,gameMap.width/2);
     tileConfig ||= {
@@ -49,9 +49,9 @@ const MapDisplay = ({gameMap, tileConfig}) => {
         loader.load('/castle_3d_model.glb', (gltf) => {
             gltf.scene.scale.set(0.005,0.005,0.005);
             gltf.scene.position.set(
-                gameMap.width-tileConfig.width/2 - center.x,
-                (0.5+gameMap.heightMap.at(-1).at(-1))*tileConfig.height,
-                gameMap.width-tileConfig.width/2 - center.z,
+                gameMap.width - tileConfig.width/2 - center.x,
+                (0.5 + gameMap.heightMap.at(-1).at(-1)) * tileConfig.height,
+                gameMap.width - tileConfig.width/2 - center.z,
             );
             const model = gltf.scene;
 
@@ -63,14 +63,30 @@ const MapDisplay = ({gameMap, tileConfig}) => {
         loader.load('/portal1s.glb', (gltf) => {
             gltf.scene.scale.set(0.1,0.1,0.1);
             gltf.scene.position.set(
-                0+tileConfig.width/2 - center.x,
-                (0.5+gameMap.heightMap[0][0])*tileConfig.height,
-                0+tileConfig.width/2 - center.z,
+                0 + tileConfig.width/2 - center.x,
+                (0.5 + gameMap.heightMap[0][0]) * tileConfig.height,
+                0 + tileConfig.width/2 - center.z,
             );
             gltf.scene.rotation.y = Math.PI/4;
 
             scene.add(gltf.scene)
         });
+
+        // add flags along path
+        if (path) {
+            for (let [x,z] of path.slice(1,path.length-1)) {
+                loader.load('/flag.glb', (gltf) => {
+                    gltf.scene.scale.set(0.1,0.1,0.1);
+                    gltf.scene.position.set(
+                        x + tileConfig.width/2 - center.x,
+                        (0.5 + gameMap.heightMap[x][z]) * tileConfig.height,
+                        z + tileConfig.width/2 - center.z,
+                    );
+                    gltf.scene.rotation.y = 5*Math.PI/4;
+                    scene.add(gltf.scene);
+                })
+            }
+        }
         
         const tick = () => {    
             controls.update();

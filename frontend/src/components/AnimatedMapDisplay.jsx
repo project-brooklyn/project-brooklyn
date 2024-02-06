@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { getSteps } from "../utils";
 
-
-const AnimatedMapDisplay = ({gameMap, tileConfig, path}) => {
+const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
     const mapRef = useRef();
     const center = new THREE.Vector3(gameMap.width/2,0,gameMap.width/2);
+    const {heightMap} = gameMap;
     tileConfig ||= {
         width: 1,
         height: 0.25,
@@ -70,17 +71,27 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path}) => {
 
         // add 3d models
         const loader = new GLTFLoader();
-        loadModel(loader, scene, '/castle_3d_model.glb', gameMap.width-1, 0, gameMap.depth-1, 0.005, 0);
-        loadModel(loader, scene, '/portal1s.glb', 0, 0, 0, 0.1, Math.PI/4);
-        loadModel(loader, scene, '/flag.glb', 0, 0, 0, 0.1, 0, function (model) {
-            // this is a basic example
-            // later implementations will take a path argument
-            // and use a helper function to follow the path
-            return () => {
-                model.position.x += .01;
-                model.position.z += .01;
+        loadModel(loader, scene, '/castle_3d_model.glb', gameMap.width-1, heightMap[gameMap.width-1][gameMap.depth-1], gameMap.depth-1, 0.005, 0);
+        loadModel(loader, scene, '/portal1s.glb', 0, heightMap[0][0], 0, 0.1, Math.PI/4);
+        // loadModel(loader, scene, '/flag.glb', 0, 0, 0, 0.1, 0, function (model) {
+        //     // this is a basic example
+        //     // later implementations will take a path argument
+        //     // and use a helper function to follow the path
+        //     return () => {
+        //         model.position.x += .01;
+        //         model.position.z += .01;
+        //     }
+        // });
+        if (enemies) {
+            for (let enemy of enemies) {
+                loadModel(loader, scene, enemy.modelFileLocation, 0, 0, 0, enemy.scale, 0,
+                    function (model) {
+                        const steps = getSteps(path, heightMap);
+                        // console.log(steps)
+                        return () => {}
+                    })
             }
-        });
+        }
         
         const tick = () => {
             for (let fn of animationFunctions) fn();

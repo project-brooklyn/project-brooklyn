@@ -53,7 +53,8 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
 
         // Build the Map
         const mapData = gameMap.map();
-        const tileGeometry = new THREE.BoxGeometry(tileConfig.width, tileConfig.height, tileConfig.width);
+        const spacer = 0.05; // add space between tiles to see better, remove after improved textures
+        const tileGeometry = new THREE.BoxGeometry(tileConfig.width*(1-spacer), tileConfig.height*(1-spacer), tileConfig.width*(1-spacer));
         for (let tile of mapData) {
             const material = new THREE.MeshBasicMaterial(tile.type.material);
             const mesh = new THREE.Mesh(tileGeometry, material);
@@ -73,23 +74,36 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
         const loader = new GLTFLoader();
         loadModel(loader, scene, '/castle_3d_model.glb', gameMap.width-1, heightMap[gameMap.width-1][gameMap.depth-1], gameMap.depth-1, 0.005, 0);
         loadModel(loader, scene, '/portal1s.glb', 0, heightMap[0][0], 0, 0.1, Math.PI/4);
-        // loadModel(loader, scene, '/flag.glb', 0, 0, 0, 0.1, 0, function (model) {
-        //     // this is a basic example
-        //     // later implementations will take a path argument
-        //     // and use a helper function to follow the path
-        //     return () => {
-        //         model.position.x += .01;
-        //         model.position.z += .01;
-        //     }
-        // });
+
         if (enemies) {
             for (let enemy of enemies) {
                 loadModel(loader, scene, enemy.modelFileLocation, 0, 0, 0, enemy.scale, 0,
                     function (model) {
                         const steps = getSteps(path, heightMap);
-                        // console.log(steps)
-                        return () => {}
-                    })
+                        let stepIndex = 1;
+                        return () => {
+                            const curr = steps[stepIndex-1];
+                            const next = steps[stepIndex];
+
+                            // rotation
+                            if (curr[0]<next[0]) model.rotation.y = Math.PI/2;
+                            if (curr[0]>next[0]) model.rotation.y = 3*Math.PI/2;
+                            if (curr[2]<next[2]) model.rotation.y = 0;
+                            if (curr[2]>next[2]) model.rotation.y = Math.PI;
+
+                            // translation
+                            model.position.x = next[0] + offset.x;
+                            model.position.y = (next[1] + 0.5)*tileConfig.height;
+                            model.position.z = next[2] + offset.z;
+
+                            if (stepIndex<steps.length-1) {
+                                stepIndex++;
+                            } else { // simple remove model
+                                model.visible = false;
+                            }
+                        }
+                    }
+                );
             }
         }
         

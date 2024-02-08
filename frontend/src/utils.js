@@ -21,20 +21,20 @@ export const djikstra = (gameMap) => {
 
     while (queue) {
         const { path, time } = queue.shift();
-        const [x, y] = path.at(-1);
-        const z = heightMap[x][y];
+        const [x, z] = path.at(-1);
+        const y = heightMap[x][z];
 
-        if (visited[x][y]) continue;
-        visited[x][y] = true;
+        if (visited[x][z]) continue;
+        visited[x][z] = true;
 
-        if (x===final[0] && y===final[1]) return path;
+        if (x===final[0] && z===final[1]) return path;
 
-        const neighbors = getNeighbors(x, y, gameMap);
-        for(let [nx, ny] of neighbors){
-            const nz = heightMap[nx][ny];
+        const neighbors = getNeighbors(x, z, gameMap);
+        for(let [nx, nz] of neighbors){
+            const ny = heightMap[nx][nz];
             queue.push({
-                path: [...path, [nx, ny]],
-                time: time + walkTime + (nz>z ? climbTime*(nz-z) : dropTime*(z-nz)),
+                path: [...path, [nx, nz]],
+                time: time + walkTime + (ny>y ? climbTime*(ny-y) : dropTime*(y-ny)),
             })
         };
 
@@ -45,51 +45,54 @@ export const djikstra = (gameMap) => {
 
 export const getSteps = (path, heightMap) => {
     let pathIndex = 0;
-    const increments = 10;
+    const increment = 50;
     let [x,y,z] = [path[0][0], heightMap[path[0][0]][path[0][1]], path[0][1]];
     const steps = [];
-
-    // console.log(path.at(-1))
     while (pathIndex<path.length-1) {
-    // for(let q=0;q<10;q++) {
-        // console.log(x,z)
-        const [[xi,zi], [xf,zf]] = [path[pathIndex], path[pathIndex+1]];
-        console.log(xi,zi,xf,zf)
-        const [dx, dz] = [(xf-xi)/100,(zf-zi)/100]
+        const [[xi, zi], [xf, zf]] = [path[pathIndex], path[pathIndex+1]];
 
         // move from center of curr to boundary
-        while () {
-            console.log(x,z, 'a')
+        while (Math.abs(x-xi) <= Math.abs((xf-xi)*.5) && Math.abs(z-zi) <= Math.abs((zf-zi)*.5)) {
             steps.push([x,y,z]);
-            x += (xf-xi)/increments;
-            z += (zf-zi)/increments;
+            x += (xf-xi)/increment;
+            z += (zf-zi)/increment;
+            x = round(x);
+            z = round(z);
         }
-        [x,z] = [(xf-xi)/2,(zf-zi)/2]
 
         // move from curr height to next height
+        const [yi, yf] = [y, heightMap[xf][zf]];
+        while (y !== yf) {
+            steps.push([x,y,z]);
+            y += (yf-yi)/increment; // can divide for slower climb speed
+            y = round(y);
+        }
 
         // move from boundary to center of next
         while (Math.abs(x-xi) < Math.abs(xf-xi) || Math.abs(z-zi) < Math.abs(zf-zi)) {
-            console.log(x,z, 'b')
             steps.push([x,y,z]);
-            x += (xf-xi)/increments;
-            z += (zf-zi)/increments;
+            x += (xf-xi)/increment;
+            z += (zf-zi)/increment;
+            x = round(x);
+            z = round(z);
         }
-        [x,z] = [xf,zf]
 
         pathIndex++;
     }
-    console.log(steps)
     return steps;
 }
 
 export const pythagorean = (p1, p2) => {
     if (p1.length !== p2.length) throw new Error('Incompatibile Vector Dimensions');
 
-    let sumOfSquares = 0;
-    for(let i=0; i<p1.length; i++){
-        sumOfSquares += (p1[i]-p2[i])**2;
-    }
+    const sumOfSquares = p1.reduce((acc,curr,idx) => {
+        const diff = curr - p2[idx];
+        return acc + (diff * diff);
+    }, 0);
     return Math.sqrt(sumOfSquares);
 }
 
+export const round = (num, decimals=2) => {
+    const inverse = 10**decimals;
+    return Math.round(num*inverse) / inverse;
+}

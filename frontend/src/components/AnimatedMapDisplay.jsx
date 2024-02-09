@@ -21,7 +21,7 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
 
     const loadModel = (loader, scene, model, x, y, z, scale = 1, rotation = 0, curryAnimate) => {
         loader.load(model, (m) => {
-            m.scene.scale.set(scale, scale, scale);
+            m.scene.scale.setScalar(scale);
             m.scene.position.set(
                 x + offset.x,
                 tileConfig.height*y + offset.y,

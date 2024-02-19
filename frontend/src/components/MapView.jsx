@@ -8,9 +8,9 @@ const tileConfig = {
 // Converts map coordinates to render coordinates.
 function convertToRenderCoordinates(mapVector) {
     return new THREE.Vector3(
-        mapVector.x,
-        mapVector.z,
-        mapVector.y
+        mapVector.x * tileConfig.width,
+        mapVector.z * tileConfig.height,
+        mapVector.y * tileConfig.width
     )
 }
 

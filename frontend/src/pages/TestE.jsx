@@ -1,6 +1,6 @@
 import MapDisplay from "../components/MapDisplay";
 import ZigZagMap from "../map/ZigZagMap";
-import { djikstra } from "../utils";
+import { djikstra } from "../utils/game_utils";
 
 const TestE = () => {
     const gameMap = new ZigZagMap();

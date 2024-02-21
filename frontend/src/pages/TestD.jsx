@@ -1,6 +1,6 @@
 import MapDisplay from "../components/MapDisplay";
 import RandomMap from "../map/RandomMap";
-import { djikstra } from "../utils";
+import { djikstra } from "../utils/game_utils";
 
 const TestD = () => {
     const gameMap = new RandomMap();

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { getSteps } from "../utils";
+import { getSteps } from "../utils/game_utils";
 
 const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
     const mapRef = useRef();

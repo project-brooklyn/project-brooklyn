@@ -1,6 +1,6 @@
 import AnimatedMapDisplay from "../components/AnimatedMapDisplay";
 import DemoMap from "../map/DemoMap";
-import { djikstra } from "../utils";
+import { djikstra } from "../utils/game_utils";
 
 const TestF = () => {
     const gameMap = new DemoMap();

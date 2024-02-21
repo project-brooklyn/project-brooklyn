@@ -1,5 +1,5 @@
 import RandomMap from '../map/RandomMap'
-import { djikstra } from '../utils'
+import { djikstra } from '../utils/game_utils'
 import AnimatedMapDisplay from '../components/AnimatedMapDisplay';
 import Guy from '../enemies/Guy';
 

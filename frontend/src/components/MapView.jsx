@@ -17,15 +17,14 @@ function convertToRenderCoordinates(mapVector) {
 // Produces the geometry for a map tile.
 function renderTile(tile) {
     const position = convertToRenderCoordinates(tile)
-
-    return <>
-        <mesh position={ [position.x, position.y, position.z] }>
+    return (
+        <mesh position={ [position.x, position.y, position.z] } key={`${tile.x},${tile.y},${tile.z}`}>
             <boxGeometry args={ [tileConfig.width, tileConfig.height, tileConfig.width] } />
             <meshBasicMaterial
                 color={ tile.type.material.color }
             />
         </mesh>
-    </>
+    )
 }
 
 export default function MapView({gameMap})

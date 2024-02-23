@@ -2,6 +2,7 @@ import { Float, OrbitControls, PerspectiveCamera, Text } from '@react-three/drei
 
 import MapView from './MapView.jsx'
 import DemoMap from '../map/DemoMap.js'
+import Castle from './Castle.jsx';
 
 export default function Display()
 {
@@ -14,7 +15,9 @@ export default function Display()
         <Text position-y={ 2 } >
             Defend your base!
         </Text>
+        <ambientLight intensity={ 1 } />
 
+        <Castle />
         <MapView gameMap={gameMap}/>
     </>
 }

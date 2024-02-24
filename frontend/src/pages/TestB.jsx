@@ -5,7 +5,7 @@ import './TestB.css'
 const TestB = () => {
 
     return (<>
-        {/* <h1>Test Page B</h1> */}
+        <h1>Test Page B</h1>
         <Canvas>
             <Display />
         </Canvas>

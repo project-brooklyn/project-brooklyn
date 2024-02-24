@@ -77,7 +77,7 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
 
         if (enemies) {
             for (let enemy of enemies) {
-                loadModel(loader, scene, enemy.modelFileLocation, 0, 0, 0, enemy.scale, 0,
+                loadModel(loader, scene, enemy.modelFileLocation, enemy.x, enemy.y, enemy.z, enemy.scale, 0,
                     function (model) {
                         const steps = getSteps(path, heightMap);
                         let stepIndex = 1;

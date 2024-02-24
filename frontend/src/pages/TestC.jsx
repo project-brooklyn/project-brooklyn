@@ -1,7 +1,7 @@
 import RandomMap from '../map/RandomMap'
 import { djikstra } from '../utils/game_utils'
 import AnimatedMapDisplay from '../components/AnimatedMapDisplay';
-import Guy from '../enemies/Guy';
+import Guy from '../entities/Guy';
 
 const TestC = () => {
     const gameMap = new RandomMap();

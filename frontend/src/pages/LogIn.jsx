@@ -25,7 +25,7 @@ const LogIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // help fix this please
+        // this will be changed to use .env
         const baseUrl = 'http://localhost:8000';
 
         try {

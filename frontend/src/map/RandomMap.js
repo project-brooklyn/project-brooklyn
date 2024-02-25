@@ -5,7 +5,7 @@ class RandomMap extends GameMap {
     constructor() {
         const width = 12;
         const depth = 12;
-        const height = 6;
+        const height = 10;
         super(width, depth, height);
 
         this.heightMap = [];

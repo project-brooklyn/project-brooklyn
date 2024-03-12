@@ -42,8 +42,9 @@ export default function Display()
         <ambientLight intensity={ 2 } />
 
         <BaseView base={castle} hp={baseHp}/>
-        {/* {portal.fiberComponent()} */}
-        {/* {guys.map(guy => guy.fiberComponent())} */}
+        {castle.fiberComponent()}
+        {portal.fiberComponent()}
+        {guys.map((guy,i) => guy.fiberComponent(i))}
 
         <MapView gameMap={gameMap}/>
     </>

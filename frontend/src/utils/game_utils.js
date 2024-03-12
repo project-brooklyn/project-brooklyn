@@ -10,8 +10,8 @@ const getNeighbors = (x, y, gameMap) => {
 }
 
 export const djikstra = (gameMap) => {
-    const start = [0,0];
-    const final = [gameMap.width-1, gameMap.depth-1];
+    const start = [gameMap.width-1, gameMap.depth-1];
+    const final = [0,0];
     const heightMap = gameMap.heightMap;
 
     const climbTime = 4; // time to climb one tile

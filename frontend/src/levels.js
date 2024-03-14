@@ -1,7 +1,11 @@
 import Guy from "./entities/Guy";
 
 export const levels = [
-    null,
+    {
+        enemy: Guy,
+        count: 0,
+        delay: 1000,
+    },
     {
         enemy: Guy,
         count: 10,

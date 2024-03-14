@@ -3,21 +3,24 @@ import { djikstra, getSteps } from "./utils/game_utils";
 const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
 export default class Game {
-    constructor(gameMap, setEnemies) {
+    constructor(gameMap) {
         this.level = 0;
         this.phase = BUILD;
         this.gameMap = gameMap;
-        this.setEnemies = setEnemies;
+        this.enemies = [];
         this.animationFunctions = [];
         this.steps = []
-
-        setInterval(this.tick, 10);
     }
 
-    spawnEnemy = (enemy) => {
-        const newEnemy = new enemy(0, 1.25, 0);
+    setSteps = (spawn, goal) => {
+        const path = djikstra(this.gameMap, spawn, goal);
+        this.steps = getSteps(path, this.gameMap.heightMap);
+    }
+
+    spawnEnemy = (enemy, position) => {
+        const newEnemy = new enemy(...position);
+        this.enemies.push(newEnemy);
         this.animationFunctions.push(newEnemy.getMoveFunction(this.steps));
-        this.setEnemies(prev => [...prev, newEnemy]);
     }
 
     spawnEnemies = (level) => {
@@ -35,6 +38,6 @@ export default class Game {
 
     tick = () => {
         for (let fn of this.animationFunctions) fn();
-    }
+    };
 }
 

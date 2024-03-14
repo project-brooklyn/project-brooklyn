@@ -9,9 +9,9 @@ const getNeighbors = (x, y, gameMap) => {
     return neighbors;
 }
 
-export const djikstra = (gameMap) => {
-    const start = [gameMap.width-1, gameMap.depth-1];
-    const final = [0,0];
+export const djikstra = (gameMap, spawn, goal) => {
+    const start = [spawn[0], spawn[1]];
+    const final = [goal[0], goal[1]];
     const heightMap = gameMap.heightMap;
 
     const climbTime = 4; // time to climb one tile
@@ -23,20 +23,20 @@ export const djikstra = (gameMap) => {
 
     while (queue) {
         const { path, time } = queue.shift();
-        const [x, z] = path.at(-1);
-        const y = heightMap[x][z];
+        const [x, y] = path.at(-1);
+        const z = heightMap[x][y];
 
-        if (visited[x][z]) continue;
-        visited[x][z] = true;
+        if (visited[x][y]) continue;
+        visited[x][y] = true;
 
-        if (x===final[0] && z===final[1]) return path;
+        if (x===final[0] && y===final[1]) return path;
 
-        const neighbors = getNeighbors(x, z, gameMap);
-        for(let [nx, nz] of neighbors){
-            const ny = heightMap[nx][nz];
+        const neighbors = getNeighbors(x, y, gameMap);
+        for(let [nx, ny] of neighbors){
+            const nz = heightMap[nx][ny];
             queue.push({
-                path: [...path, [nx, nz]],
-                time: time + walkTime + (ny>y ? climbTime*(ny-y) : dropTime*(y-ny)),
+                path: [...path, [nx, ny]],
+                time: time + walkTime + (nz>z ? climbTime*(nz-z) : dropTime*(z-nz)),
             })
         };
 
@@ -48,35 +48,35 @@ export const djikstra = (gameMap) => {
 export const getSteps = (path, heightMap) => {
     let pathIndex = 0;
     const increment = 50;
-    let [x,y,z] = [path[0][0], heightMap[path[0][0]][path[0][1]], path[0][1]];
+    let [x,y,z] = [path[0][0], path[0][1], heightMap[path[0][0]][path[0][1]]];
     const steps = [];
     while (pathIndex<path.length-1) {
-        const [[xi, zi], [xf, zf]] = [path[pathIndex], path[pathIndex+1]];
+        const [[xi, yi], [xf, yf]] = [path[pathIndex], path[pathIndex+1]];
 
         // move from center of curr to boundary
-        while (Math.abs(x-xi) <= Math.abs((xf-xi)*.5) && Math.abs(z-zi) <= Math.abs((zf-zi)*.5)) {
+        while (Math.abs(x-xi) <= Math.abs((xf-xi)*.5) && Math.abs(y-yi) <= Math.abs((yf-yi)*.5)) {
             steps.push([x,y,z]);
             x += (xf-xi)/increment;
-            z += (zf-zi)/increment;
+            y += (yf-yi)/increment;
             x = round(x);
-            z = round(z);
-        }
-
-        // move from curr height to next height
-        const [yi, yf] = [y, heightMap[xf][zf]];
-        while (y !== yf) {
-            steps.push([x,y,z]);
-            y += (yf-yi)/increment; // can divide for slower climb speed
             y = round(y);
         }
 
+        // move from curr height to next height
+        const [zi, zf] = [z, heightMap[xf][yf]];
+        while (z !== zf) {
+            steps.push([x,y,z]);
+            z += (zf-zi)/increment; // can divide for slower climb speed
+            z = round(z);
+        }
+
         // move from boundary to center of next
-        while (Math.abs(x-xi) < Math.abs(xf-xi) || Math.abs(z-zi) < Math.abs(zf-zi)) {
+        while (Math.abs(x-xi) < Math.abs(xf-xi) || Math.abs(y-yi) < Math.abs(yf-yi)) {
             steps.push([x,y,z]);
             x += (xf-xi)/increment;
-            z += (zf-zi)/increment;
+            y += (yf-yi)/increment;
             x = round(x);
-            z = round(z);
+            y = round(y);
         }
 
         pathIndex++;

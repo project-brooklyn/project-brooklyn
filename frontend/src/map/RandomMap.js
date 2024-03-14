@@ -3,8 +3,8 @@ import { Tile, TileType } from '/src/map/Tile.js';
 
 class RandomMap extends GameMap {
     constructor() {
-        const width = 12;
-        const depth = 12;
+        const width = 10;
+        const depth = 10;
         const height = 10;
         super(width, depth, height);
 

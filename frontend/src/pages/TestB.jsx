@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import Display from '../components/Display'
+// import Display from '../components/Display'
 import './TestB.css'
 
 const TestB = () => {
@@ -7,7 +7,7 @@ const TestB = () => {
     return (<>
         <h1>Test Page B</h1>
         <Canvas>
-            <Display />
+            {/* <Display /> */}
         </Canvas>
     </>)
 }

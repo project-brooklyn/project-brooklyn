@@ -1,13 +1,15 @@
 import { useAuth } from "../AuthContext";
 import GameCanvas from "../components/GameCanvas";
+import Game from "../Game";
 
 import DemoMap from "../map/DemoMap";
 import RandomMap from "../map/RandomMap";
-import Game from "../Game";
+import ZigZagMap from "../map/ZigZagMap";
+import MazeMap from "../map/MazeMap";
 
 const HomePage = () => {
     const { user, logout } = useAuth();
-    const game = new Game(new DemoMap());
+    const game = new Game(new MazeMap());
 
     return (<>
         {user ? `You are logged in as ${user.username}` : 'You are not logged in'}

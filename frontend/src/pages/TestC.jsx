@@ -1,6 +1,6 @@
 import RandomMap from '../map/RandomMap'
 import { djikstra } from '../utils/game_utils'
-import AnimatedMapDisplay from '../components/AnimatedMapDisplay';
+// import AnimatedMapDisplay from '../components/AnimatedMapDisplay';
 import Guy from '../entities/Guy';
 
 const TestC = () => {
@@ -10,7 +10,7 @@ const TestC = () => {
 
     return (<>
         <h1>Test Page C</h1>
-        <AnimatedMapDisplay gameMap={gameMap} path={path} enemies={enemies}/>
+        {/* <AnimatedMapDisplay gameMap={gameMap} path={path} enemies={enemies}/> */}
     </>)
 }
 

@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 
 import { levels } from "../levels";
-import { objectToComponent } from "../utils/render_utils";
 
 import Castle from "../entities/Castle";
 import MapView from "./MapView";
 import Portal from "../entities/Portal";
-import Guy from "../entities/Guy";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import EnemyView from "./EnemyView";
+import StructureView from "./StructureView";
 
 export default function GameCanvas({game}) {
     const { gameMap } = game;
@@ -52,10 +51,10 @@ export default function GameCanvas({game}) {
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
         <ambientLight intensity={2} />
 
-        <Text onClick={startDefendPhase} position={[width/2-0.5, height, 0]}>START</Text>
+        <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>START</Text>
 
-        {[castle, portal].map(objectToComponent)}
-        {enemies.map((enemy, i) => objectToComponent(enemy, i))}
+        <StructureView structures={[castle, portal]}/>
+        <EnemyView enemies={enemies}/>
 
         <MapView gameMap={gameMap}/>
     </Canvas>

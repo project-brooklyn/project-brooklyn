@@ -4,7 +4,7 @@ import { useLoader } from "@react-three/fiber";
 
 const renderStructure = (structure) => {
     const { scale, name, hp, offset } = structure;
-    if (!hp) return null;
+    if (!hp) return <></>;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
@@ -14,11 +14,11 @@ const renderStructure = (structure) => {
         scale={scale}
         position={[coordinates.x, coordinates.y, coordinates.z]}
     />);
-}
+};
 
 export default function StructureView({structures}) {
-    const structureComponents = structures.map(renderStructure)
+    const structureComponents = structures.map(renderStructure);
     return <>
         {structureComponents}
     </>
-}
+};

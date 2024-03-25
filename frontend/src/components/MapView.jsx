@@ -22,4 +22,4 @@ export default function MapView({gameMap})
     return <>
         {tilesMeshes}
     </>
-}
+};

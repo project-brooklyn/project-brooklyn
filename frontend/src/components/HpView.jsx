@@ -29,13 +29,11 @@ export default function HpView({hp, yposition, width = 0.5, mode = "slider"})
     }, [hp])
 
     return <>
-        {(mode === "color") &&
-            <sprite scale={[width, 0.04, 0]} position-y={yposition} >
+        <sprite scale={[width, 0.04, 0]} position-y={yposition} >
+            {(mode === "color") &&
                 <spriteMaterial ref={materialRef} color={"black"} />
-            </sprite>
-        }
-        {(mode === "slider") &&
-            <sprite scale={[width, 0.04, 0]} position-y={yposition} >
+            }
+            {(mode === "slider") &&
                 <spriteMaterial
                     key={'hp-bar-material:' + hp}
                     onBeforeCompile={
@@ -54,7 +52,7 @@ export default function HpView({hp, yposition, width = 0.5, mode = "slider"})
                     }}
                     defines={{"USE_UV": ""}}
                 />
-            </sprite>
-        }
+            }
+        </sprite>
     </>
 }

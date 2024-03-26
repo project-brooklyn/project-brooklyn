@@ -11,11 +11,6 @@ export default function BaseView({base, hp})
         </>
     }
 
-    const [currentHp, setCurrentHp] = useState(hp)
-    useEffect(() => {
-        setCurrentHp(hp)
-    }, [hp])
-
     // TODO: Use render util to convert coordinates, i.e. convertToRenderCoordinates().
     model.scene.position.set(base.x, base.z * 0.1, base.y)
 
@@ -26,7 +21,7 @@ export default function BaseView({base, hp})
     const key = `${base.x},${base.y},${base.z}`
 
     return <>
-        <HpView hp={currentHp} />
+        <HpView hp={hp} yposition={0.75} width={1.0} />
         <primitive object={object} key={key} />
     </>
 }

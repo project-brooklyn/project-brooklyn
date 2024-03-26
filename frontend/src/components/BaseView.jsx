@@ -21,7 +21,7 @@ export default function BaseView({base, hp})
     const key = `${base.x},${base.y},${base.z}`
 
     return <>
-        <HpView hp={hp} />
+        <HpView hp={hp} yposition={0.75} width={1.0} />
         <primitive object={object} key={key} />
     </>
 }

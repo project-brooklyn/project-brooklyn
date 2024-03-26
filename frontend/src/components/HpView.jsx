@@ -6,10 +6,8 @@ const COLOR_YELLOW = new THREE.Color("yellow")
 const COLOR_ORANGE = new THREE.Color("orange")
 const COLOR_RED = new THREE.Color("red")
 
-export default function HpView({hp, mode = "slider"})
+export default function HpView({hp, yposition, width = 0.5, mode = "slider"})
 {
-    const width = 1.0
-
     const materialRef = useRef()
     useEffect(() =>{
         if (mode === "color") {
@@ -32,12 +30,12 @@ export default function HpView({hp, mode = "slider"})
 
     return <>
         {(mode === "color") &&
-            <sprite scale={[width, 0.04, 0]} position-y={0.75} >
+            <sprite scale={[width, 0.04, 0]} position-y={yposition} >
                 <spriteMaterial ref={materialRef} color={"black"} />
             </sprite>
         }
         {(mode === "slider") &&
-            <sprite scale={[1, 0.04, 0]} position-y={0.75} >
+            <sprite scale={[width, 0.04, 0]} position-y={yposition} >
                 <spriteMaterial
                     key={'hp-bar-material:' + hp}
                     onBeforeCompile={

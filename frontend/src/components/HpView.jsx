@@ -11,8 +11,6 @@ export default function HpView({hp, mode = "slider"})
     const width = 1.0
 
     const materialRef = useRef()
-    const [currentHp, setCurrentHp] = useState(hp)
-
     useEffect(() =>{
         if (mode === "color") {
             let color = null
@@ -30,9 +28,6 @@ export default function HpView({hp, mode = "slider"})
             }
             materialRef.current.color = color
         }
-        else if (mode === "slider") {
-            setCurrentHp(hp)
-        }
     }, [hp])
 
     return <>
@@ -44,10 +39,10 @@ export default function HpView({hp, mode = "slider"})
         {(mode === "slider") &&
             <sprite scale={[1, 0.04, 0]} position-y={0.75} >
                 <spriteMaterial
-                    key={'hp-bar-material:' + currentHp}
+                    key={'hp-bar-material:' + hp}
                     onBeforeCompile={
                         (shader, _) => {
-                            shader.uniforms.progress = {value: currentHp};
+                            shader.uniforms.progress = {value: hp};
                             shader.fragmentShader = `
                                 uniform float progress;
                                 ${shader.fragmentShader}
@@ -60,7 +55,6 @@ export default function HpView({hp, mode = "slider"})
                                 )
                     }}
                     defines={{"USE_UV": ""}}
-                    customProgramCacheKey={() => {return hp}}
                 />
             </sprite>
         }

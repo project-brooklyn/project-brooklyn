@@ -1,4 +1,4 @@
-import MapDisplay from "../components/MapDisplay";
+// import MapDisplay from "../components/MapDisplay";
 import RandomMap from "../map/RandomMap";
 import { djikstra } from "../utils/game_utils";
 
@@ -8,7 +8,7 @@ const TestD = () => {
 
     return (<>
         <h1>Test Page D</h1>
-        <MapDisplay gameMap={gameMap} path={path} />
+        {/* <MapDisplay gameMap={gameMap} path={path} /> */}
     </>)
 };
 

@@ -2,13 +2,12 @@ import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Stats, Text } from '@react-three/drei'
 
-import BaseView from './BaseView.jsx'
-import MapView from './MapView.jsx'
-import DemoMap from '../map/DemoMap.js'
-import Castle from '../entities/Castle.js';
-import Portal from '../entities/Portal.js';
-import Guy from '../entities/Guy.js';
-import { randomInt } from '../utils/math_utils.js';
+import MapView from '../MapView.jsx'
+import DemoMap from '../../map/DemoMap.js'
+import Castle from '../../entities/Castle.js';
+import Portal from '../../entities/Portal.js';
+import Guy from '../../entities/Guy.js';
+import { randomInt } from '../../utils/math_utils.js';
 
 const castle = new Castle(0,0,1);
 
@@ -42,8 +41,9 @@ export default function Display()
         <ambientLight intensity={ 2 } />
 
         <BaseView base={castle} hp={baseHp}/>
-        {/* {portal.fiberComponent()} */}
-        {/* {guys.map(guy => guy.fiberComponent())} */}
+        {castle.fiberComponent()}
+        {portal.fiberComponent()}
+        {guys.map((guy,i) => guy.fiberComponent(i))}
 
         <MapView gameMap={gameMap}/>
     </>

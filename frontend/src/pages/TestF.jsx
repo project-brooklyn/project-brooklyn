@@ -1,4 +1,4 @@
-import AnimatedMapDisplay from "../components/AnimatedMapDisplay";
+import AnimatedMapDisplay from "../components/tests/AnimatedMapDisplay";
 import DemoMap from "../map/DemoMap";
 import { djikstra } from "../utils/game_utils";
 
@@ -8,7 +8,7 @@ const TestF = () => {
 
     return (<>
         <h1>Test Page F</h1>
-        <AnimatedMapDisplay gameMap={gameMap} path={path} />
+        {/* <AnimatedMapDisplay gameMap={gameMap} path={path} /> */}
     </>)
 };
 

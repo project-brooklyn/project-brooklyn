@@ -1,31 +1,19 @@
-import * as THREE from 'three';
+import { convertToRenderCoordinates, tileConfig } from "../utils/render_utils";
 
-const tileConfig = {
-    width: 1,
-    height: 0.25,
-}
-
-// Converts map coordinates to render coordinates.
-function convertToRenderCoordinates(mapVector) {
-    return new THREE.Vector3(
-        mapVector.x * tileConfig.width,
-        mapVector.z * tileConfig.height,
-        mapVector.y * tileConfig.width
-    )
-}
-
-// Produces the geometry for a map tile.
 function renderTile(tile) {
     const position = convertToRenderCoordinates(tile)
+    const spacer = 0.00; // add space between tiles to see better, remove after improved textures
+
     return (
-        <mesh position={ [position.x, position.y, position.z] } key={`${tile.x},${tile.y},${tile.z}`}>
-            <boxGeometry args={ [tileConfig.width, tileConfig.height, tileConfig.width] } />
+        // reduce position.y so that tiles render below other objects
+        <mesh position={ [position.x, position.y - tileConfig.height/2, position.z] } key={`${tile.x},${tile.y},${tile.z}`}>
+            <boxGeometry args={ [tileConfig.width*(1-spacer), tileConfig.height*(1-spacer), tileConfig.width*(1-spacer)] } />
             <meshBasicMaterial
                 color={ tile.type.material.color }
             />
         </mesh>
     )
-}
+};
 
 export default function MapView({gameMap})
 {
@@ -34,4 +22,4 @@ export default function MapView({gameMap})
     return <>
         {tilesMeshes}
     </>
-}
+};

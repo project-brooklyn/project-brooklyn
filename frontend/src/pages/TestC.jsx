@@ -1,17 +1,14 @@
-import RandomMap from '../map/RandomMap'
-import { djikstra } from '../utils/game_utils'
-// import AnimatedMapDisplay from '../components/AnimatedMapDisplay';
-import Guy from '../entities/Guy';
+import GameCanvas from "../components/GameCanvas";
+import MazeMap from "../map/MazeMap";
+import Game from "../Game";
+import './Test.css';
 
 const TestC = () => {
-    const gameMap = new RandomMap();
-    const path = djikstra(gameMap);
-    const enemies = [new Guy()];
 
     return (<>
-        <h1>Test Page C</h1>
-        {/* <AnimatedMapDisplay gameMap={gameMap} path={path} enemies={enemies}/> */}
+        <h1>Test Page C (Maze/Climbing Demo)</h1>
+        <GameCanvas game={new Game(new MazeMap())} />
     </>)
-}
+};
 
 export default TestC;

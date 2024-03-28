@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/testc',
-        element: <TestC gameMap={gameMap}/>,
+        element: <TestC />,
     },
     {
         path: '/testd',

@@ -6,13 +6,19 @@ export const pythagorean = (p1, p2) => {
         return acc + (diff * diff);
     }, 0);
     return Math.sqrt(sumOfSquares);
-}
+};
 
 export const round = (num, decimals=2) => {
     const inverse = 10**decimals;
     return Math.round(num*inverse) / inverse;
-}
+};
 
 export const randomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
+
+export const normalize = (orig, dest) => {
+    const magnitude = pythagorean(orig, dest);
+    const vector = dest.map((val, idx) => val - orig[idx]);
+    return vector.map((val) => val/magnitude);
+};

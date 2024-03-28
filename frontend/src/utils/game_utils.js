@@ -1,4 +1,4 @@
-import { round } from "./math_utils";
+import { round, normalize } from "./math_utils";
 
 const getNeighbors = (x, y, gameMap) => {
     const neighbors = [];
@@ -83,3 +83,19 @@ export const getSteps = (path, heightMap) => {
     }
     return steps;
 }
+
+export const getStraightPath = (start, end, heightMap, speed=0.1) => {
+    const unitVector = normalize(start, end);
+    const aboveGround = (x,y,z) => {
+        const [xIdx, yIdx] = [round(x,0), round(y,0)];
+        if (xIdx < 0 || xIdx >= heightMap.length || yIdx < 0 || yIdx >= heightMap[0].length) return false;  
+        return z >= heightMap[xIdx][yIdx];
+    }
+    const path = [start];
+    while (aboveGround(...path.at(-1))) {
+        path.push(path.at(-1).map((val,idx) => val + unitVector[idx]*speed));
+    }
+
+    if (round(path.at(-1)[0],0) !== end[0] || round(path.at(-1)[1],0) !== end[1]) return [];
+    return path;
+};

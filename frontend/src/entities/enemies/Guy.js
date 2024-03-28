@@ -1,6 +1,6 @@
-import Entity from "./Entity";
+import Enemy from "./Enemy";
 
-export default class Guy extends Entity {
+export default class Guy extends Enemy {
     constructor (x,y,z) {
         super(x, y, z, 0.3);
         this.name = "guy";

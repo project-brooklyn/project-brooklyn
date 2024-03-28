@@ -7,7 +7,11 @@ export default class Game {
         this.level = 0;
         this.phase = BUILD;
         this.gameMap = gameMap;
+
+        this.towers = [];
         this.enemies = [];
+        this.projectiles = [];
+        
         this.animationFunctions = [];
         this.steps = []
     }
@@ -34,6 +38,11 @@ export default class Game {
             count--;
             if (!count) clearInterval(interval);
         }, delay);
+    };
+
+    addProjectile = (projectile) => {
+        this.projectiles.push(projectile);
+        this.animationFunctions.push(projectile.getMoveFunction());
     };
 
     tick = () => {

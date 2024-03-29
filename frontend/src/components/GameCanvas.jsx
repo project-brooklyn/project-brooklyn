@@ -12,6 +12,7 @@ import EnemyView from "./EnemyView";
 import StructureView from "./StructureView";
 import ProjectileView from "./ProjectileView";
 import ArrowTower from "../entities/towers/ArrowTower";
+import RockTower from "../entities/towers/RockTower";
 
 export default function GameCanvas({game}) {
     const { gameMap } = game;
@@ -21,7 +22,7 @@ export default function GameCanvas({game}) {
     const [enemies, setEnemies] = useState([]);
     const [towers, setTowers] = useState([
         new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
-        new ArrowTower(0, depth-1, heightMap.at(0).at(-1))
+        new RockTower(0, depth-1, heightMap.at(0).at(-1))
     ]);
     const [projectiles, setProjectiles] = useState([]);
     const ref = useRef(null);

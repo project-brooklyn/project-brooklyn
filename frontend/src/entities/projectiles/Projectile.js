@@ -8,4 +8,17 @@ export default class Projectile extends Entity {
         this.hp = Infinity;
     }
 
+    getMoveFunction = () => {
+        this.stepIndex = 0;
+
+        return () => {
+            if (this.stepIndex >= this.path.length) {
+                this.hp = 0;
+                return;
+            }
+
+            this.setPosition(...this.path[this.stepIndex]);
+            this.stepIndex++;
+        }
+    };
 };

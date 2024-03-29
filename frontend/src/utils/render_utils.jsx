@@ -13,6 +13,7 @@ export const modelFiles = {
     arrow: './arrow.glb',
     rock: './rock.glb',
     arrowTower: './simple_building.glb',
+    rockTower: './simple_building.glb',
 };
 
 // Converts map coordinates to render coordinates.

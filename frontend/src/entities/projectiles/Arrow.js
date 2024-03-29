@@ -6,18 +6,5 @@ export default class Arrow extends Projectile {
         this.name = "arrow";        
     };
 
-    getMoveFunction = () => {
-        this.stepIndex = 0;
-
-        return () => {
-            if (this.stepIndex >= this.path.length) {
-                this.hp = 0;
-                return;
-            }
-
-            this.setPosition(...this.path[this.stepIndex]);
-            this.stepIndex++;
-        }
-    };
 
 };

@@ -1,4 +1,4 @@
-import { round, normalize } from "./math_utils";
+import { round, normalize, pythagorean, quadratic } from "./math_utils";
 
 const getNeighbors = (x, y, gameMap) => {
     const neighbors = [];
@@ -84,18 +84,52 @@ export const getSteps = (path, heightMap) => {
     return steps;
 }
 
+const aboveGround = (x, y, z, heightMap) => {
+    const [xIdx, yIdx] = [round(x,0), round(y,0)];
+    if (xIdx < 0 || xIdx >= heightMap.length || yIdx < 0 || yIdx >= heightMap[0].length) return false;  
+    return z >= heightMap[xIdx][yIdx];
+}
+
 export const getStraightPath = (start, end, heightMap, speed=0.1) => {
     const unitVector = normalize(start, end);
-    const aboveGround = (x,y,z) => {
-        const [xIdx, yIdx] = [round(x,0), round(y,0)];
-        if (xIdx < 0 || xIdx >= heightMap.length || yIdx < 0 || yIdx >= heightMap[0].length) return false;  
-        return z >= heightMap[xIdx][yIdx];
-    }
     const path = [start];
-    while (aboveGround(...path.at(-1))) {
+    while (aboveGround(...path.at(-1), heightMap)) {
         path.push(path.at(-1).map((val,idx) => val + unitVector[idx]*speed));
     }
 
+    if (round(path.at(-1)[0],0) !== end[0] || round(path.at(-1)[1],0) !== end[1]) return [];
+    return path;
+};
+
+export const getParabolicPath = (start, end, heightMap, timeInvertal = 0.02) => {
+    const g = -9.8; // gravitational acceleration
+    const angleToHorizontal = 75 * (Math.PI/180); // 75 degrees to radians
+
+    const heightDifference = end[2] - start[2];
+    const horizontalDistance = pythagorean(start.slice(0,2), end.slice(0,2));
+    /*
+        horizontalDistance = v0*cos(angle)*t
+        heightDifference = v0*sin(angle)*t + 0.5*g*t^2
+
+        heightDifference = 0.5*g*t^2 + 0*t + horizontalDistance*tan(angle)
+    */
+    const times = quadratic(g/2, 0, horizontalDistance*Math.tan(angleToHorizontal) - heightDifference);
+    if (!times.length) return [];
+    const time = Math.max(...times); // take later time if two solutions
+    
+    const initialVelocity = horizontalDistance / (time * Math.cos(angleToHorizontal));
+    const angleAroundZ = Math.atan2(end[1]-start[1], end[0]-start[0]);
+
+    const path = [start];
+    while (path.length===1 || aboveGround(...path.at(-1), heightMap)) {
+        const [x,y,z] = path.at(-1);
+        const t = (path.length-1)*timeInvertal;
+        const dx = initialVelocity * Math.cos(angleToHorizontal) * Math.cos(angleAroundZ) * timeInvertal;
+        const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInvertal;
+        const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInvertal) + (g * t * timeInvertal);
+        path.push([x + dx, y + dy, z+dz]);
+    };
+    
     if (round(path.at(-1)[0],0) !== end[0] || round(path.at(-1)[1],0) !== end[1]) return [];
     return path;
 };

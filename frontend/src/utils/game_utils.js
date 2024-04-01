@@ -84,16 +84,19 @@ export const getSteps = (path, heightMap) => {
     return steps;
 }
 
-const aboveGround = (x, y, z, heightMap) => {
+const isAboveGround = (x, y, z, heightMap) => {
     const [xIdx, yIdx] = [round(x,0), round(y,0)];
     if (xIdx < 0 || xIdx >= heightMap.length || yIdx < 0 || yIdx >= heightMap[0].length) return false;  
     return z >= heightMap[xIdx][yIdx];
 }
 
 export const getStraightPath = (start, end, heightMap, speed=0.1) => {
+    // start and end are [x,y,z] coordinates
+    // returns a series of points, separated by distance 'speed', that follow a straight path
+    // if no straight path through heightMap is possible, returns an empty array
     const unitVector = normalize(start, end);
     const path = [start];
-    while (aboveGround(...path.at(-1), heightMap)) {
+    while (isAboveGround(...path.at(-1), heightMap)) {
         path.push(path.at(-1).map((val,idx) => val + unitVector[idx]*speed));
     }
 
@@ -101,8 +104,11 @@ export const getStraightPath = (start, end, heightMap, speed=0.1) => {
     return path;
 };
 
-export const getParabolicPath = (start, end, heightMap, timeInvertal = 0.02) => {
-    const g = -9.8; // gravitational acceleration
+export const getParabolicPath = (start, end, heightMap, timeInterval=0.02) => {
+    // start and end are [x,y,z] coordinates
+    // returns a series (separated by timeInterval) of points that follow a parabolic path
+    // if no parabolic path (starting at the default angle) through heightMap is possible, returns an empty array
+    const g = -10; // gravitational acceleration
     const angleToHorizontal = 75 * (Math.PI/180); // 75 degrees to radians
 
     const heightDifference = end[2] - start[2];
@@ -121,12 +127,12 @@ export const getParabolicPath = (start, end, heightMap, timeInvertal = 0.02) => 
     const angleAroundZ = Math.atan2(end[1]-start[1], end[0]-start[0]);
 
     const path = [start];
-    while (path.length===1 || aboveGround(...path.at(-1), heightMap)) {
+    while (isAboveGround(...path.at(-1), heightMap)) {
         const [x,y,z] = path.at(-1);
-        const t = (path.length-1)*timeInvertal;
-        const dx = initialVelocity * Math.cos(angleToHorizontal) * Math.cos(angleAroundZ) * timeInvertal;
-        const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInvertal;
-        const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInvertal) + (g * t * timeInvertal);
+        const t = (path.length-1)*timeInterval;
+        const dx = initialVelocity * Math.cos(angleToHorizontal) * Math.cos(angleAroundZ) * timeInterval;
+        const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInterval;
+        const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInterval) + (g * t * timeInterval);
         path.push([x + dx, y + dy, z+dz]);
     };
     

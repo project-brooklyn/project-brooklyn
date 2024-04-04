@@ -1,4 +1,4 @@
-import Guy from "./entities/Guy";
+import Guy from "./entities/enemies/Guy";
 
 export const levels = [
     {

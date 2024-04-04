@@ -10,6 +10,10 @@ export const modelFiles = {
     portal: './portal1s.glb',
     castle: './castle_3d_model.glb',
     flag: './flag.glb',
+    arrow: './arrow.glb',
+    rock: './rock.glb',
+    arrowTower: './simple_building.glb',
+    rockTower: './simple_building.glb',
 };
 
 // Converts map coordinates to render coordinates.

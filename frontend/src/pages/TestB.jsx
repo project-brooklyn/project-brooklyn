@@ -1,14 +1,13 @@
-import { Canvas } from '@react-three/fiber'
-// import Display from '../components/Display'
-import './TestB.css'
+import Game from "../Game";
+import GameCanvas from "../components/GameCanvas";
+import ZigZagMap from "../map/ZigZagMap";
+import './Test.css';
 
 const TestB = () => {
 
     return (<>
-        <h1>Test Page B</h1>
-        <Canvas>
-            {/* <Display /> */}
-        </Canvas>
+        <h1>Test Page B (ZigZag)</h1>
+        <GameCanvas game={new Game(new ZigZagMap())} />
     </>)
 }
 

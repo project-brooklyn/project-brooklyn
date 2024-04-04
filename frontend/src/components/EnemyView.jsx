@@ -4,7 +4,7 @@ import { useLoader } from "@react-three/fiber";
 
 const renderEnemy = (enemy) => {
     const { scale, name, hp, offset, spawnedAt, rotation } = enemy;
-    if (!hp) return <></>;
+    if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);

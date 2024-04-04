@@ -9,7 +9,7 @@ import MazeMap from "../map/MazeMap";
 
 const HomePage = () => {
     const { user, logout } = useAuth();
-    const game = new Game(new MazeMap());
+    const game = new Game(new DemoMap());
 
     return (<>
         {user ? `You are logged in as ${user.username}` : 'You are not logged in'}

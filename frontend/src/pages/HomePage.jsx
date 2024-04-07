@@ -3,9 +3,6 @@ import GameCanvas from "../components/GameCanvas";
 import Game from "../Game";
 
 import DemoMap from "../map/DemoMap";
-import RandomMap from "../map/RandomMap";
-import ZigZagMap from "../map/ZigZagMap";
-import MazeMap from "../map/MazeMap";
 
 const HomePage = () => {
     const { user, logout } = useAuth();
@@ -21,6 +18,7 @@ const HomePage = () => {
             :
                 <div>
                     <a href="/signup">Sign Up</a>
+                    <br />
                     <a href="/login">Log In</a>
                 </div>
         }

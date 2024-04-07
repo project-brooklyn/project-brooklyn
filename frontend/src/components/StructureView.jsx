@@ -1,19 +1,24 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { convertToRenderCoordinates, modelFiles } from "../utils/render_utils";
 import { useLoader } from "@react-three/fiber";
+import HpView from "./HpView";
 
 const renderStructure = (structure) => {
-    const { scale, name, hp, offset } = structure;
+    const { scale, name, hp, maxHp, offset } = structure;
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
-    return (<primitive
-        key={name+coordinates.x+coordinates.y+coordinates.z}
-        object={gltf.scene.clone(true)}
-        scale={scale}
-        position={[coordinates.x, coordinates.y, coordinates.z]}
-    />);
+    const key = name+coordinates.x+coordinates.y+coordinates.z;
+    return (<>
+        {hp && hp !== Infinity && <HpView hpFraction={hp/maxHp} position={[coordinates.x, coordinates.y, coordinates.z]} width={1.0} />}
+        <primitive
+            key={key}
+            object={gltf.scene.clone(true)}
+            scale={scale}
+            position={[coordinates.x, coordinates.y, coordinates.z]}
+        />
+    </>);
 };
 
 export default function StructureView({structures}) {

@@ -6,19 +6,19 @@ const COLOR_YELLOW = new THREE.Color("yellow")
 const COLOR_ORANGE = new THREE.Color("orange")
 const COLOR_RED = new THREE.Color("red")
 
-export default function HpView({hp, yposition, width = 0.5, mode = "slider"})
+export default function HpView({hpFraction, position, width = 0.5, mode = "slider", modelHeight = 0.5})
 {
     const materialRef = useRef()
     useEffect(() =>{
         if (mode === "color") {
             let color = null
-            if (hp >= 0.75) {
+            if (hpFraction >= 0.75) {
                 color = COLOR_GREEN
             }
-            else if (hp >= 0.5) {
+            else if (hpFraction >= 0.5) {
                 color = COLOR_YELLOW
             }
-            else if (hp >= 0.25) {
+            else if (hpFraction >= 0.25) {
                 color = COLOR_ORANGE
             }
             else {
@@ -26,19 +26,19 @@ export default function HpView({hp, yposition, width = 0.5, mode = "slider"})
             }
             materialRef.current.color = color
         }
-    }, [hp])
+    }, [hpFraction])
 
     return <>
-        <sprite scale={[width, 0.04, 0]} position-y={yposition} >
+        <sprite scale={[width, 0.04, 0]} position={[position[0], position[1] + modelHeight, position[2]]} >
             {(mode === "color") &&
                 <spriteMaterial ref={materialRef} color={"black"} />
             }
             {(mode === "slider") &&
                 <spriteMaterial
-                    key={'hp-bar-material:' + hp}
+                    key={'hp-bar-material:' + hpFraction}
                     onBeforeCompile={
                         (shader, _) => {
-                            shader.uniforms.progress = {value: hp};
+                            shader.uniforms.progress = {value: hpFraction};
                             shader.fragmentShader = `
                                 uniform float progress;
                                 ${shader.fragmentShader}

@@ -21,19 +21,27 @@ export default function GameCanvas({game}) {
   
     const [enemies, setEnemies] = useState([]);
     const [towers, setTowers] = useState([
+        castle,
+        portal,
         new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
         new RockTower(0, depth-1, heightMap.at(0).at(-1))
     ]);
+    game.towers = towers; // will need to change to game.addTower(tower) when building towers is implemented
+    
     const [projectiles, setProjectiles] = useState([]);
     const ref = useRef(null);
     
-
     useEffect(() => {
         const animate = () => {
             game.tick()
+
+            handleEnemiesAtCastle(game.enemies);
+            setTowers([...game.towers]);
+
             setEnemies([...game.enemies]);
             towersAttack(game.enemies);
             setProjectiles([...game.projectiles]);
+
             ref.current = requestAnimationFrame(animate);
         }
         ref.current = requestAnimationFrame(animate);
@@ -57,6 +65,7 @@ export default function GameCanvas({game}) {
     
     const towersAttack = (enemies) => {
         for (let tower of towers) {
+            if (!tower.canAttack) continue;
             let attacked = false;
             for (let enemy of enemies) {
                 if (!enemy.hp) continue;
@@ -71,7 +80,21 @@ export default function GameCanvas({game}) {
             }
             if (!attacked && tower.currentCooldown) tower.currentCooldown--;
         }
-    }
+    };
+
+    const handleEnemiesAtCastle = (enemies) => {
+        for (const enemy of enemies)  {
+            if (
+                enemy.position[0] === castle.position[0] &&
+                enemy.position[1] === castle.position[1] &&
+                enemy.position[2] === castle.position[2] &&
+                enemy.hp // enemy is alive at castle
+            ) {
+                castle.takeDamage(enemy.hp);
+                enemy.hp = 0;
+            }
+        }
+    };
 
     return <Canvas>
         {/* adds axes, [xyz] = [rgb] */}
@@ -83,7 +106,7 @@ export default function GameCanvas({game}) {
 
         <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>START</Text>
 
-        <StructureView structures={[castle, portal, ...towers]}/>
+        <StructureView structures={towers}/>
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 

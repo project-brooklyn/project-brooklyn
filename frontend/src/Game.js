@@ -45,6 +45,10 @@ export default class Game {
         this.animationFunctions.push(projectile.getMoveFunction());
     };
 
+    addTower = (tower) => {
+        this.towers.push(tower);
+    };
+
     tick = () => {
         for (let fn of this.animationFunctions) fn();
     };

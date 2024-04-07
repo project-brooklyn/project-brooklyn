@@ -27,10 +27,8 @@ export default class Enemy extends Entity {
             if (this.stepIndex<steps.length-1) {
                 this.stepIndex++;
             } else {
-                // enemy attacks the base
-
-                // simple remove model
-                this.hp=0; 
+                // enemy reaching base
+                // is handled in GameCanvas
             }
         }
     }

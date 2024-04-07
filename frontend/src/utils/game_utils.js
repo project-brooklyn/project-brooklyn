@@ -81,6 +81,7 @@ export const getSteps = (path, heightMap) => {
 
         pathIndex++;
     }
+    steps.push([path.at(-1)[0], path.at(-1)[1], heightMap[path.at(-1)[0]][path.at(-1)[1]]]);
     return steps;
 }
 

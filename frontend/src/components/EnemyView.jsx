@@ -11,14 +11,16 @@ const renderEnemy = (enemy) => {
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const position = [coordinates.x, coordinates.y, coordinates.z];
     return (<>
-        <HpView hpFraction={hp/maxHp} position={position} />
+      <group position={position} >
+        <HpView hpFraction={hp/maxHp} position={[0, 0.5, 0]} />
         <primitive
             key={name+spawnedAt}
             object={gltf.scene.clone(true)}
             scale={scale}
-            position={position}
+            /* position={position} */
             rotation={rotation}
         />
+      </group>
     </>);
 }
 

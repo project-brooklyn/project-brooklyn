@@ -9,19 +9,20 @@ const renderStructure = (structure) => {
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
-    const key = name+coordinates.x+coordinates.y+coordinates.z;
-    return (<>
-        {hp && hp !== Infinity && <HpView hpFraction={hp/maxHp} position={[coordinates.x, coordinates.y, coordinates.z]} width={1.0} />}
-        <primitive
-            key={key}
-            object={gltf.scene.clone(true)}
-            scale={scale}
-            position={[coordinates.x, coordinates.y, coordinates.z]}
-        />
-    </>);
+    const key = name + coordinates.x + coordinates.y + coordinates.z;
+    return (
+        <group position={[coordinates.x, coordinates.y, coordinates.z]} >
+            {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
+            <primitive
+                key={key}
+                object={gltf.scene.clone(true)}
+                scale={scale}
+            />
+        </group>
+    );
 };
 
-export default function StructureView({structures}) {
+export default function StructureView({ structures }) {
     const structureComponents = structures.map(renderStructure);
     return <>
         {structureComponents}

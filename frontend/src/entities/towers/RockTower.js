@@ -8,6 +8,7 @@ export default class RockTower extends Tower {
         this.name = 'rockTower';
         this.cooldown = 50;
         this.currentCooldown = 0;
+        this.damage = 20;
     };
 
     canAttack = (target, heightMap) => {

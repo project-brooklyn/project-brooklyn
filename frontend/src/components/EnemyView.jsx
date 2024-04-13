@@ -17,7 +17,6 @@ const renderEnemy = (enemy) => {
             key={name+spawnedAt}
             object={gltf.scene.clone(true)}
             scale={scale}
-            /* position={position} */
             rotation={rotation}
         />
       </group>

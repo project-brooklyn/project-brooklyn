@@ -4,12 +4,14 @@ const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
 export default class Game {
     constructor(gameMap) {
-        this.level = 0;
+        this.level = 1;
         this.phase = BUILD;
         this.gameMap = gameMap;
+        this.over = false;
 
         this.towers = [];
         this.enemies = [];
+        this.spawningEnemies = false;
         this.projectiles = [];
         
         this.animationFunctions = [];

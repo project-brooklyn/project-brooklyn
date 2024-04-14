@@ -73,7 +73,8 @@ export default function GameCanvas({game}) {
                 if (path) {
                     const projectile = tower.createProjectile(path);
                     game.addProjectile(projectile);
-                    
+                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
+
                     attacked = true;
                     break;
                 }

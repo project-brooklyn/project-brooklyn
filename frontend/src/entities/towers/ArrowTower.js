@@ -8,6 +8,7 @@ export default class ArrowTower extends Tower {
         this.name = 'arrowTower';
         this.cooldown = 25;
         this.currentCooldown = 0;
+        this.damage = 10;
     };
 
     canAttack = (target, heightMap) => {

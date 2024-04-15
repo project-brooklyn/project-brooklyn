@@ -20,5 +20,15 @@ export const levels = [
         enemy: Guy,
         count: 30,
         delay: 1000,
-    }
+    },
+    {
+        enemy: Guy,
+        count: 40,
+        delay: 1000,
+    },
+    {
+        enemy: Guy,
+        count: 50,
+        delay: 1000,
+    },
 ];

@@ -2,8 +2,10 @@ import Projectile from "./Projectile";
 
 export default class Rock extends Projectile {
     constructor (x, y, z, path) {
-        super(x, y, z, 0.005, path);
-        this.name = "rock";        
+        const scale = 0.005;
+        const rotation = [0.0, 0.0, 0.0];
+        super(x, y, z, scale, rotation, path);
+        this.name = "rock";
     };
 
 };

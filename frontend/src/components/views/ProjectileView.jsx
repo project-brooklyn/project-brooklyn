@@ -5,6 +5,7 @@ import { useLoader } from "@react-three/fiber";
 const renderProjectile = (projectile) => {
     const { name, offset, spawnedAt, rotation, scale, hp } = projectile;
     const coordinates = convertToRenderCoordinates(projectile, offset);
+    const renderRotation = convertToRenderRotation(rotation);
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
 
     if (!hp) return null;
@@ -13,7 +14,7 @@ const renderProjectile = (projectile) => {
         object={gltf.scene.clone(true)}
         scale={scale}
         position={[coordinates.x, coordinates.y, coordinates.z]}
-        rotation={rotation}
+        rotation={renderRotation.toArray()}
     />);
 };
 

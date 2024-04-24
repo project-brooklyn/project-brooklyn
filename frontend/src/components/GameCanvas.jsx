@@ -15,24 +15,32 @@ import ArrowTower from "../entities/towers/ArrowTower";
 import RockTower from "../entities/towers/RockTower";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
+import Guy from "../entities/enemies/Guy";
+import Arrow from "../entities/projectiles/Arrow";
+import Rock from "../entities/projectiles/Rock";
 
 export default function GameCanvas({game}) {
-    const { gameMap } = game;
+    const { gameMap, gold } = game;
     const { width, depth, height, heightMap } = gameMap;
     const [castle, portal] = [new Castle(width-1, depth-1, heightMap.at(-1).at(-1)), new Portal(0, 0, heightMap[0][0])];
   
-    const exampleTowers = [new ArrowTower(), new RockTower()]
+    const towerConstructors = [ArrowTower, RockTower];
+    const exampleTowers = towerConstructors.map(constructor => new constructor());
     exampleTowers.forEach(tower => tower.disabled = true);
     const [selectedTower, setSelectedTower] = useState('');
 
+    // attemp to reduce lag at start of first level
+    const preload = [new Arrow(), new Rock(), new Guy()]
+    preload.forEach(entity => entity.disabled = true);
+
     const [enemies, setEnemies] = useState([]);
-    const [towers, setTowers] = useState([
+    const [structures, setStructures] = useState([
         castle,
         portal,
         new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
         new RockTower(0, depth-1, heightMap.at(0).at(-1))
     ]);
-    game.towers = towers; // will need to change to game.addTower(tower) when building towers is implemented
+    game.towers = structures; // will need to change to game.addTower(tower) when building towers is implemented
     
     const [projectiles, setProjectiles] = useState([]);
     const ref = useRef(null);
@@ -42,7 +50,7 @@ export default function GameCanvas({game}) {
             game.tick()
 
             handleEnemiesAtCastle(game.enemies);
-            setTowers([...game.towers]);
+            setStructures([...game.towers]);
 
             setEnemies([...game.enemies]);
             towersAttack(game.enemies);
@@ -75,7 +83,7 @@ export default function GameCanvas({game}) {
     };
     
     const towersAttack = (enemies) => {
-        for (let tower of towers) {
+        for (let tower of game.towers) {
             if (!tower.canAttack) continue;
             let attacked = false;
             for (let enemy of enemies) {
@@ -125,13 +133,30 @@ export default function GameCanvas({game}) {
         }
     };
 
+    const buildTower = (x, y, z) => {
+        if (game.phase !== 'build' || game.over) return;
+        const tower = towerConstructors.find(tower => tower.name === selectedTower.charAt(0).toUpperCase() + selectedTower.slice(1));
+        if (!tower) return;
+        if (y !== heightMap.at(x).at(z)) return;
+        if (structures.some(structure => structure.position[0] === x && structure.position[2] === z)) return;
+
+        const newTower = new tower(x, z, heightMap.at(x).at(z));
+        if (game.gold < newTower.price) return;
+
+        setSelectedTower('')
+        // game.addTower(newTower);
+        setStructures(oldStructures => [...oldStructures, newTower]);
+        game.towers = structures;
+        game.gold -= newTower.price;
+    }
+
     return <Canvas>
         {/* adds axes, [xyz] = [rgb] */}
         <axesHelper args={[width, depth, height]}/>
         <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>
             {game.over ? 'GAME OVER' : 'START'}
         </Text>
-        <GameInfo level={game.level} phase={game.phase} height={height} depth={depth}/>
+        <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={gold} />
         <BuyMenu
             width={width} depth={depth} 
             exampleTowers={exampleTowers} 
@@ -143,10 +168,10 @@ export default function GameCanvas({game}) {
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
         <ambientLight intensity={2} />
 
-        <StructureView structures={towers}/>
+        <StructureView structures={structures}/>
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 
-        <MapView gameMap={gameMap}/>
+        <MapView gameMap={gameMap} buildTower={buildTower} />
     </Canvas>
 };

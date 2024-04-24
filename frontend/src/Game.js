@@ -15,7 +15,8 @@ export default class Game {
         this.projectiles = [];
         
         this.animationFunctions = [];
-        this.steps = []
+        this.steps = [];
+        this.gold = 250;
     }
 
     setSteps = (spawn, goal) => {
@@ -54,5 +55,5 @@ export default class Game {
     tick = () => {
         for (let fn of this.animationFunctions) fn();
     };
-}
+};
 

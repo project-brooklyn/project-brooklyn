@@ -10,16 +10,13 @@ const renderStructure = (structure) => {
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const key = name + coordinates.x + coordinates.y + coordinates.z;
-    return (
-        <group position={[coordinates.x, coordinates.y, coordinates.z]} >
-            {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
-            <primitive
-                key={key}
-                object={gltf.scene.clone(true)}
-                scale={scale}
-            />
-        </group>
-    );
+    return (<group position={[coordinates.x, coordinates.y, coordinates.z]} key={key}>
+        {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
+        <primitive
+            object={gltf.scene.clone(true)}
+            scale={scale}
+        />
+    </group>);
 };
 
 export default function StructureView({ structures }) {

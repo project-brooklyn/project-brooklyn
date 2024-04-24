@@ -12,4 +12,4 @@ export default function GameInfo({level, phase, height, depth}) {
             {`Phase: ${phase}\n`}
         </Text>
     )
-}
+};

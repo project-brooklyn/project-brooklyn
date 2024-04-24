@@ -1,5 +1,5 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { convertToRenderCoordinates, modelFiles } from "../utils/render_utils";
+import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils";
 import { render, useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 

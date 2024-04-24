@@ -4,6 +4,6 @@ export default class Tower extends Entity {
     constructor (x, y, z, scale) {
         super(x, y, z, scale);
         this.hp = Infinity;
-        this.damage = 0;
+        this.disabled = false;
     }
 }

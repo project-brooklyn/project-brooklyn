@@ -1,4 +1,4 @@
-import { convertToRenderCoordinates, tileConfig } from "../utils/render_utils";
+import { convertToRenderCoordinates, tileConfig } from "../../utils/render_utils";
 
 function renderTile(tile) {
     const position = convertToRenderCoordinates(tile)

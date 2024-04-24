@@ -6,20 +6,25 @@ import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import { levels } from "../levels";
 
 import Castle from "../entities/Castle";
-import MapView from "./MapView";
+import MapView from "./views/MapView";
 import Portal from "../entities/Portal";
-import EnemyView from "./EnemyView";
-import StructureView from "./StructureView";
-import ProjectileView from "./ProjectileView";
+import EnemyView from "./views/EnemyView";
+import StructureView from "./views/StructureView";
+import ProjectileView from "./views/ProjectileView";
 import ArrowTower from "../entities/towers/ArrowTower";
 import RockTower from "../entities/towers/RockTower";
-import GameInfo from "./GameInfo";
+import GameInfo from "./ui/GameInfo";
+import BuyMenu from "./ui/BuyMenu";
 
 export default function GameCanvas({game}) {
     const { gameMap } = game;
     const { width, depth, height, heightMap } = gameMap;
     const [castle, portal] = [new Castle(width-1, depth-1, heightMap.at(-1).at(-1)), new Portal(0, 0, heightMap[0][0])];
   
+    const exampleTowers = [new ArrowTower(), new RockTower()]
+    exampleTowers.forEach(tower => tower.disabled = true);
+    const [selectedTower, setSelectedTower] = useState('');
+
     const [enemies, setEnemies] = useState([]);
     const [towers, setTowers] = useState([
         castle,
@@ -127,6 +132,12 @@ export default function GameCanvas({game}) {
             {game.over ? 'GAME OVER' : 'START'}
         </Text>
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth}/>
+        <BuyMenu
+            width={width} depth={depth} 
+            exampleTowers={exampleTowers} 
+            selectedTower={selectedTower}
+            setSelectedTower={setSelectedTower}
+        />
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

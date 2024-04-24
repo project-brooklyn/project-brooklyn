@@ -1,11 +1,11 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { convertToRenderCoordinates, modelFiles } from "../utils/render_utils";
+import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils";
 import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const renderStructure = (structure) => {
-    const { scale, name, hp, maxHp, offset } = structure;
-    if (!hp) return null;
+    const { scale, name, hp, maxHp, offset, disabled } = structure;
+    if (!hp || disabled) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);

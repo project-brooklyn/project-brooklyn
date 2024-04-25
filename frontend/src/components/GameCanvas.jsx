@@ -26,12 +26,7 @@ export default function GameCanvas({game}) {
   
     const towerConstructors = [ArrowTower, RockTower];
     const exampleTowers = towerConstructors.map(constructor => new constructor());
-    exampleTowers.forEach(tower => tower.disabled = true);
     const [selectedTower, setSelectedTower] = useState('');
-
-    // attemp to reduce lag at start of first level
-    const preload = [new Arrow(), new Rock(), new Guy()]
-    preload.forEach(entity => entity.disabled = true);
 
     const [enemies, setEnemies] = useState([]);
     const [structures, setStructures] = useState([
@@ -40,17 +35,22 @@ export default function GameCanvas({game}) {
         new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
         new RockTower(0, depth-1, heightMap.at(0).at(-1))
     ]);
-    game.towers = structures; // will need to change to game.addTower(tower) when building towers is implemented
+    // game.towers = structures;
     
     const [projectiles, setProjectiles] = useState([]);
     const ref = useRef(null);
     
     useEffect(() => {
+        // preload models
+        setEnemies([new Guy(0, 0, -1, 0.001)]);
+        setProjectiles([new Arrow(0, 0, -1, 0.001), new Rock(0, 0, -1, 0.001)]);
+        
+        for (let structure of structures) game.addTower(structure);
+
         const animate = () => {
             game.tick()
 
             handleEnemiesAtCastle(game.enemies);
-            setStructures([...game.towers]);
 
             setEnemies([...game.enemies]);
             towersAttack(game.enemies);
@@ -60,7 +60,7 @@ export default function GameCanvas({game}) {
 
             ref.current = requestAnimationFrame(animate);
         }
-        ref.current = requestAnimationFrame(animate);
+        setTimeout(() => ref.current = requestAnimationFrame(animate), 100);
         return () => cancelAnimationFrame(ref.current);
     }, []);
     
@@ -69,6 +69,10 @@ export default function GameCanvas({game}) {
         game.phase = 'defend';
         game.spawningEnemies = true;
         game.setSteps(portal.position, castle.position);
+
+        setSelectedTower('');
+        setEnemies([]);
+        setProjectiles([]);
         
         let {enemy, count, delay} = levels[game.level];
         const interval = setInterval(() => {
@@ -83,22 +87,24 @@ export default function GameCanvas({game}) {
     };
     
     const towersAttack = (enemies) => {
-        for (let tower of game.towers) {
-            if (!tower.canAttack) continue;
-            let attacked = false;
-            for (let enemy of enemies) {
-                if (!enemy.hp) continue;
-                const path = tower.canAttack(enemy.position, heightMap);
-                if (path) {
-                    const projectile = tower.createProjectile(path);
-                    game.addProjectile(projectile);
-                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
-
-                    attacked = true;
-                    break;
+        for (let row of game.towers) {
+            for (let tower of row) {
+                if (!tower || !tower.canAttack) continue;
+                let attacked = false;
+                for (let enemy of enemies) {
+                    if (!enemy.hp) continue;
+                    const path = tower.canAttack(enemy.position, heightMap);
+                    if (path) {
+                        const projectile = tower.createProjectile(path);
+                        game.addProjectile(projectile);
+                        enemy.hp = Math.max(enemy.hp - tower.damage, 0);
+    
+                        attacked = true;
+                        break;
+                    }
                 }
+                if (!attacked && tower.currentCooldown) tower.currentCooldown--;
             }
-            if (!attacked && tower.currentCooldown) tower.currentCooldown--;
         }
     };
 
@@ -124,6 +130,9 @@ export default function GameCanvas({game}) {
             !game.enemies.some(enemy => !!enemy.hp)
         ) {
             setEnemies([]);
+            setProjectiles([]);
+            setSelectedTower('');
+
             game.enemies = enemies;
             game.level++;
 
@@ -135,23 +144,20 @@ export default function GameCanvas({game}) {
 
     const buildTower = (x, y, z) => {
         if (game.phase !== 'build' || game.over) return;
-        const tower = towerConstructors.find(tower => tower.name === selectedTower.charAt(0).toUpperCase() + selectedTower.slice(1));
+        const tower = towerConstructors.find(tower => tower.name.toLowerCase() === selectedTower.toLowerCase());
         if (!tower) return;
         if (y !== heightMap.at(x).at(z)) return;
-        if (structures.some(structure => structure.position[0] === x && structure.position[2] === z)) return;
+        if (game.towers[z][x]) return;        
 
         const newTower = new tower(x, z, heightMap.at(x).at(z));
         if (game.gold < newTower.price) return;
 
-        setSelectedTower('')
-        // game.addTower(newTower);
         setStructures(oldStructures => [...oldStructures, newTower]);
-        game.towers = structures;
+        game.addTower(newTower);
         game.gold -= newTower.price;
     }
 
     return <Canvas>
-        {/* adds axes, [xyz] = [rgb] */}
         <axesHelper args={[width, depth, height]}/>
         <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>
             {game.over ? 'GAME OVER' : 'START'}

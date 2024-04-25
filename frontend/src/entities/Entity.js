@@ -9,7 +9,6 @@ class Entity {
         this.rotation = rotation;
 
         this.spawnedAt = new Date().getTime();
-        this.disabled = false;
     };
 
     setPosition(x,y,z) {

@@ -4,8 +4,8 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const renderStructure = (structure) => {
-    const { scale, name, hp, maxHp, offset, disabled } = structure;
-    if (!hp || disabled) return null;
+    const { scale, name, hp, maxHp, offset } = structure;
+    if (!hp) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);

@@ -20,7 +20,7 @@ import Arrow from "../entities/projectiles/Arrow";
 import Rock from "../entities/projectiles/Rock";
 
 export default function GameCanvas({game}) {
-    const { gameMap, gold } = game;
+    const { gameMap } = game;
     const { width, depth, height, heightMap } = gameMap;
     const [castle, portal] = [new Castle(width-1, depth-1, heightMap.at(-1).at(-1)), new Portal(0, 0, heightMap[0][0])];
   
@@ -28,6 +28,7 @@ export default function GameCanvas({game}) {
     const exampleTowers = towerConstructors.map(constructor => new constructor());
     const [selectedTower, setSelectedTower] = useState('');
 
+    const [goldReward, setGoldReward] = useState(100);
     const [enemies, setEnemies] = useState([]);
     const [structures, setStructures] = useState([
         castle,
@@ -35,7 +36,6 @@ export default function GameCanvas({game}) {
         new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
         new RockTower(0, depth-1, heightMap.at(0).at(-1))
     ]);
-    // game.towers = structures;
     
     const [projectiles, setProjectiles] = useState([]);
     const ref = useRef(null);
@@ -51,9 +51,9 @@ export default function GameCanvas({game}) {
             game.tick()
 
             handleEnemiesAtCastle(game.enemies);
+            towersAttack(game.enemies);
 
             setEnemies([...game.enemies]);
-            towersAttack(game.enemies);
             setProjectiles([...game.projectiles]);
 
             checkLevelOver();
@@ -74,7 +74,9 @@ export default function GameCanvas({game}) {
         setEnemies([]);
         setProjectiles([]);
         
-        let {enemy, count, delay} = levels[game.level];
+        let {enemy, count, delay, gold} = levels[game.level];
+        setGoldReward(() => gold);
+
         const interval = setInterval(() => {
             game.spawnEnemy(enemy, portal.position);
             
@@ -133,7 +135,8 @@ export default function GameCanvas({game}) {
             setProjectiles([]);
             setSelectedTower('');
 
-            game.enemies = enemies;
+            game.enemies = [];
+            game.gold += goldReward;
             game.level++;
 
             // TODO: implement score phase
@@ -162,7 +165,7 @@ export default function GameCanvas({game}) {
         <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>
             {game.over ? 'GAME OVER' : 'START'}
         </Text>
-        <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={gold} />
+        <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
         <BuyMenu
             width={width} depth={depth} 
             exampleTowers={exampleTowers} 

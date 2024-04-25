@@ -25,8 +25,7 @@ export default function GameCanvas({game}) {
     const [castle, portal] = [new Castle(width-1, depth-1, heightMap.at(-1).at(-1)), new Portal(0, 0, heightMap[0][0])];
   
     const towerConstructors = [ArrowTower, RockTower];
-    const exampleTowers = towerConstructors.map(constructor => new constructor());
-    const [selectedTower, setSelectedTower] = useState('');
+    const [newTower, setNewTower] = useState(null);
 
     const [goldReward, setGoldReward] = useState(100);
     const [enemies, setEnemies] = useState([]);
@@ -70,7 +69,7 @@ export default function GameCanvas({game}) {
         game.spawningEnemies = true;
         game.setSteps(portal.position, castle.position);
 
-        setSelectedTower('');
+        setNewTower(null);
         setEnemies([]);
         setProjectiles([]);
         
@@ -133,9 +132,10 @@ export default function GameCanvas({game}) {
         ) {
             setEnemies([]);
             setProjectiles([]);
-            setSelectedTower('');
+            setNewTower(null);
 
             game.enemies = [];
+            game.projectiles = [];
             game.gold += goldReward;
             game.level++;
 
@@ -145,34 +145,33 @@ export default function GameCanvas({game}) {
         }
     };
 
-    const buildTower = (x, y, z) => {
+    const buildTower = () => {
+        const [x, y, z] = [newTower.x, newTower.y, newTower.z];
         if (game.phase !== 'build' || game.over) return;
-        const tower = towerConstructors.find(tower => tower.name.toLowerCase() === selectedTower.toLowerCase());
-        if (!tower) return;
-        if (y !== heightMap.at(x).at(z)) return;
+        if (z !== heightMap.at(x).at(y)) return;
         if (game.towers[z][x]) return;        
-
-        const newTower = new tower(x, z, heightMap.at(x).at(z));
         if (game.gold < newTower.price) return;
-
-        setStructures(oldStructures => [...oldStructures, newTower]);
-        game.addTower(newTower);
+        
+        const copy = new newTower.constructor(x, y, z);
+        setStructures(oldStructures => [...oldStructures, copy]);
+        game.addTower(copy);
         game.gold -= newTower.price;
+        if (game.gold < newTower.price) setNewTower(null);
     }
 
     return <Canvas>
         <axesHelper args={[width, depth, height]}/>
-        <Text onClick={startDefendPhase} position={[width/2-0.5, height/2, 0]}>
+        <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
             {game.over ? 'GAME OVER' : 'START'}
         </Text>
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
         <BuyMenu
             width={width} depth={depth} 
-            exampleTowers={exampleTowers} 
-            selectedTower={selectedTower}
-            setSelectedTower={setSelectedTower}
+            towerConstructors={towerConstructors} 
+            newTower={newTower}
+            setNewTower={setNewTower}
         />
-
+        
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
         <ambientLight intensity={2} />
@@ -181,6 +180,6 @@ export default function GameCanvas({game}) {
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 
-        <MapView gameMap={gameMap} buildTower={buildTower} />
+        <MapView gameMap={gameMap} buildTower={buildTower} newTower={newTower}/>
     </Canvas>
 };

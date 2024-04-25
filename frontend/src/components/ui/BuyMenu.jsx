@@ -1,15 +1,18 @@
 import { Text } from "@react-three/drei"
+import BuildGhostView from "../views/BuildGhostView";
 
-export default function BuyMenu({width, depth, exampleTowers, selectedTower, setSelectedTower}) {
+export default function BuyMenu({width, depth, towerConstructors, newTower, setNewTower}) {
+    const exampleTowers = towerConstructors.map(constructor => new constructor());
 
     const buyButtons = exampleTowers.map((tower, i) => {
         const handleClick = () => {
-            if (selectedTower === tower.name) {
-                setSelectedTower('');
+            if (newTower?.name === tower.name) {
+                setNewTower(null);
             } else {
-                setSelectedTower(tower.name);
+                const example = exampleTowers.find(example => tower.name === example.name);
+                if (example) setNewTower(new example.constructor());
             }
-        }
+        };
         
         return (
             <Text
@@ -18,7 +21,7 @@ export default function BuyMenu({width, depth, exampleTowers, selectedTower, set
                 rotation={[-Math.PI/2, 0, 0]}
                 onClick={handleClick}
             >
-                {`${selectedTower === tower.name ? '>' : ' '} ${tower.name}: ${tower.price}\n`}
+                {`${newTower && newTower.name === tower.name ? '>' : ' '} ${tower.name}: ${tower.price}\n`}
             </Text>
         )
     });
@@ -32,6 +35,7 @@ export default function BuyMenu({width, depth, exampleTowers, selectedTower, set
                 {"Buy Menu\n"}
             </Text>
             {buyButtons}
+            {newTower && <BuildGhostView structure={newTower} />}
         </>
     )
 };

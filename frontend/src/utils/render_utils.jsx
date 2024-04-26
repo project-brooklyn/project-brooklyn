@@ -8,7 +8,8 @@ export const tileConfig = {
 export const modelFiles = {
     guy: './guy.glb',
     portal: './portal1s.glb',
-    castle: './castle_3d_model.glb',
+    // castle: './castle_3d_model.glb',
+    castle: './Simple_Base_v1.obj',
     flag: './flag.glb',
     arrow: './arrow.glb',
     rock: './rock.glb',

@@ -12,7 +12,7 @@ const renderStructure = (structure) => {
     const modelFile = modelFiles[name];
     const isObj = modelFile.slice(-3) === 'obj';
     
-    const gltf = useLoader(!isObj ? GLTFLoader : OBJLoader, modelFile)
+    const modelLoader = useLoader(!isObj ? GLTFLoader : OBJLoader, modelFile)
     const key = name + coordinates.x + coordinates.y + coordinates.z;
     return (
         <group position={[coordinates.x, coordinates.y, coordinates.z]} >

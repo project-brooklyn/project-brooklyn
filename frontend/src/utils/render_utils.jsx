@@ -7,8 +7,8 @@ export const tileConfig = {
 
 export const modelFiles = {
     guy: './guy.glb',
-    portal: './portal1s.glb',
-    castle: './castle_3d_model.glb',
+    portal: './portal.glb',
+    castle: './simple_base_v1.obj',
     flag: './flag.glb',
     arrow: './arrow.glb',
     rock: './rock.glb',
@@ -24,3 +24,15 @@ export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0
         mapVector.y * tileConfig.width - offset.y
     )
 };
+
+export const centerObjModel = (objModel) => {
+    objModel.traverse((child) => {
+        if (child.isMesh) {
+            child.geometry.computeBoundingBox();
+            const boundingBox = child.geometry.boundingBox;
+            const center = boundingBox.getCenter(new THREE.Vector3());
+
+            child.position.set(-center.x, 0, -center.z);
+        }
+    })
+}

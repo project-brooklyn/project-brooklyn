@@ -3,8 +3,7 @@ import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils
 import { useLoader } from "@react-three/fiber";
 
 export default function BuildGhostView({ structure }) {
-    const { scale, name, hp, maxHp, offset } = structure;
-    if (!hp) return null;
+    const { scale, name, offset } = structure;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const gltf = useLoader(GLTFLoader, modelFiles[name]);

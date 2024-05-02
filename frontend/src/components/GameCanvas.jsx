@@ -149,7 +149,7 @@ export default function GameCanvas({game}) {
         const [x, y, z] = [newTower.x, newTower.y, newTower.z];
         if (game.phase !== 'build' || game.over) return;
         if (z !== heightMap.at(x).at(y)) return;
-        if (game.towers[z][x]) return;        
+        if (game.towers[x][y]) return;        
         if (game.gold < newTower.price) return;
         
         const copy = new newTower.constructor(x, y, z);

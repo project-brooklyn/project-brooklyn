@@ -9,7 +9,7 @@ export default class Game {
         this.gameMap = gameMap;
         this.over = false;
 
-        this.towers = new Array(gameMap.depth).fill(null).map(() => new Array(gameMap.width).fill(null));
+        this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         // game.towers is 2D, structures in GameCanvas will be flattened for rendering
 
         this.enemies = [];
@@ -51,8 +51,8 @@ export default class Game {
     };
 
     addTower = (tower) => {
-        const [x, y, z] = tower.position;
-        this.towers[y][x] = tower;
+        const [x, y, _] = tower.position;
+        this.towers[x][y] = tower;
     };
 
     tick = () => {

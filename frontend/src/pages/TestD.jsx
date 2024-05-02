@@ -1,14 +1,13 @@
-// import MapDisplay from "../components/MapDisplay";
-import RandomMap from "../map/RandomMap";
-import { djikstra } from "../utils/game_utils";
+import GameCanvas from "../components/GameCanvas";
+import RectangleMap from "../map/RectangleMap";
+import Game from "../Game";
+import './Test.css';
 
 const TestD = () => {
-    const gameMap = new RandomMap();
-    const path = djikstra(gameMap);
 
     return (<>
-        <h1>Test Page D</h1>
-        {/* <MapDisplay gameMap={gameMap} path={path} /> */}
+        <h1>Test Page D (Rectangle Map)</h1>
+        <GameCanvas game={new Game(new RectangleMap())} />
     </>)
 };
 

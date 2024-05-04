@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import DemoMap from "../map/DemoMap";
-import MapView from '../components/views/MapView';
+import MapView from '../components/MapView';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { useState } from 'react';
 import * as THREE from 'three'

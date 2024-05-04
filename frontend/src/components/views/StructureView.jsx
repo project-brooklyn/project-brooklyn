@@ -13,6 +13,17 @@ const renderStructure = (structure) => {
     const isObjModel = modelFile.slice(-3) === 'obj';
     
     const modelLoader = useLoader(!isObjModel ? GLTFLoader : OBJLoader, modelFile)
+
+    // prevent real towers from becoming transparent when ghost view is present
+    if (!isObjModel) {
+        modelLoader.scene.traverse((child) => {
+        if (child.isMesh) {
+            child.material = child.material.clone();
+            child.material.transparent = true;
+            child.material.opacity = 1;
+        }
+    });
+}
     if (isObjModel) centerObjModel(modelLoader);
     const key = name + coordinates.x + coordinates.y + coordinates.z;
     

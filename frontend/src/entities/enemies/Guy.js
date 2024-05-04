@@ -6,7 +6,5 @@ export default class Guy extends Enemy {
         this.name = "guy";
         this.maxHp = 100;
         this.hp = this.maxHp;
-
-        this.offset = {x: 0, y: 0, z: 0};
     }
 }

@@ -9,13 +9,16 @@ export default class Game {
         this.gameMap = gameMap;
         this.over = false;
 
-        this.towers = [];
+        this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
+        // game.towers is 2D, structures in GameCanvas will be flattened for rendering
+
         this.enemies = [];
         this.spawningEnemies = false;
         this.projectiles = [];
         
         this.animationFunctions = [];
-        this.steps = []
+        this.steps = [];
+        this.gold = 250;
     }
 
     setSteps = (spawn, goal) => {
@@ -48,11 +51,12 @@ export default class Game {
     };
 
     addTower = (tower) => {
-        this.towers.push(tower);
+        const [x, y, _] = tower.position;
+        this.towers[x][y] = tower;
     };
 
     tick = () => {
         for (let fn of this.animationFunctions) fn();
     };
-}
+};
 

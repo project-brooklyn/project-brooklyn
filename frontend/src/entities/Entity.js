@@ -9,7 +9,7 @@ class Entity {
         this.rotation = rotation;
 
         this.spawnedAt = new Date().getTime();
-    }
+    };
 
     setPosition(x,y,z) {
         this.lastPosition = [...this.position];
@@ -17,8 +17,8 @@ class Entity {
         this.y = y;
         this.z = z;
         this.position = [x, y, z];
-    }
+    };
 
-}
+};
 
 export default Entity;

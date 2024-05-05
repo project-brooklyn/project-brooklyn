@@ -1,12 +1,14 @@
+import * as THREE from 'three';
+
 class Entity {
-    constructor(x, y, z, scale=1.0, rotation=[0.0, 0.0, 0.0]) {
+    constructor(x, y, z, scale=1.0, quaternion=new THREE.Quaternion()) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.position = [this.x, this.y, this.z];
         this.lastPosition = [x, y, z];
         this.scale = scale;
-        this.rotation = rotation;
+        this.quaternion = quaternion;
 
         this.spawnedAt = new Date().getTime();
     };

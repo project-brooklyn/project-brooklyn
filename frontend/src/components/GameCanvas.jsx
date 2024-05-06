@@ -42,7 +42,7 @@ export default function GameCanvas({game}) {
     useEffect(() => {
         // preload models
         setEnemies([new Guy(0, 0, -1, 0.001)]);
-        setProjectiles([new Arrow(0, 0, -1, 0.001), new Rock(0, 0, -1, 0.001)]);
+        setProjectiles([new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)]);
         
         for (let structure of structures) game.addTower(structure);
 

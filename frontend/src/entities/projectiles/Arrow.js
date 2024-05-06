@@ -1,9 +1,32 @@
+import * as THREE from 'three';
+
 import Projectile from "./Projectile";
 
+import { convertToRenderCoordinates } from "../../utils/render_utils";
+
+const DEFAULT_SCALE = 0.01
+
 export default class Arrow extends Projectile {
-    constructor (x, y, z, path) {
-        super(x, y, z, 0.01, path);
-        this.name = "arrow";        
+    constructor (x, y, z, path, scale=DEFAULT_SCALE) {
+        // Determine rotation based on the start and end of path.
+        // We assume that models have a default orientation facing
+        // forward along the positive y-axis. See GDD for more details.
+        const quaternion = new THREE.Quaternion();
+        if (path && path.length >= 2) {
+            const start = new THREE.Vector3().fromArray(path.at(0));
+            const end = new THREE.Vector3().fromArray(path.at(-1));
+            const trajectory = new THREE.Vector3().subVectors(end, start);
+
+            const yAxis = new THREE.Vector3(0, 1, 0);
+
+            // TODO(#30): Convert from game to render quaternion in `ProjectileView`
+            const renderY = convertToRenderCoordinates(yAxis);
+            const renderV = convertToRenderCoordinates(trajectory).normalize();
+            quaternion.setFromUnitVectors(renderY, renderV);
+        }
+
+        super(x, y, z, scale, quaternion, path);
+        this.name = "arrow";
     };
 
 

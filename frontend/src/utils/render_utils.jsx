@@ -20,7 +20,7 @@ export const modelFiles = {
 export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0}) {
     return new THREE.Vector3(
         mapVector.x * tileConfig.width - offset.x,
-        mapVector.z * tileConfig.height,
+        mapVector.z * tileConfig.height - offset.z,
         mapVector.y * tileConfig.width - offset.y
     )
 };

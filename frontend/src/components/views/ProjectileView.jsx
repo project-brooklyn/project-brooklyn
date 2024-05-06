@@ -3,7 +3,7 @@ import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils
 import { useLoader } from "@react-three/fiber";
 
 const renderProjectile = (projectile) => {
-    const { name, offset, spawnedAt, rotation, scale, hp } = projectile;
+    const { name, offset, spawnedAt, quaternion, scale, hp} = projectile;
     const coordinates = convertToRenderCoordinates(projectile, offset);
     const gltf = useLoader(GLTFLoader, modelFiles[name]);
 
@@ -13,7 +13,7 @@ const renderProjectile = (projectile) => {
         object={gltf.scene.clone(true)}
         scale={scale}
         position={[coordinates.x, coordinates.y, coordinates.z]}
-        rotation={rotation}
+        quaternion={quaternion}
     />);
 };
 

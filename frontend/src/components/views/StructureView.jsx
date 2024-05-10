@@ -28,10 +28,9 @@ const renderStructure = (structure) => {
     const key = name + coordinates.x + coordinates.y + coordinates.z;
     
     return (
-        <group position={[coordinates.x, coordinates.y, coordinates.z]} >
+        <group position={[coordinates.x, coordinates.y, coordinates.z]} key={key}>
             {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
             <primitive
-                key={key}
                 object={isObjModel ? modelLoader : modelLoader.scene.clone(true)}
                 scale={scale}
             />

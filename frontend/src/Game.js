@@ -17,6 +17,7 @@ export default class Game {
         this.projectiles = [];
         
         this.animationFunctions = [];
+        this.spawnFunction = () => null
         this.steps = [];
         this.gold = 250;
     }
@@ -26,23 +27,30 @@ export default class Game {
         this.steps = getSteps(path, this.gameMap.heightMap);
     }
 
-    spawnEnemy = (enemy, position) => {
-        const newEnemy = new enemy(...position);
+    spawnEnemy = (enemy) => {
+        const newEnemy = new enemy(...this.steps[0]);
         this.enemies.push(newEnemy);
         this.animationFunctions.push(newEnemy.getMoveFunction(this.steps));
     }
 
     spawnEnemies = (level) => {
-        // remake path and steps in case of build phase changes
-        const path = djikstra(this.gameMap);
-        this.steps = getSteps(path, this.gameMap.heightMap);
-
         let {enemy, count, delay} = level;
-        const interval = setInterval(() => {
-            this.spawnEnemy(enemy);
-            count--;
-            if (!count) clearInterval(interval);
-        }, delay);
+        let currentDelay = 0;
+        this.spawningEnemies = true;
+        this.spawnFunction = () => {
+            if (currentDelay) {
+                currentDelay--;
+            } else {
+                if (count) {
+                    this.spawnEnemy(enemy);
+                    count--;
+                } else {
+                    this.spawnFunction = () => null;
+                    this.spawningEnemies = false;
+                }
+                currentDelay = delay;
+            }
+        }
     };
 
     addProjectile = (projectile) => {
@@ -57,6 +65,7 @@ export default class Game {
 
     tick = () => {
         for (let fn of this.animationFunctions) fn();
+        this.spawnFunction();
     };
 };
 

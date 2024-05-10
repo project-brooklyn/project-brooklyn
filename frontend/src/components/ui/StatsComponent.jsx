@@ -16,7 +16,7 @@ const StatsComponent = () => {
         }
         animate();
 
-        return () => statsRef.current.removeChiled(stats.dom);
+        return () => statsRef.current.removeChild(stats.dom);
     }, [])
 
     return (

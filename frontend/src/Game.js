@@ -17,7 +17,7 @@ export default class Game {
         this.projectiles = [];
         
         this.animationFunctions = [];
-        this.spawnFunction = () => null
+        this.spawnFunction = () => null;
         this.steps = [];
         this.gold = 250;
     }
@@ -33,7 +33,7 @@ export default class Game {
         this.animationFunctions.push(newEnemy.getMoveFunction(this.steps));
     }
 
-    spawnEnemies = (level) => {
+    setupEnemySpawn = (level) => {
         let {enemy, count, delay} = level;
         let currentDelay = 0;
         this.spawningEnemies = true;

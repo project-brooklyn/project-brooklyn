@@ -41,8 +41,8 @@ export default function GameCanvas({game}) {
     
     useEffect(() => {
         // preload models
-        game.enemies = [new Guy(0, 0, -1, 0.001)]
-        game.projectiles = [new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)]
+        game.enemies = [new Guy(0, 0, -1, 0.001)];
+        game.projectiles = [new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)];
         
         for (let structure of structures) game.addTower(structure);
 
@@ -76,7 +76,7 @@ export default function GameCanvas({game}) {
         setProjectiles(game.projectiles);
         
         const level = levels[game.level];
-        game.spawnEnemies(level)
+        game.setupEnemySpawn(level);
         setGoldReward(() => level.gold);
     };
     

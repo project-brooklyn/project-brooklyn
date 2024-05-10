@@ -18,6 +18,7 @@ import BuyMenu from "./ui/BuyMenu";
 import Guy from "../entities/enemies/Guy";
 import Arrow from "../entities/projectiles/Arrow";
 import Rock from "../entities/projectiles/Rock";
+import StatsComponent from "./ui/StatsComponent";
 
 export default function GameCanvas({game}) {
     const { gameMap } = game;
@@ -59,7 +60,7 @@ export default function GameCanvas({game}) {
 
             ref.current = requestAnimationFrame(animate);
         }
-        setTimeout(() => ref.current = requestAnimationFrame(animate), 100);
+        ref.current = requestAnimationFrame(animate)
         return () => cancelAnimationFrame(ref.current);
     }, []);
     

@@ -5,10 +5,10 @@ class DemoMap extends GameMap {
     constructor() {
         const width = 10;
         const depth = 10;
-        const height = 3;
+        const height = 1;
         super(width, depth, height);
 
-        this.heightMap = new Array(width).fill().map(() => new Array(depth).fill(2))
+        this.heightMap = new Array(width).fill().map(() => new Array(depth).fill(0))
 
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < depth; y++) {

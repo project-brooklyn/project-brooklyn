@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 
 import { levels } from "../levels";
 
@@ -22,7 +22,8 @@ import Rock from "../entities/projectiles/Rock";
 export default function GameCanvas({game}) {
     const { gameMap } = game;
     const { width, depth, height, heightMap } = gameMap;
-    const [castle, portal] = [new Castle(width-1, depth-1, heightMap.at(-1).at(-1)), new Portal(0, 0, heightMap[0][0])];
+    const castle = new Castle(width-1, depth-1, heightMap.at(-1).at(-1))
+    const portal = new Portal(0, 0, heightMap[0][0]);
   
     const towerConstructors = [ArrowTower, RockTower];
     const [newTower, setNewTower] = useState(null);
@@ -37,31 +38,28 @@ export default function GameCanvas({game}) {
     ]);
     
     const [projectiles, setProjectiles] = useState([]);
-    const ref = useRef(null);
-    
+
     useEffect(() => {
         // preload models
         game.enemies = [new Guy(0, 0, -1, 0.001)];
         game.projectiles = [new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)];
-        
-        for (let structure of structures) game.addTower(structure);
 
-        const animate = () => {
-            game.tick();
-
-            handleEnemiesAtCastle(game.enemies);
-            towersAttack(game.enemies);
-
-            setEnemies([...game.enemies]);
-            setProjectiles([...game.projectiles]);
-
-            checkLevelOver();
-
-            ref.current = requestAnimationFrame(animate);
+        for (let structure of structures){
+            game.addTower(structure);
         }
-        ref.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(ref.current);
     }, []);
+
+    useFrame((_state, _delta, _xrFrame) => {
+        game.tick();
+
+        handleEnemiesAtCastle(game.enemies);
+        towersAttack(game.enemies);
+
+        setEnemies([...game.enemies]);
+        setProjectiles([...game.projectiles]);
+
+        checkLevelOver();
+    })
     
     const startDefendPhase = () => {
         if (game.phase !== 'build' || game.level === levels.length-1 || game.over) return;
@@ -152,7 +150,7 @@ export default function GameCanvas({game}) {
         if (game.gold < newTower.price) setNewTower(null);
     }
 
-    return <Canvas>
+    return <>
         <axesHelper args={[width, depth, height]}/>
         <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
             {game.over ? 'GAME OVER' : 'START'}
@@ -174,5 +172,5 @@ export default function GameCanvas({game}) {
         <ProjectileView projectiles={projectiles}/>
 
         <MapView gameMap={gameMap} buildTower={buildTower} newTower={newTower}/>
-    </Canvas>
-};
+    </>
+}

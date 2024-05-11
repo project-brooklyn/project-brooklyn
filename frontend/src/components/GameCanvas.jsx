@@ -41,13 +41,13 @@ export default function GameCanvas({game}) {
     
     useEffect(() => {
         // preload models
-        setEnemies([new Guy(0, 0, -1, 0.001)]);
-        setProjectiles([new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)]);
+        game.enemies = [new Guy(0, 0, -1, 0.001)];
+        game.projectiles = [new Arrow(0, 0, -1, [], 0.001), new Rock(0, 0, -1, [], 0.001)];
         
         for (let structure of structures) game.addTower(structure);
 
         const animate = () => {
-            game.tick()
+            game.tick();
 
             handleEnemiesAtCastle(game.enemies);
             towersAttack(game.enemies);
@@ -59,7 +59,7 @@ export default function GameCanvas({game}) {
 
             ref.current = requestAnimationFrame(animate);
         }
-        setTimeout(() => ref.current = requestAnimationFrame(animate), 100);
+        ref.current = requestAnimationFrame(animate);
         return () => cancelAnimationFrame(ref.current);
     }, []);
     
@@ -67,24 +67,17 @@ export default function GameCanvas({game}) {
         if (game.phase !== 'build' || game.level === levels.length-1 || game.over) return;
         game.phase = 'defend';
         game.spawningEnemies = true;
+        game.enemies = [];
+        game.projectiles = [];
         game.setSteps(portal.position, castle.position);
 
         setNewTower(null);
-        setEnemies([]);
-        setProjectiles([]);
+        setEnemies(game.enemies);
+        setProjectiles(game.projectiles);
         
-        let {enemy, count, delay, gold} = levels[game.level];
-        setGoldReward(() => gold);
-
-        const interval = setInterval(() => {
-            game.spawnEnemy(enemy, portal.position);
-            
-            count--;
-            if (!count) {
-                clearInterval(interval);
-                game.spawningEnemies = false;
-            }
-        }, delay);
+        const level = levels[game.level];
+        game.setupEnemySpawn(level);
+        setGoldReward(() => level.gold);
     };
     
     const towersAttack = (enemies) => {

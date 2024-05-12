@@ -1,14 +1,17 @@
-import GameCanvas from "../components/GameCanvas";
+import { Canvas } from "@react-three/fiber";
+import GameDisplay from "../components/GameDisplay";
 import MazeMap from "../map/MazeMap";
 import Game from "../Game";
 import './Test.css';
 
 const TestC = () => {
 
-    return (<>
+    return <>
         <h1>Test Page C (Maze/Climbing Demo)</h1>
-        <GameCanvas game={new Game(new MazeMap())} />
-    </>)
+        <Canvas>
+            <GameDisplay game={new Game(new MazeMap())} />
+        </Canvas>
+    </>
 };
 
 export default TestC;

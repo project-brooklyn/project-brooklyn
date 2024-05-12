@@ -1,14 +1,17 @@
+import { Canvas } from "@react-three/fiber";
 import Game from "../Game";
-import GameCanvas from "../components/GameCanvas";
+import GameDisplay from "../components/GameDisplay";
 import ZigZagMap from "../map/ZigZagMap";
 import './Test.css';
 
 const TestB = () => {
 
-    return (<>
+    return <>
         <h1>Test Page B (ZigZag)</h1>
-        <GameCanvas game={new Game(new ZigZagMap())} />
-    </>)
+        <Canvas>
+            <GameDisplay game={new Game(new ZigZagMap())} />
+        </Canvas>
+    </>
 }
 
 export default TestB;

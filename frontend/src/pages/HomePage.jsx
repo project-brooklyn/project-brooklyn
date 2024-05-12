@@ -1,6 +1,7 @@
 import { useAuth } from "../AuthContext";
-import GameCanvas from "../components/GameCanvas";
-import StatsComponent from "../components/ui/StatsComponent";
+import { Canvas } from "@react-three/fiber";
+import GameDisplay from "../components/GameDisplay";
+import { Stats } from '@react-three/drei';
 import Game from "../Game";
 
 import DemoMap from "../map/DemoMap";
@@ -30,8 +31,10 @@ const HomePage = () => {
         </div>
         
         <h1>Project Brooklyn</h1>
-        <StatsComponent />
-        <GameCanvas game={game} />
+        <Stats showPanel={0} className="stats" />
+        <Canvas>
+            <GameDisplay game={game} />
+        </Canvas>
     </>)
 };
 

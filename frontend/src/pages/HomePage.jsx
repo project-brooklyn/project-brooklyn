@@ -1,6 +1,6 @@
 import { useAuth } from "../AuthContext";
 import { Canvas } from "@react-three/fiber";
-import GameCanvas from "../components/GameCanvas";
+import GameDisplay from "../components/GameDisplay";
 import { Stats } from '@react-three/drei';
 import Game from "../Game";
 
@@ -33,7 +33,7 @@ const HomePage = () => {
         <h1>Project Brooklyn</h1>
         <Stats showPanel={0} className="stats" />
         <Canvas>
-            <GameCanvas game={game} />
+            <GameDisplay game={game} />
         </Canvas>
     </>)
 };

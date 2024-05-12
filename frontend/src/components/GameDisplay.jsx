@@ -19,7 +19,7 @@ import Guy from "../entities/enemies/Guy";
 import Arrow from "../entities/projectiles/Arrow";
 import Rock from "../entities/projectiles/Rock";
 
-export default function GameCanvas({game}) {
+export default function GameDisplay({game}) {
     const { gameMap } = game;
     const { width, depth, height, heightMap } = gameMap;
     const castle = new Castle(width-1, depth-1, heightMap.at(-1).at(-1))

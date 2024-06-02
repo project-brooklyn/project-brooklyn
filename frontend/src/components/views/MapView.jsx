@@ -1,15 +1,18 @@
 import { convertToRenderCoordinates, tileConfig } from "../../utils/render_utils";
 
-export default function MapView({gameMap, buildTower, newTower})
+export default function MapView({assets, gameMap, buildTower, newTower})
 {
     function renderTile(tile) {
         const position = convertToRenderCoordinates(tile)
-        const spacer = 0.05; // add space between tiles to see better, remove after improved textures
+        const geometry = assets.geometryManager.get("tile");
+        const material = assets.materialManager.get(tile.type.name);
     
         return (
             <mesh
                 // reduce position.y so that tiles render below other objects
                 position={ [position.x, position.y - tileConfig.height/2, position.z] }
+                geometry={geometry}
+                material={material}
                 key={`${tile.x},${tile.y},${tile.z}`}
                 onClick={(e) => {
                     if (!newTower) return
@@ -21,24 +24,13 @@ export default function MapView({gameMap, buildTower, newTower})
                     if (newTower) newTower.setPosition(tile.x, tile.y, tile.z);
                 }}
             >
-                
-                <boxGeometry
-                    args={[
-                        tileConfig.width*(1-spacer),
-                        tileConfig.height*(1-spacer),
-                        tileConfig.width*(1-spacer)
-                    ]}
-                />
-                <meshBasicMaterial
-                    color={ tile.type.material.color }
-                />
             </mesh>
         )
-    };
+    }
 
     const tilesMeshes = gameMap.mapData.map(renderTile)
 
     return <>
         {tilesMeshes}
     </>
-};
+}

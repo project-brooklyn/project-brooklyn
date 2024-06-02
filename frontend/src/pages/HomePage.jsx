@@ -5,10 +5,17 @@ import { Stats } from '@react-three/drei';
 import Game from "../Game";
 
 import DemoMap from "../map/DemoMap";
+import GeometryManager from "../components/GeometryManager";
+import MaterialManager from "../components/MaterialManager";
 
 const HomePage = () => {
     const { user, logout } = useAuth();
     const game = new Game(new DemoMap());
+
+    const assets = {
+        geometryManager: new GeometryManager(),
+        materialManager: new MaterialManager(),
+    }
 
     return (<>
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
@@ -33,7 +40,7 @@ const HomePage = () => {
         <h1>Project Brooklyn</h1>
         <Stats showPanel={0} className="stats" />
         <Canvas>
-            <GameDisplay game={game} />
+            <GameDisplay game={game} assets={assets} />
         </Canvas>
     </>)
 };

@@ -5,16 +5,27 @@ export const tileConfig = {
     height: 0.25,
 };
 
-export const modelFiles = {
-    guy: './guy.glb',
-    portal: './portal.glb',
-    castle: './simple_base_v1.obj',
-    flag: './flag.glb',
-    arrow: './arrow.glb',
-    rock: './rock.glb',
-    arrowTower: './simple_building.glb',
-    rockTower: './simple_building.glb',
-};
+// export const modelFiles = {
+//     guy: './guy.glb',
+//     portal: './portal.glb',
+//     castle: './simple_base_v1.obj',
+//     flag: './flag.glb',
+//     arrow: './arrow.glb',
+//     rock: './rock.glb',
+//     arrowTower: './simple_building.glb',
+//     rockTower: './simple_building.glb',
+// };
+export const modelFiles = { 
+    guy: './basic/robot.glb',
+    portal: './basic/portal.glb',
+    castle: './basic/house.glb',
+    flag: './basic/flag.glb',
+    arrow: './basic/arrow.glb',
+    rock: './basic/cannonball.glb',
+    arrowTower: './basic/ballista_tower.glb',
+    rockTower: './basic/cannon_tower.glb',
+    laserTower: './basic/laser_tower.glb',
+}
 
 // Converts map coordinates to render coordinates.
 export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0}) {
@@ -25,8 +36,8 @@ export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0
     )
 };
 
-export const centerObjModel = (objModel) => {
-    objModel.traverse((child) => {
+export const centerObjModel = (objLoader) => {
+    objLoader.traverse((child) => {
         if (child.isMesh) {
             child.geometry.computeBoundingBox();
             const boundingBox = child.geometry.boundingBox;

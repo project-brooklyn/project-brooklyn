@@ -2,7 +2,7 @@ import Enemy from "./Enemy";
 
 export default class Guy extends Enemy {
     constructor (x, y, z, scale) {
-        super(x, y, z, scale ?? 0.2);
+        super(x, y, z, scale ?? 0.01);
         this.name = "guy";
         this.maxHp = 100;
         this.hp = this.maxHp;

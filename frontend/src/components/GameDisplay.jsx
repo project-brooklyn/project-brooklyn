@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as THREE from "three";
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 import { levels } from "../levels";
 
-import Castle from "../entities/Castle";
 import MapView from "./views/MapView";
-import Portal from "../entities/Portal";
 import EnemyView from "./views/EnemyView";
 import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
@@ -15,36 +13,18 @@ import ArrowTower from "../entities/towers/ArrowTower";
 import RockTower from "../entities/towers/RockTower";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
-import Guy from "../entities/enemies/Guy";
-import Arrow from "../entities/projectiles/Arrow";
-import Rock from "../entities/projectiles/Rock";
 
 export default function GameDisplay({game, assets}) {
-    const { gameMap } = game;
+    const { gameMap, castle, portal } = game;
     const { width, depth, height, heightMap } = gameMap;
-
-    const castle = new Castle(width-1, depth-1, heightMap.at(-1).at(-1))
-    const portal = new Portal(0, 0, heightMap[0][0]);
   
     const towerConstructors = [ArrowTower, RockTower];
     const [newTower, setNewTower] = useState(null);
 
     const [goldReward, setGoldReward] = useState(100);
     const [enemies, setEnemies] = useState([]);
-    const [structures, setStructures] = useState([
-        castle,
-        portal,
-        new ArrowTower(width-1, 0, heightMap.at(-1).at(0)),
-        new RockTower(0, depth-1, heightMap.at(0).at(-1))
-    ]);
     
     const [projectiles, setProjectiles] = useState([]);
-
-    useEffect(() => {
-        for (let structure of structures){
-            game.addTower(structure);
-        }
-    }, []);
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
@@ -141,7 +121,6 @@ export default function GameDisplay({game, assets}) {
         if (game.gold < newTower.price) return;
         
         const copy = new newTower.constructor(x, y, z);
-        setStructures(oldStructures => [...oldStructures, copy]);
         game.addTower(copy);
         game.gold -= newTower.price;
         if (game.gold < newTower.price) setNewTower(null);
@@ -164,7 +143,7 @@ export default function GameDisplay({game, assets}) {
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
         <ambientLight intensity={2} />
 
-        <StructureView structures={structures}/>
+        <StructureView structures={game.towers}/>
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 

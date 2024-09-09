@@ -5,6 +5,7 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const renderStructure = (structure) => {
+    if (!structure) return null;
     const { scale, name, hp, maxHp, offset } = structure;
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
@@ -39,7 +40,7 @@ const renderStructure = (structure) => {
 };
 
 export default function StructureView({ structures }) {
-    const structureComponents = structures.map(renderStructure);
+    const structureComponents = structures.flat().map(renderStructure);
     return <>
         {structureComponents}
     </>

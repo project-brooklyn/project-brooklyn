@@ -1,4 +1,6 @@
 import { djikstra, getSteps } from "./utils/game_utils";
+import Castle from "./entities/Castle";
+import Portal from "./entities/Portal";
 
 const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -10,7 +12,10 @@ export default class Game {
         this.over = false;
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
-        // game.towers is 2D, structures in GameCanvas will be flattened for rendering
+        this.portal = new Portal(0, 0, gameMap.heightMap[0][0]);
+        this.castle = new Castle(gameMap.width-1, gameMap.depth-1, gameMap.heightMap.at(-1).at(-1));
+        this.towers[0][0] = this.portal;
+        this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
 
         this.enemies = [];
         this.spawningEnemies = false;

@@ -17,10 +17,6 @@ import TestE from './pages/TestE.jsx';
 import TestF from './pages/TestF.jsx';
 import TestG from './pages/TestG.jsx';
 
-
-import RandomMap from './map/RandomMap.js';
-const gameMap = new RandomMap();
-
 const router = createBrowserRouter([
     {
         path: '/',

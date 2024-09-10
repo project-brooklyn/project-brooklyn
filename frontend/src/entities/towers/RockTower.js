@@ -4,7 +4,7 @@ import Tower from "./Tower";
 
 export default class RockTower extends Tower {
     constructor (x, y, z) {
-        super(x, y, z, 0.075);
+        super(x, y, z, 0.01);
         this.name = 'rockTower';
         this.cooldown = 50;
         this.currentCooldown = 0;

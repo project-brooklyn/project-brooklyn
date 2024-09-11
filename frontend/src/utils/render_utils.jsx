@@ -5,16 +5,6 @@ export const tileConfig = {
     height: 0.25,
 };
 
-// export const modelFiles = {
-//     guy: './guy.glb',
-//     portal: './portal.glb',
-//     castle: './simple_base_v1.obj',
-//     flag: './flag.glb',
-//     arrow: './arrow.glb',
-//     rock: './rock.glb',
-//     arrowTower: './simple_building.glb',
-//     rockTower: './simple_building.glb',
-// };
 export const modelFiles = { 
     guy: './basic/robot.glb',
     portal: './basic/portal.glb',

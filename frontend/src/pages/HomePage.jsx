@@ -1,21 +1,14 @@
-import { useAuth } from "../AuthContext";
 import { Canvas } from "@react-three/fiber";
-import GameDisplay from "../components/GameDisplay";
 import { Stats } from '@react-three/drei';
+import { useAuth } from "../AuthContext";
 import Game from "../Game";
-
+import GameDisplay from "../components/GameDisplay";
+import assets from "../components/assets";
 import DemoMap from "../map/DemoMap";
-import GeometryManager from "../components/GeometryManager";
-import MaterialManager from "../components/MaterialManager";
 
 const HomePage = () => {
     const { user, logout } = useAuth();
     const game = new Game(new DemoMap());
-
-    const assets = {
-        geometryManager: new GeometryManager(),
-        materialManager: new MaterialManager(),
-    }
 
     return (<>
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>

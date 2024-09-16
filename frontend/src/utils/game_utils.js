@@ -45,9 +45,11 @@ export const djikstra = (gameMap, spawn, goal) => {
     throw new Error('No Path Found');
 }
 
-export const getSteps = (path, heightMap) => {
+export const getSteps = (path, heightMap, speed) => {
     let pathIndex = 0;
-    const increment = 50;
+    const increment = 60 / speed; 
+    // default speed of 1 splits each step (tile to tile) into 60 increments
+
     let [x,y,z] = [path[0][0], path[0][1], heightMap[path[0][0]][path[0][1]]];
     const steps = [];
     while (pathIndex<path.length-1) {

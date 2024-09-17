@@ -29,7 +29,7 @@ export default class Game {
     }
 
     setSteps = (spawn, goal, speed ) => {
-        const path = djikstra(this.gameMap, spawn, goal, speed);
+        const path = djikstra(this.gameMap, spawn, goal);
         this.steps = getSteps(path, this.gameMap.heightMap, speed || 1);
     }
 

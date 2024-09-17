@@ -12,7 +12,7 @@ export default class RockTower extends Tower {
         this.price = 100;
     };
 
-    canAttack = (target, heightMap) => {
+    canAttack = (target, gameMap) => {
         if (this.currentCooldown) return false;
 
         const path = getParabolicPath(
@@ -21,8 +21,8 @@ export default class RockTower extends Tower {
                 this.position[1],
                 this.position[2], // Add 3 to shoot from above the ground
             ],
-            target, 
-            heightMap,
+            target,
+            gameMap,
             0.02, // timeInterval must be low to prevent rock passing through target
         );
         if (!path.length) return false;

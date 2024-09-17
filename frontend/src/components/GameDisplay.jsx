@@ -17,7 +17,7 @@ import LaserTower from "../entities/towers/LaserTower";
 
 export default function GameDisplay({game, assets}) {
     const { gameMap, castle, portal } = game;
-    const { width, depth, height, heightMap } = gameMap;
+    const { width, depth, height } = gameMap;
   
     const towerConstructors = [ArrowTower, RockTower, LaserTower];
     const [newTower, setNewTower] = useState(null);
@@ -63,7 +63,7 @@ export default function GameDisplay({game, assets}) {
                 let attacked = false;
                 for (let enemy of enemies) {
                     if (!enemy.hp) continue;
-                    const path = tower.canAttack(enemy.position, heightMap);
+                    const path = tower.canAttack(enemy.position, gameMap);
                     if (path) {
                         const projectile = tower.createProjectile(path);
                         game.addProjectile(projectile);
@@ -117,7 +117,7 @@ export default function GameDisplay({game, assets}) {
     const buildTower = () => {
         const [x, y, z] = [newTower.x, newTower.y, newTower.z];
         if (game.phase !== 'build' || game.over) return;
-        if (z !== heightMap.at(x).at(y)) return;
+        if (z !== gameMap.getElevation(x, y)) return;
         if (game.towers[x][y]) return;        
         if (game.gold < newTower.price) return;
         

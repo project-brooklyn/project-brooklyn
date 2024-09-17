@@ -13,12 +13,13 @@ import ArrowTower from "../entities/towers/ArrowTower";
 import RockTower from "../entities/towers/RockTower";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
+import LaserTower from "../entities/towers/LaserTower";
 
 export default function GameDisplay({game, assets}) {
     const { gameMap, castle, portal } = game;
     const { width, depth, height, heightMap } = gameMap;
   
-    const towerConstructors = [ArrowTower, RockTower];
+    const towerConstructors = [ArrowTower, RockTower, LaserTower];
     const [newTower, setNewTower] = useState(null);
 
     const [goldReward, setGoldReward] = useState(100);

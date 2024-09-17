@@ -7,6 +7,8 @@ export const tileConfig = {
 
 export const modelFiles = { 
     guy: './basic/robot.glb',
+    lamb: './basic/lamb.glb',
+    cow: './basic/spherical_cow.glb',
     portal: './basic/portal.glb',
     castle: './basic/house.glb',
     flag: './basic/flag.glb',

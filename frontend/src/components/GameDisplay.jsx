@@ -45,13 +45,13 @@ export default function GameDisplay({game, assets}) {
         game.spawningEnemies = true;
         game.enemies = [];
         game.projectiles = [];
-        game.setSteps(portal.position, castle.position);
-
+        
         setNewTower(null);
         setEnemies(game.enemies);
         setProjectiles(game.projectiles);
         
         const level = levels[game.level];
+        game.setSteps(portal.position, castle.position, level.enemy.SPEED);
         game.setupEnemySpawn(level);
         setGoldReward(() => level.gold);
     };

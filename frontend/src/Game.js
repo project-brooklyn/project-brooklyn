@@ -2,6 +2,7 @@ import { djikstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 
+// eslint-disable-next-line no-unused-vars
 const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
 export default class Game {
@@ -27,9 +28,9 @@ export default class Game {
         this.gold = 250;
     }
 
-    setSteps = (spawn, goal) => {
+    setSteps = (spawn, goal, speed ) => {
         const path = djikstra(this.gameMap, spawn, goal);
-        this.steps = getSteps(path, this.gameMap.heightMap);
+        this.steps = getSteps(path, this.gameMap.heightMap, speed || 1);
     }
 
     spawnEnemy = (enemy) => {
@@ -64,6 +65,7 @@ export default class Game {
     };
 
     addTower = (tower) => {
+        // eslint-disable-next-line no-unused-vars
         const [x, y, _] = tower.position;
         this.towers[x][y] = tower;
     };

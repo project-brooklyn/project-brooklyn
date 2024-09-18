@@ -14,7 +14,7 @@ class GameMap {
         this.maxY = 0;
         this.maxZ = 0;
 
-        this.mapData = new Map();
+        this.tileData = new Map();
         this.elevationData = new Map();
     }
 
@@ -32,7 +32,7 @@ class GameMap {
 
     forEachTile(callbackFn) {
         let results = []
-        for (let [key, tile] of this.mapData) {
+        for (let [key, tile] of this.tileData) {
             const coordinates = key.split(',').map((x) => parseInt(x, 10));
             results.push(callbackFn(tile, coordinates));
         }
@@ -40,7 +40,7 @@ class GameMap {
     }
 
     getTile(x, y, z) {
-        return this.mapData.get(tileKey(x, y, z)) || undefined;
+        return this.tileData.get(tileKey(x, y, z)) || undefined;
     }
 
     isOccupied(x, y, z) {
@@ -52,7 +52,7 @@ class GameMap {
     }
 
     addTile(x, y, z, tile) {
-        this.mapData.set(tileKey(x, y, z), tile);
+        this.tileData.set(tileKey(x, y, z), tile);
 
         const cell = cellKey(x, y);
         this.elevationData.set(cell, Math.max(this.elevationData.get(cell) ?? 0, z));

@@ -1,9 +1,5 @@
 import { round, normalize, pythagorean, quadratic } from "./math_utils";
 
-function cellKey(x, y) {
-    return [x, y].join(',');
-}
-
 const getNeighbors = (x, y, gameMap) => {
     const neighbors = [];
     if (x>0) neighbors.push([x-1,y]);
@@ -29,10 +25,11 @@ export const djikstra = (gameMap, spawn, goal) => {
         const [x, y] = path.at(-1);
         const z = gameMap.getElevation(x, y);
 
-        if (visited.has(cellKey(x, y))) {
+        const cell = [x, y].join(',');
+        if (visited.has(cell)) {
             continue;
         }
-        visited.add(cellKey(x, y));
+        visited.add(cell);
 
         if (x===final[0] && y===final[1]) return path;
 
@@ -52,7 +49,7 @@ export const djikstra = (gameMap, spawn, goal) => {
 
 export const getSteps = (path, gameMap, speed) => {
     let pathIndex = 0;
-    const increment = 60 / speed; 
+    const increment = 60 / speed;
     // default speed of 1 splits each step (tile to tile) into 60 increments
 
     let [x,y,z] = [path[0][0], path[0][1], gameMap.getElevation(path[0][0], path[0][1])];

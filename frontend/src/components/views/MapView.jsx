@@ -2,7 +2,7 @@ import { convertToRenderCoordinates, tileConfig } from "../../utils/render_utils
 
 export default function MapView({assets, gameMap, buildTower, newTower})
 {
-    function renderTile(tile) {
+    function renderTile(tile, _coordinates) {
         const position = convertToRenderCoordinates(tile)
         const geometry = assets.geometryManager.get("tile");
         const material = assets.materialManager.get(tile.type.name);
@@ -28,7 +28,7 @@ export default function MapView({assets, gameMap, buildTower, newTower})
         )
     }
 
-    const tilesMeshes = gameMap.mapData.map(renderTile)
+    const tilesMeshes = gameMap.forEachTile(renderTile);
 
     return <>
         {tilesMeshes}

@@ -13,8 +13,9 @@ export default class Game {
         this.over = false;
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
-        this.portal = new Portal(0, 0, gameMap.heightMap[0][0]);
-        this.castle = new Castle(gameMap.width-1, gameMap.depth-1, gameMap.heightMap.at(-1).at(-1));
+        this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
+        this.castle = new Castle(gameMap.width-1, gameMap.depth-1,
+                gameMap.getElevation(gameMap.width-1, gameMap.depth-1));  // Assumes map is rectangular
         this.towers[0][0] = this.portal;
         this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
 
@@ -30,7 +31,7 @@ export default class Game {
 
     setSteps = (spawn, goal, speed ) => {
         const path = djikstra(this.gameMap, spawn, goal);
-        this.steps = getSteps(path, this.gameMap.heightMap, speed || 1);
+        this.steps = getSteps(path, this.gameMap, speed || 1);
     }
 
     spawnEnemy = (enemy) => {

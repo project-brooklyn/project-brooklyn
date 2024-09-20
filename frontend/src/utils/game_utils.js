@@ -105,7 +105,9 @@ export const getStraightPath = (start, end, gameMap, speed=0.1) => {
         path.push(path.at(-1).map((val,idx) => val + unitVector[idx]*speed));
     }
 
-    if (round(path.at(-1)[0],0) !== end[0] || round(path.at(-1)[1],0) !== end[1]) return [];
+    // check if path hits ground within tolerance of target
+    const tolerance = 0.5;
+    if (pythagorean(path.at(-1), end) > tolerance) return [];
     return path;
 };
 
@@ -141,6 +143,8 @@ export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
         path.push([x + dx, y + dy, z+dz]);
     };
     
-    if (round(path.at(-1)[0],0) !== end[0] || round(path.at(-1)[1],0) !== end[1]) return [];
+    // check if path hits ground within tolerance of target
+    const tolerance = 0.5;
+    if (pythagorean(path.at(-1), end) > tolerance) return [];
     return path;
 };

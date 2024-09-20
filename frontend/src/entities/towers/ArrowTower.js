@@ -12,9 +12,7 @@ export default class ArrowTower extends Tower {
         this.price = 50;
     };
 
-    canAttack = (target, gameMap) => {
-        if (this.currentCooldown) return false;
-
+    getProjectilePath = (target, gameMap) => {
         const path = getStraightPath(
             [
                 this.position[0],
@@ -24,8 +22,6 @@ export default class ArrowTower extends Tower {
             target,
             gameMap,
             0.2);
-        if (!path.length) return false;
-
         return path;
     };
 

@@ -12,9 +12,7 @@ export default class LaserTower extends Tower {
         this.price = 200;
     };
 
-    canAttack = (target, heightMap) => {
-        if (this.currentCooldown) return false;
-
+    getProjectilePath = (target, heightMap) => {
         const path = getStraightPath(
             [
                 this.position[0],
@@ -24,8 +22,6 @@ export default class LaserTower extends Tower {
             target, 
             heightMap,
             0.4);
-        if (!path.length) return false;
-
         return path;
     }
 

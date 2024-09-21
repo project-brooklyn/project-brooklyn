@@ -57,23 +57,29 @@ export default function GameDisplay({game, assets}) {
     };
     
     const towersAttack = (enemies) => {
-        for (let row of game.towers) {
-            for (let tower of row) {
-                if (!tower || !tower.canAttack) continue;
-                let attacked = false;
-                for (let enemy of enemies) {
-                    if (!enemy.hp) continue;
-                    const path = tower.canAttack(enemy.position, gameMap);
-                    if (path) {
-                        const projectile = tower.createProjectile(path);
-                        game.addProjectile(projectile);
-                        enemy.hp = Math.max(enemy.hp - tower.damage, 0);
-    
-                        attacked = true;
-                        break;
-                    }
+        for (let tower of game.towers.flat()) {
+            // handle null, portal, and castle
+            if (!tower || !tower.getProjectilePath) continue;
+
+            // handle tower cooldown
+            if (tower.currentCooldown) {
+                --tower.currentCooldown;
+                continue;
+            }
+
+            // check all enemies, attack first (farthest along path)
+            for (let enemy of enemies) {
+                if (!enemy.hp) continue;
+                const path = tower.getProjectilePath(enemy.position, gameMap);
+                if (path.length) {
+                    const projectile = tower.createProjectile(path);
+                    game.addProjectile(projectile);
+
+                    // TODO: this is instant damage, convert to when projectile hits?
+                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
+
+                    break;
                 }
-                if (!attacked && tower.currentCooldown) tower.currentCooldown--;
             }
         }
     };

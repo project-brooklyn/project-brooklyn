@@ -1,12 +1,12 @@
 import { convertToRenderCoordinates, tileConfig } from "../../utils/render_utils";
 
-export default function MapView({assets, gameMap, buildTower, newTower})
+export default function MapView({assets, gameMap, mouseInput})
 {
     function renderTile(tile, _coordinates) {
         const position = convertToRenderCoordinates(tile)
         const geometry = assets.geometryManager.get("tile");
         const material = assets.materialManager.get(tile.type.name);
-    
+
         return (
             <mesh
                 // reduce position.y so that tiles render below other objects
@@ -15,13 +15,10 @@ export default function MapView({assets, gameMap, buildTower, newTower})
                 material={material}
                 key={`${tile.x},${tile.y},${tile.z}`}
                 onClick={(e) => {
-                    if (!newTower) return
-                    e.stopPropagation();
-                    buildTower();
+                    mouseInput.triggerClick(tile.x, tile.y, tile.z);
                 }}
                 onPointerEnter={(e) => {
-                    e.stopPropagation();
-                    if (newTower) newTower.setPosition(tile.x, tile.y, tile.z);
+                    mouseInput.triggerHover(tile.x, tile.y, tile.z);
                 }}
             >
             </mesh>

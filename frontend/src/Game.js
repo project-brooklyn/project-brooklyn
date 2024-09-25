@@ -1,9 +1,9 @@
 import { djikstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
+import MouseInput from "./components/MouseInput";
 
-// eslint-disable-next-line no-unused-vars
-const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
+export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
 export default class Game {
     constructor(gameMap) {
@@ -22,11 +22,13 @@ export default class Game {
         this.enemies = [];
         this.spawningEnemies = false;
         this.projectiles = [];
-        
+
         this.animationFunctions = [];
         this.spawnFunction = () => null;
         this.steps = [];
         this.gold = 250;
+
+        this.mouseInput = new MouseInput();
     }
 
     setSteps = (spawn, goal, speed ) => {

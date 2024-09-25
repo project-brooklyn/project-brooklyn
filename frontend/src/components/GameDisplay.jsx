@@ -4,6 +4,7 @@ import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 import { levels } from "../levels";
+import { BUILD, DEFEND, SCORE } from "../Game";
 
 import MapView from "./views/MapView";
 import EnemyView from "./views/EnemyView";
@@ -18,13 +19,12 @@ import LaserTower from "../entities/towers/LaserTower";
 export default function GameDisplay({game, assets}) {
     const { gameMap, castle, portal } = game;
     const { width, depth, height } = gameMap;
-  
+
     const towerConstructors = [ArrowTower, RockTower, LaserTower];
-    const [newTower, setNewTower] = useState(null);
 
     const [goldReward, setGoldReward] = useState(100);
     const [enemies, setEnemies] = useState([]);
-    
+
     const [projectiles, setProjectiles] = useState([]);
 
     useFrame((_state, _delta, _xrFrame) => {
@@ -38,24 +38,23 @@ export default function GameDisplay({game, assets}) {
 
         checkLevelOver();
     })
-    
+
     const startDefendPhase = () => {
-        if (game.phase !== 'build' || game.level === levels.length-1 || game.over) return;
-        game.phase = 'defend';
+        if (game.phase !== BUILD || game.level === levels.length-1 || game.over) return;
+        game.phase = DEFEND;
         game.spawningEnemies = true;
         game.enemies = [];
         game.projectiles = [];
-        
-        setNewTower(null);
+
         setEnemies(game.enemies);
         setProjectiles(game.projectiles);
-        
+
         const level = levels[game.level];
         game.setSteps(portal.position, castle.position, level.enemy.SPEED);
         game.setupEnemySpawn(level);
         setGoldReward(() => level.gold);
     };
-    
+
     const towersAttack = (enemies) => {
         for (let tower of game.towers.flat()) {
             // handle null, portal, and castle
@@ -101,13 +100,12 @@ export default function GameDisplay({game, assets}) {
 
     const checkLevelOver = () => {
         if (
-            game.phase === 'defend' && 
-            !game.spawningEnemies && 
+            game.phase === DEFEND &&
+            !game.spawningEnemies &&
             !game.enemies.some(enemy => !!enemy.hp)
         ) {
             setEnemies([]);
             setProjectiles([]);
-            setNewTower(null);
 
             game.enemies = [];
             game.projectiles = [];
@@ -115,23 +113,10 @@ export default function GameDisplay({game, assets}) {
             game.level++;
 
             // TODO: implement score phase
-            game.phase = 'score';
-            setTimeout(() => game.phase = 'build', 3000);
+            game.phase = SCORE;
+            setTimeout(() => game.phase = BUILD, 3000);
         }
     };
-
-    const buildTower = () => {
-        const [x, y, z] = [newTower.x, newTower.y, newTower.z];
-        if (game.phase !== 'build' || game.over) return;
-        if (z !== gameMap.getElevation(x, y)) return;
-        if (game.towers[x][y]) return;        
-        if (game.gold < newTower.price) return;
-        
-        const copy = new newTower.constructor(x, y, z);
-        game.addTower(copy);
-        game.gold -= newTower.price;
-        if (game.gold < newTower.price) setNewTower(null);
-    }
 
     return <>
         <axesHelper args={[width, depth, height]}/>
@@ -139,13 +124,13 @@ export default function GameDisplay({game, assets}) {
             {game.over ? 'GAME OVER' : 'START'}
         </Text>
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
-        <BuyMenu
-            width={width} depth={depth} 
-            towerConstructors={towerConstructors} 
-            newTower={newTower}
-            setNewTower={setNewTower}
-        />
-        
+        {game.phase === BUILD &&
+            <BuyMenu
+                game={game}
+                towerConstructors={towerConstructors}
+            />
+        }
+
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
         <ambientLight intensity={2} />
@@ -154,6 +139,6 @@ export default function GameDisplay({game, assets}) {
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 
-        <MapView assets={assets} gameMap={gameMap} buildTower={buildTower} newTower={newTower}/>
+        <MapView assets={assets} gameMap={gameMap} mouseInput={game.mouseInput}/>
     </>
 }

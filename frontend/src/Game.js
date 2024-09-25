@@ -68,7 +68,6 @@ export default class Game {
     };
 
     addTower = (tower) => {
-        // eslint-disable-next-line no-unused-vars
         const [x, y, _] = tower.position;
         this.towers[x][y] = tower;
     };

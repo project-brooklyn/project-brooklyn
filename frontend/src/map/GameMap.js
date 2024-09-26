@@ -62,11 +62,11 @@ class GameMap {
         this.maxZ = Math.max(this.maxZ, z + 1);
     }
 
-    removeTile(x, y, z) {
+    removeTile(_x, _y, _z) {
         // Removing a tile will update the elevation data accordingly but will
         // not reduce the overall max bounds of the map.
         // TODO: Implement
     }
-};
+}
 
 export default GameMap;

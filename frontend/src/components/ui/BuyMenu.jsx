@@ -8,12 +8,10 @@ export default function BuyMenu({game, towerConstructors}) {
     const {gameMap, mouseInput} = game;
     const {width, depth} = gameMap;
 
-    const [selected, setSelected] = useState(null);
     const [newTower, setNewTower] = useState(null);
 
     const deselectAll = () => {
         setNewTower(null);
-        setSelected(null);
         mouseInput.removeHoverCallback(NAME);
         mouseInput.removeClickCallback(NAME);
     };
@@ -40,7 +38,7 @@ export default function BuyMenu({game, towerConstructors}) {
                         t.setPosition(x, y, z);
                     });
 
-                    const buildTower = (_x, _y, _z) => {
+                    const buildTower = () => {
                         // Use t's position instead of callback's coordinates. Otherwise,
                         // under certain circumstances, the built tower may jump to a
                         // different tile than the preview depending on camera angle and
@@ -85,4 +83,4 @@ export default function BuyMenu({game, towerConstructors}) {
             {newTower && <BuildGhostView structure={newTower} />}
         </>
     )
-};
+}

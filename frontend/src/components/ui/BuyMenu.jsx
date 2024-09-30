@@ -1,16 +1,38 @@
 import { useState, useEffect } from "react";
 import { Text } from "@react-three/drei"
 import BuildGhostView from "../views/BuildGhostView";
+import { Vector3 } from "three";
+
+import ArrowTower from "../../entities/towers/ArrowTower";
+import RockTower from "../../entities/towers/RockTower";
+import LaserTower from "../../entities/towers/LaserTower";
 
 const NAME = "BuyMenu"
 
-export default function BuyMenu({game, towerConstructors}) {
+const TOWERS = new Map([
+    ["arrowTower", {
+        create: ArrowTower,
+        price: 50,
+    }],
+    ["rockTower", {
+        create: RockTower,
+        price: 100,
+    }],
+    ["laserTower", {
+        create: LaserTower,
+        price: 200,
+    }],
+]);
+
+export default function BuyMenu({game}) {
     const {gameMap, mouseInput} = game;
     const {width, depth} = gameMap;
 
+    const [selectedItem, setSelectedItem] = useState(null);
     const [newTower, setNewTower] = useState(null);
 
     const deselectAll = () => {
+        setSelectedItem(null);
         setNewTower(null);
         mouseInput.removeHoverCallback(NAME);
         mouseInput.removeClickCallback(NAME);
@@ -21,41 +43,51 @@ export default function BuyMenu({game, towerConstructors}) {
         deselectAll();
     }, [game.phase])
 
-    const exampleTowers = towerConstructors.map(constructor => new constructor());
+    useEffect(() => {
+        // Handle selected item
+        if (!selectedItem) {
+            return;
+        }
 
-    const buyButtons = exampleTowers.map((tower, i) => {
+        if (selectedItem.name.endsWith("Tower")) {
+            const t = TOWERS.get(selectedItem.name);
+
+            mouseInput.addHoverCallback(NAME, (x, y, z) => {
+                if (!selectedItem.targetPosition) {
+                    selectedItem.targetPosition = new Vector3();
+                }
+                selectedItem.targetPosition.set(x, y, z);
+                setNewTower(new t.create(x, y, z));
+            });
+
+            const buildTower = () => {
+                if (game.over) return;
+
+                const {x, y, z} = selectedItem.targetPosition;
+                if (z !== gameMap.getElevation(x, y)) return;
+                if (game.towers[x][y]) return;
+
+                if (game.gold < t.price) return;
+
+                const tower = new t.create(x, y, z);
+                game.addTower(tower);
+                game.gold -= t.price;
+                if (game.gold < t.price) deselectAll(null);
+            };
+            mouseInput.addClickCallback(NAME, buildTower);
+        }
+    }, [selectedItem])
+
+    const buyTowerButtons = Array.from(TOWERS.keys(), (towerKey, i) => {
         const handleClick = () => {
-            if (newTower?.name === tower.name) {
-                setNewTower(null);
+            if (selectedItem?.name == towerKey) {
+                deselectAll();
             } else {
                 deselectAll();
-                const example = exampleTowers.find(example => tower.name === example.name);
-                if (example) {
-                    const t = new example.constructor();
-                    setNewTower(t);
-
-                    mouseInput.addHoverCallback(NAME, (x, y, z) => {
-                        t.setPosition(x, y, z);
-                    });
-
-                    const buildTower = () => {
-                        // Use t's position instead of callback's coordinates. Otherwise,
-                        // under certain circumstances, the built tower may jump to a
-                        // different tile than the preview depending on camera angle and
-                        // proximity to the tile boundary.
-
-                        if (game.over) return;
-                        if (t.z !== gameMap.getElevation(t.x, t.y)) return;
-                        if (game.towers[t.x][t.y]) return;
-                        if (game.gold < t.price) return;
-
-                        const copy = new t.constructor(t.x, t.y, t.z);
-                        game.addTower(copy);
-                        game.gold -= t.price;
-                        if (game.gold < t.price) setNewTower(null);
-                    };
-                    mouseInput.addClickCallback(NAME, buildTower);
-                }
+                setSelectedItem({
+                    name: towerKey,
+                    targetPosition: null,
+                });
             }
         };
 
@@ -66,7 +98,7 @@ export default function BuyMenu({game, towerConstructors}) {
                 rotation={[-Math.PI/2, 0, 0]}
                 onClick={handleClick}
             >
-                {`${newTower && newTower.name === tower.name ? '>' : ' '} ${tower.name}: ${tower.price}\n`}
+                {`${selectedItem?.name == towerKey ? '>' : ' '} ${towerKey}: ${TOWERS.get(towerKey).price}\n`}
             </Text>
         )
     });
@@ -79,7 +111,7 @@ export default function BuyMenu({game, towerConstructors}) {
             >
                 {"Buy Menu\n"}
             </Text>
-            {buyButtons}
+            {buyTowerButtons}
             {newTower && <BuildGhostView structure={newTower} />}
         </>
     )

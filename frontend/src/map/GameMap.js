@@ -63,11 +63,11 @@ class GameMap {
     }
 
     removeTile(x, y, z) {
+        // Assumes that tiles can only be removed from the top layer of the map.
         // Removing a tile will update the elevation data accordingly but will
         // not reduce the overall max bounds of the map.
         this.tileData.delete(tileKey(x, y, z));
 
-        // Assuming that tiles can only be removed from the top layer of the map.
         const cell = cellKey(x, y);
         this.elevationData.set(cell, this.elevationData.get(cell) - 1);
     }

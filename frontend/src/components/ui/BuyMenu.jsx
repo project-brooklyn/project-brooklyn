@@ -27,16 +27,27 @@ const TOWERS = new Map([
     }],
 ]);
 
-const TERRAFORM_FILL = "Fill";
-const TERRAFORM_EXCAVATE = "Excavate";
+const TERRAFORM_FILL = "terraformFill";
+const TERRAFORM_EXCAVATE = "terraformExcavate";
 const TERRAFORMS = new Map([
     [TERRAFORM_FILL, {
+        label: "Fill",
         price: 100,
     }],
     [TERRAFORM_EXCAVATE, {
+        label: "Excavate",
         price: 100,
     }],
 ]);
+
+function isTop(gameMap, x, y, z) {
+    return gameMap.getElevation(x, y) === z;
+}
+
+function isOccupied(game, x, y, z) {
+    const tower = game.towers[x][y];
+    return tower && (tower.z === z);
+}
 
 export default function BuyMenu({game}) {
     const {gameMap, mouseInput} = game;
@@ -53,10 +64,15 @@ export default function BuyMenu({game}) {
         game.gameMapOverrides.clear();
     };
 
+    const chargeCost = (price) => {
+        game.gold -= price;
+        if (game.gold < price) deselectAll();
+    };
+
     useEffect(() => {
         // Handle game state changes
         deselectAll();
-    }, [game.phase])
+    }, [game.phase, game.over])
 
     useEffect(() => {
         // Handle selected item
@@ -77,43 +93,50 @@ export default function BuyMenu({game}) {
             });
 
             const buildTower = () => {
-                if (game.over) return;
+                if (game.gold < t.price) return;
 
                 const {x, y, z} = selectedItem.targetPosition;
-                if (z !== gameMap.getElevation(x, y)) return;
-                if (game.towers[x][y]) return;
-
-                if (game.gold < t.price) return;
+                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
+                    return;
+                }
+                chargeCost(t.price);
 
                 const tower = new t.create(x, y, z);
                 game.addTower(tower);
-                game.gold -= t.price;
-                if (game.gold < t.price) deselectAll(null);
             };
             mouseInput.addClickCallback(NAME, buildTower);
-        } else if (selectedItem.name == TERRAFORM_FILL) {
+        } else if (selectedItem.name.startsWith("terraform")) {
+            const terraform = TERRAFORMS.get(selectedItem.name);
+
             mouseInput.addHoverCallback(NAME, (x, y, z) => {
+                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
+                    return;
+                }
+
                 if (!selectedItem.targetPosition) {
                     selectedItem.targetPosition = new Vector3();
                 }
-                selectedItem.targetPosition.set(x, y, z + 1);
-                game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone))
-            });
 
-            mouseInput.addClickCallback(NAME, (x, y, z) => {
-                game.gameMapOverrides.clear();
-            });
-        } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
-            mouseInput.addHoverCallback(NAME, (x, y, z) => {
-                if (!selectedItem.targetPosition) {
-                    selectedItem.targetPosition = new Vector3();
+                if (selectedItem.name == TERRAFORM_FILL) {
+                    selectedItem.targetPosition.set(x, y, z + 1);
+                    game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
+                } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
+                    selectedItem.targetPosition.set(x, y, z);
+                    game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
                 }
-                selectedItem.targetPosition.set(x, y, z);
-                game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
             });
 
-            mouseInput.addClickCallback(NAME, (x, y, z) => {
+            mouseInput.addClickCallback(NAME, () => {
+                if (game.gold < terraform.price) return;
                 game.gameMapOverrides.clear();
+                chargeCost(terraform.price);
+
+                const {x, y, z} = selectedItem.targetPosition;
+                if (selectedItem.name == TERRAFORM_FILL) {
+                    gameMap.addTile(x, y, z, new Tile(x, y, z, TileType.Stone));
+                } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
+                    gameMap.removeTile(x, y, z);
+                }
             });
         }
     }, [selectedItem])
@@ -160,6 +183,7 @@ export default function BuyMenu({game}) {
         };
 
         const index = menuIndex++;
+        const label = TERRAFORMS.get(terraformKey).label;
         const price = TERRAFORMS.get(terraformKey).price;
         return (
             <Text
@@ -168,7 +192,7 @@ export default function BuyMenu({game}) {
                 rotation={[-Math.PI/2, 0, 0]}
                 onClick={handleClick}
             >
-                    {`${selectedItem?.name == terraformKey ? '>' : ' '} ${terraformKey}: ${price}`}
+                    {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
             </Text>
         )
     });

@@ -9,8 +9,7 @@ export default class ArrowTower extends Tower {
         this.cooldown = 25;
         this.currentCooldown = 0;
         this.damage = 10;
-        this.price = 50;
-    };
+    }
 
     getProjectilePath = (target, gameMap) => {
         const path = getStraightPath(
@@ -29,4 +28,4 @@ export default class ArrowTower extends Tower {
         this.currentCooldown = this.cooldown;
         return new Arrow(...this.position, path);
     };
-};
+}

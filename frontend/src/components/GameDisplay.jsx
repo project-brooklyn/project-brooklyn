@@ -131,6 +131,6 @@ export default function GameDisplay({game, assets}) {
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 
-        <MapView assets={assets} gameMap={gameMap} mouseInput={game.mouseInput}/>
+        <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput}/>
     </>
 }

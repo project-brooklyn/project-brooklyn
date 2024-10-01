@@ -30,7 +30,7 @@ export default function MapView({assets, gameMap, overrides, mouseInput})
                 position={ [position.x, position.y - tileConfig.height/2, position.z] }
                 geometry={geometry}
                 material={material}
-                key={`${tile.x},${tile.y},${tile.z}`}
+                key={`${tile.x},${tile.y},${tile.z},${reactive}`}
                 onClick={onClick}
                 onPointerEnter={onPointerEnter}
             >

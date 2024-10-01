@@ -118,7 +118,7 @@ export default function BuyMenu({game}) {
                 }
 
                 if (selectedItem.name == TERRAFORM_FILL) {
-                    selectedItem.targetPosition.set(x, y, z + 1);
+                    selectedItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
                 } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
                     selectedItem.targetPosition.set(x, y, z);
@@ -128,11 +128,16 @@ export default function BuyMenu({game}) {
 
             mouseInput.addClickCallback(NAME, () => {
                 if (game.gold < terraform.price) return;
-                game.gameMapOverrides.clear();
+
+                if (!selectedItem.targetPosition) return;
+                let {x, y, z} = selectedItem.targetPosition;
+                selectedItem.targetPosition = null;
                 chargeCost(terraform.price);
 
-                const {x, y, z} = selectedItem.targetPosition;
+                game.gameMapOverrides.clear();
+
                 if (selectedItem.name == TERRAFORM_FILL) {
+                    z += 1;
                     gameMap.addTile(x, y, z, new Tile(x, y, z, TileType.Stone));
                 } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
                     gameMap.removeTile(x, y, z);
@@ -177,7 +182,6 @@ export default function BuyMenu({game}) {
                 setSelectedItem({
                     name: terraformKey,
                     targetPosition: null,
-                    lastPosition: null,
                 });
             }
         };

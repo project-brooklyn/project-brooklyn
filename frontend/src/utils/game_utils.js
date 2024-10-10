@@ -40,7 +40,7 @@ export const djikstra = (gameMap, spawn, goal) => {
                 path: [...path, [nx, ny]],
                 time: time + walkTime + (nz>z ? climbTime*(nz-z) : dropTime*(z-nz)),
             })
-        };
+        }
 
         queue.sort((a,b) => a.time - b.time); // lazy heap
     }
@@ -141,7 +141,7 @@ export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
         const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInterval;
         const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInterval) + (g * t * timeInterval);
         path.push([x + dx, y + dy, z+dz]);
-    };
+    }
     
     // check if path hits ground within tolerance of target
     const tolerance = 0.5;

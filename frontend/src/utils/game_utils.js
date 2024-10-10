@@ -10,7 +10,6 @@ const getNeighbors = (x, y, gameMap) => {
 }
 
 export const dijkstra = (gameMap, spawn, goal) => {
-    console.log('Dijkstra');
     const start = [spawn[0], spawn[1]];
     const final = [goal[0], goal[1]];
 
@@ -90,7 +89,6 @@ export const getSteps = (path, gameMap, speed) => {
         pathIndex++;
     }
     steps.push([path.at(-1)[0], path.at(-1)[1], gameMap.getElevation(path.at(-1)[0], path.at(-1)[1])]);
-    console.log("\n\n\n", "Steps: ", steps, "\n\n\n");
     return steps;
 }
 

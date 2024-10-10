@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
     createBrowserRouter,
@@ -9,13 +8,7 @@ import HomePage from './pages/HomePage.jsx';
 import './index.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import TestA from './pages/TestA.jsx';
-import TestB from './pages/TestB.jsx';
-import TestC from './pages/TestC.jsx';
-import TestD from './pages/TestD.jsx';
-import TestE from './pages/TestE.jsx';
-import TestF from './pages/TestF.jsx';
-import TestG from './pages/TestG.jsx';
+import { TestA, TestB, TestC, TestD } from './pages/TestPages.jsx';
 
 const router = createBrowserRouter([
     {
@@ -46,24 +39,10 @@ const router = createBrowserRouter([
         path: '/testd',
         element: <TestD />,
     },
-    {
-        path: '/teste',
-        element: <TestE />,
-    },
-    {
-        path: '/testf',
-        element: <TestF />,
-    },
-    {
-        path: '/testg',
-        element: <TestG />,
-    },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    // <React.StrictMode>
-        <AuthProvider>
-            <RouterProvider router={router} />
-        </AuthProvider>
-    // </React.StrictMode>,
+    <AuthProvider>
+        <RouterProvider router={router} />
+    </AuthProvider>
 )

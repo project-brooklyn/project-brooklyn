@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage.jsx';
 import './index.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import { TestA, TestB, TestC, TestD } from './pages/TestPages.jsx';
+import { TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
 
 const router = createBrowserRouter([
     {
@@ -39,6 +39,10 @@ const router = createBrowserRouter([
         path: '/testd',
         element: <TestD />,
     },
+    {
+        path: '/teste',
+        element: <TestE />,
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

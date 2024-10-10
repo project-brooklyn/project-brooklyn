@@ -1,4 +1,4 @@
-import { djikstra, getSteps } from "./utils/game_utils";
+import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import MouseInput from "./components/MouseInput";
@@ -16,8 +16,11 @@ export default class Game {
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
-        this.castle = new Castle(gameMap.width-1, gameMap.depth-1,
-                gameMap.getElevation(gameMap.width-1, gameMap.depth-1));  // Assumes map is rectangular
+        this.castle = new Castle(
+            gameMap.width-1,
+            gameMap.depth-1, 
+            gameMap.getElevation(gameMap.width-1, gameMap.depth-1)
+        );  // Assumes map is rectangular
         this.towers[0][0] = this.portal;
         this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
 
@@ -34,7 +37,7 @@ export default class Game {
     }
 
     setSteps = (spawn, goal, speed ) => {
-        const path = djikstra(this.gameMap, spawn, goal);
+        const path = dijkstra(this.gameMap, spawn, goal);
         this.steps = getSteps(path, this.gameMap, speed || 1);
     }
 

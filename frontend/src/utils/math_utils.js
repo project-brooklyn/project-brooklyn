@@ -8,7 +8,7 @@ export const pythagorean = (p1, p2) => {
     return Math.sqrt(sumOfSquares);
 };
 
-export const round = (num, decimals=2) => {
+export const round = (num, decimals=5) => {
     const inverse = 10**decimals;
     return Math.round(num*inverse) / inverse;
 };

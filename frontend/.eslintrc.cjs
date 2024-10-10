@@ -25,5 +25,6 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'react/prop-types': 'off', // this can be handled when upgrading to typescript
   },
 }

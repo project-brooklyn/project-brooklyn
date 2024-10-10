@@ -17,7 +17,7 @@ export const modelFiles = {
     arrowTower: './basic/ballista_tower.glb',
     rockTower: './basic/cannon_tower.glb',
     laserTower: './basic/laser_tower.glb',
-}
+};
 
 // Converts map coordinates to render coordinates.
 export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0}) {
@@ -26,7 +26,7 @@ export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0
         mapVector.z * tileConfig.height - offset.z,
         mapVector.y * tileConfig.width - offset.y
     )
-};
+}
 
 export const centerObjModel = (objLoader) => {
     objLoader.traverse((child) => {

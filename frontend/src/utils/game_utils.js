@@ -99,6 +99,9 @@ const isAboveGround = (x, y, z, gameMap) => {
 }
 
 export const getStraightPath = (start, end, gameMap, speed=0.1) => {
+    const minRange = 3.5;
+    if (pythagorean(start, end) < minRange) return [];
+
     // start and end are [x,y,z] coordinates
     // returns a series of points, separated by distance 'speed', that follow a straight path
     // if no straight path through heightMap is possible, returns an empty array
@@ -115,6 +118,9 @@ export const getStraightPath = (start, end, gameMap, speed=0.1) => {
 };
 
 export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
+    const minRange = 3.5;
+    if (pythagorean(start, end) < minRange) return [];
+
     // start and end are [x,y,z] coordinates
     // returns a series (separated by timeInterval) of points that follow a parabolic path
     // if no parabolic path (starting at the default angle) through height map is possible, returns an empty array

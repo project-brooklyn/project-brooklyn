@@ -16,7 +16,7 @@ export default class RockTower extends Tower {
             [
                 this.position[0],
                 this.position[1],
-                this.position[2], // Add 3 to shoot from above the ground
+                this.position[2] + 3, // Add 3 to shoot from above the ground
             ],
             target,
             gameMap,

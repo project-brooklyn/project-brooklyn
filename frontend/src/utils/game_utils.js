@@ -10,6 +10,7 @@ const getNeighbors = (x, y, gameMap) => {
 }
 
 export const dijkstra = (gameMap, spawn, goal) => {
+    console.log('Dijkstra');
     const start = [spawn[0], spawn[1]];
     const final = [goal[0], goal[1]];
 
@@ -65,14 +66,16 @@ export const getSteps = (path, gameMap, speed) => {
             x = round(x);
             y = round(y);
         }
+        [x, y] = [(xi+xf)/2, (yi+yf)/2];
 
         // move from curr height to next height
         const [zi, zf] = [z, gameMap.getElevation(xf, yf)];
-        while (z !== zf) {
+        while (Math.abs(z-zi) < Math.abs(zf-zi)) {
             steps.push([x,y,z]);
             z += (zf-zi)/increment; // can divide for slower climb speed
             z = round(z);
         }
+        z = zf;
 
         // move from boundary to center of next
         while (Math.abs(x-xi) < Math.abs(xf-xi) || Math.abs(y-yi) < Math.abs(yf-yi)) {
@@ -82,10 +85,12 @@ export const getSteps = (path, gameMap, speed) => {
             x = round(x);
             y = round(y);
         }
+        [x, y] = [xf, yf];
 
         pathIndex++;
     }
     steps.push([path.at(-1)[0], path.at(-1)[1], gameMap.getElevation(path.at(-1)[0], path.at(-1)[1])]);
+    console.log("\n\n\n", "Steps: ", steps, "\n\n\n");
     return steps;
 }
 

@@ -9,8 +9,10 @@ export default class Game {
     constructor(gameMap) {
         this.level = 1;
         this.phase = BUILD;
-        this.gameMap = gameMap;
         this.over = false;
+
+        this.gameMap = gameMap;
+        this.gameMapOverrides = new Map();
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
@@ -76,5 +78,5 @@ export default class Game {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();
     };
-};
+}
 

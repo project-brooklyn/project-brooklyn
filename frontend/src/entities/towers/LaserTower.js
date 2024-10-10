@@ -9,8 +9,7 @@ export default class LaserTower extends Tower {
         this.cooldown = 40;
         this.currentCooldown = 0;
         this.damage = 40;
-        this.price = 200;
-    };
+    }
 
     getProjectilePath = (target, heightMap) => {
         const path = getStraightPath(
@@ -29,4 +28,4 @@ export default class LaserTower extends Tower {
         this.currentCooldown = this.cooldown;
         return new Laser(...this.position, path);
     }
-};
+}

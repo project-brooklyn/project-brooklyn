@@ -1,4 +1,4 @@
-function tileKey(x, y, z) {
+export function tileKey(x, y, z) {
     return [x, y, z].join(',');
 }
 
@@ -32,9 +32,8 @@ class GameMap {
 
     forEachTile(callbackFn) {
         let results = []
-        for (let [key, tile] of this.tileData) {
-            const coordinates = key.split(',').map((x) => parseInt(x, 10));
-            results.push(callbackFn(tile, coordinates));
+        for (let [_key, tile] of this.tileData) {
+            results.push(callbackFn(tile));
         }
         return results
     }
@@ -52,6 +51,7 @@ class GameMap {
     }
 
     addTile(x, y, z, tile) {
+        // Adds (or updates) a tile.
         this.tileData.set(tileKey(x, y, z), tile);
 
         const cell = cellKey(x, y);
@@ -62,10 +62,14 @@ class GameMap {
         this.maxZ = Math.max(this.maxZ, z + 1);
     }
 
-    removeTile(_x, _y, _z) {
+    removeTile(x, y, z) {
+        // Assumes that tiles can only be removed from the top layer of the map.
         // Removing a tile will update the elevation data accordingly but will
         // not reduce the overall max bounds of the map.
-        // TODO: Implement
+        this.tileData.delete(tileKey(x, y, z));
+
+        const cell = cellKey(x, y);
+        this.elevationData.set(cell, this.elevationData.get(cell) - 1);
     }
 }
 

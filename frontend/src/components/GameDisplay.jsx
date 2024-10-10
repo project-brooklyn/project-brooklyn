@@ -10,17 +10,12 @@ import MapView from "./views/MapView";
 import EnemyView from "./views/EnemyView";
 import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
-import ArrowTower from "../entities/towers/ArrowTower";
-import RockTower from "../entities/towers/RockTower";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
-import LaserTower from "../entities/towers/LaserTower";
 
 export default function GameDisplay({game, assets}) {
     const { gameMap, castle, portal } = game;
     const { width, depth, height } = gameMap;
-
-    const towerConstructors = [ArrowTower, RockTower, LaserTower];
 
     const [goldReward, setGoldReward] = useState(100);
     const [enemies, setEnemies] = useState([]);
@@ -125,10 +120,7 @@ export default function GameDisplay({game, assets}) {
         </Text>
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
         {game.phase === BUILD &&
-            <BuyMenu
-                game={game}
-                towerConstructors={towerConstructors}
-            />
+            <BuyMenu game={game}/>
         }
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
@@ -139,6 +131,6 @@ export default function GameDisplay({game, assets}) {
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
 
-        <MapView assets={assets} gameMap={gameMap} mouseInput={game.mouseInput}/>
+        <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput}/>
     </>
 }

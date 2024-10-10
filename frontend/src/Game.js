@@ -1,4 +1,4 @@
-import { djikstra, getSteps } from "./utils/game_utils";
+import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import MouseInput from "./components/MouseInput";
@@ -34,7 +34,7 @@ export default class Game {
     }
 
     setSteps = (spawn, goal, speed ) => {
-        const path = djikstra(this.gameMap, spawn, goal);
+        const path = dijkstra(this.gameMap, spawn, goal);
         this.steps = getSteps(path, this.gameMap, speed || 1);
     }
 

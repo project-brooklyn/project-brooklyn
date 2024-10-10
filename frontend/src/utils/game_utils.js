@@ -9,7 +9,7 @@ const getNeighbors = (x, y, gameMap) => {
     return neighbors;
 }
 
-export const djikstra = (gameMap, spawn, goal) => {
+export const dijkstra = (gameMap, spawn, goal) => {
     const start = [spawn[0], spawn[1]];
     const final = [goal[0], goal[1]];
 

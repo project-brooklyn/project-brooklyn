@@ -9,7 +9,7 @@ const getNeighbors = (x, y, gameMap) => {
     return neighbors;
 }
 
-export const djikstra = (gameMap, spawn, goal) => {
+export const dijkstra = (gameMap, spawn, goal) => {
     const start = [spawn[0], spawn[1]];
     const final = [goal[0], goal[1]];
 
@@ -40,7 +40,7 @@ export const djikstra = (gameMap, spawn, goal) => {
                 path: [...path, [nx, ny]],
                 time: time + walkTime + (nz>z ? climbTime*(nz-z) : dropTime*(z-nz)),
             })
-        };
+        }
 
         queue.sort((a,b) => a.time - b.time); // lazy heap
     }
@@ -65,14 +65,16 @@ export const getSteps = (path, gameMap, speed) => {
             x = round(x);
             y = round(y);
         }
+        [x, y] = [(xi+xf)/2, (yi+yf)/2];
 
         // move from curr height to next height
         const [zi, zf] = [z, gameMap.getElevation(xf, yf)];
-        while (z !== zf) {
+        while (Math.abs(z-zi) < Math.abs(zf-zi)) {
             steps.push([x,y,z]);
             z += (zf-zi)/increment; // can divide for slower climb speed
             z = round(z);
         }
+        z = zf;
 
         // move from boundary to center of next
         while (Math.abs(x-xi) < Math.abs(xf-xi) || Math.abs(y-yi) < Math.abs(yf-yi)) {
@@ -82,6 +84,7 @@ export const getSteps = (path, gameMap, speed) => {
             x = round(x);
             y = round(y);
         }
+        [x, y] = [xf, yf];
 
         pathIndex++;
     }
@@ -96,6 +99,9 @@ const isAboveGround = (x, y, z, gameMap) => {
 }
 
 export const getStraightPath = (start, end, gameMap, speed=0.1) => {
+    const minRange = 3.5;
+    if (pythagorean(start, end) < minRange) return [];
+
     // start and end are [x,y,z] coordinates
     // returns a series of points, separated by distance 'speed', that follow a straight path
     // if no straight path through heightMap is possible, returns an empty array
@@ -112,6 +118,9 @@ export const getStraightPath = (start, end, gameMap, speed=0.1) => {
 };
 
 export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
+    const minRange = 3.5;
+    if (pythagorean(start, end) < minRange) return [];
+
     // start and end are [x,y,z] coordinates
     // returns a series (separated by timeInterval) of points that follow a parabolic path
     // if no parabolic path (starting at the default angle) through height map is possible, returns an empty array
@@ -141,7 +150,7 @@ export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
         const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInterval;
         const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInterval) + (g * t * timeInterval);
         path.push([x + dx, y + dy, z+dz]);
-    };
+    }
     
     // check if path hits ground within tolerance of target
     const tolerance = 0.5;

@@ -103,6 +103,7 @@ export default function BuyMenu({game}) {
 
                 const tower = new t.create(x, y, z);
                 game.addTower(tower);
+                gameMap.addTower(x, y);
             };
             mouseInput.addClickCallback(NAME, buildTower);
         } else if (selectedItem.name.startsWith("terraform")) {

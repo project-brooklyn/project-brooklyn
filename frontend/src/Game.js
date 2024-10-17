@@ -31,7 +31,7 @@ export default class Game {
         this.animationFunctions = [];
         this.spawnFunction = () => null;
         this.steps = [];
-        this.gold = 250;
+        this.gold = 500;
 
         this.mouseInput = new MouseInput();
     }

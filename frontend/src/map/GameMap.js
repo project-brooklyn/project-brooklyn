@@ -50,9 +50,11 @@ class GameMap {
     }
 
     getElevation(x, y, includeTower=false) {
-        const hasTower = !!this.towers.get(cellKey(x, y));
+        const cell = cellKey(x, y);
+        const mapHeight = this.elevationData.get(cell) || 0;
+        const maybeTowerHeight = (includeTower && this.towers.get(cell)) ? towerHeight : 0;
 
-        return this.elevationData.get(cellKey(x, y)) + (includeTower && hasTower ? towerHeight : 0) || 0;
+        return mapHeight + maybeTowerHeight ;
     }
 
     addTile(x, y, z, tile) {

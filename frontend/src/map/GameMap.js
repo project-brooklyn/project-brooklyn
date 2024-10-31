@@ -6,6 +6,8 @@ function cellKey(x, y) {
     return [x, y].join(',');
 }
 
+const towerHeight = 2.5;
+
 class GameMap {
     constructor() {
         // For simplicity, assume for now that the minimum value for each
@@ -14,6 +16,7 @@ class GameMap {
         this.maxY = 0;
         this.maxZ = 0;
 
+        this.towers = new Map();
         this.tileData = new Map();
         this.elevationData = new Map();
     }
@@ -46,8 +49,12 @@ class GameMap {
         return this.getTile(x, y, z) != undefined;
     }
 
-    getElevation(x, y) {
-        return this.elevationData.get(cellKey(x, y)) || 0;
+    getElevation(x, y, includeTower=false) {
+        const cell = cellKey(x, y);
+        const mapHeight = this.elevationData.get(cell) || 0;
+        const maybeTowerHeight = (includeTower && this.towers.get(cell)) ? towerHeight : 0;
+
+        return mapHeight + maybeTowerHeight ;
     }
 
     addTile(x, y, z, tile) {
@@ -70,6 +77,10 @@ class GameMap {
 
         const cell = cellKey(x, y);
         this.elevationData.set(cell, this.elevationData.get(cell) - 1);
+    }
+
+    addTower(x, y) {
+        this.towers.set(cellKey(x, y), true);
     }
 }
 

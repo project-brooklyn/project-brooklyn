@@ -23,7 +23,7 @@ export const dijkstra = (gameMap, spawn, goal) => {
     while (queue) {
         const { path, time } = queue.shift();
         const [x, y] = path.at(-1);
-        const z = gameMap.getElevation(x, y);
+        const z = gameMap.getElevation(x, y, true);
 
         const cell = [x, y].join(',');
         if (visited.has(cell)) {
@@ -35,7 +35,7 @@ export const dijkstra = (gameMap, spawn, goal) => {
 
         const neighbors = getNeighbors(x, y, gameMap);
         for(let [nx, ny] of neighbors){
-            const nz = gameMap.getElevation(nx, ny);
+            const nz = gameMap.getElevation(nx, ny, true);
             queue.push({
                 path: [...path, [nx, ny]],
                 time: time + walkTime + (nz>z ? climbTime*(nz-z) : dropTime*(z-nz)),
@@ -68,7 +68,7 @@ export const getSteps = (path, gameMap, speed) => {
         [x, y] = [(xi+xf)/2, (yi+yf)/2];
 
         // move from curr height to next height
-        const [zi, zf] = [z, gameMap.getElevation(xf, yf)];
+        const [zi, zf] = [z, gameMap.getElevation(xf, yf, true)];
         while (Math.abs(z-zi) < Math.abs(zf-zi)) {
             steps.push([x,y,z]);
             z += (zf-zi)/increment; // can divide for slower climb speed

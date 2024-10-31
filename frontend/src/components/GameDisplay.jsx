@@ -109,15 +109,15 @@ export default function GameDisplay({game, assets}) {
 
             // TODO: implement score phase
             game.phase = SCORE;
-            setTimeout(() => game.phase = BUILD, 3000);
+            setTimeout(() => game.phase = BUILD, 2000);
         }
     };
 
     return <>
         <axesHelper args={[width, depth, height]}/>
-        <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
+        {game.phase === BUILD && <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
             {game.over ? 'GAME OVER' : 'START'}
-        </Text>
+        </Text>}
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
         {game.phase === BUILD &&
             <BuyMenu game={game}/>

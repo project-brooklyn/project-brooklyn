@@ -128,10 +128,15 @@ export default function BuyMenu({game}) {
             });
 
             mouseInput.addClickCallback(NAME, () => {
-                if (game.gold < terraform.price) return;
-
                 if (!selectedItem.targetPosition) return;
                 let {x, y, z} = selectedItem.targetPosition;
+                if (z < 1) {
+                    // Not allowed to excavate lowest tile level.
+                    return;
+                }
+
+                if (game.gold < terraform.price) return;
+
                 selectedItem.targetPosition = null;
                 chargeCost(terraform.price);
 

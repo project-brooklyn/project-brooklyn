@@ -5,13 +5,17 @@ export default function MapView({assets, gameMap, overrides, mouseInput})
 {
     function renderTile(tile, reactive = true) {
         const tkey = tileKey(tile.x, tile.y, tile.z)
-        if (overrides.get("HIDE") === tkey) {
-            return null;
-        }
 
         const position = convertToRenderCoordinates(tile)
         const geometry = assets.geometryManager.get("tile");
-        const material = assets.materialManager.get(tile.type.name);
+
+        let material = assets.materialManager.get(tile.type.name);
+        if (overrides.get("HIDE") === tkey) {
+            // Adjust material opacity
+            material = material.clone();
+            material.opacity = 0.5;
+            material.transparent = true;
+        }
 
         let onClick = null;
         let onPointerEnter = null;

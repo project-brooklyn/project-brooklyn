@@ -20,10 +20,10 @@ export default function MapView({assets, gameMap, overrides, mouseInput})
         let onClick = null;
         let onPointerEnter = null;
         if (reactive) {
-            onClick = (e) => {
+            onClick = (_e) => {
                 mouseInput.triggerClick(tile.x, tile.y, tile.z);
             };
-            onPointerEnter = (e) => {
+            onPointerEnter = (_e) => {
                 mouseInput.triggerHover(tile.x, tile.y, tile.z);
             };
         }

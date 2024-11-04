@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { TileType } from "../map/Tile";
+import textures from "./textures";
 
 class MaterialManager {
     materials = new Map();
@@ -15,7 +16,8 @@ class MaterialManager {
 
     makeTileMaterial(tileType) {
         return new THREE.MeshBasicMaterial({
-            color: tileType.material.color
+            color: tileType.material.color,
+            map: textures[tileType.name] || null,
         });
     }
 

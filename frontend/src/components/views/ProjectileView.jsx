@@ -18,7 +18,7 @@ const renderProjectile = (projectile) => {
         position={[coordinates.x, coordinates.y, coordinates.z]}
         quaternion={quaternion}
     />);
-};
+}
 
 const renderLaser = (laser) => {
     const { path, spawnedAt } = laser;
@@ -38,4 +38,4 @@ export default function ProjectileView({projectiles}) {
     return <>
         {projectileComponents}
     </>
-};
+}

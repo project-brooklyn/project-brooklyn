@@ -37,11 +37,11 @@ const renderStructure = (structure) => {
             />
         </group>
     );
-};
+}
 
 export default function StructureView({ structures }) {
     const structureComponents = structures.flat().map(renderStructure);
     return <>
         {structureComponents}
     </>
-};
+}

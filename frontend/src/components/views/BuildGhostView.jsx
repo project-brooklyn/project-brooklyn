@@ -22,4 +22,4 @@ export default function BuildGhostView({ structure }) {
             scale={scale}
         />
     </group>);
-};
+}

@@ -12,9 +12,10 @@ import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
+import PathView from "./views/PathView";
 
 export default function GameDisplay({game, assets}) {
-    const { gameMap, castle, portal } = game;
+    const { gameMap, castle } = game;
     const { width, depth, height } = gameMap;
 
     const [goldReward, setGoldReward] = useState(100);
@@ -45,7 +46,7 @@ export default function GameDisplay({game, assets}) {
         setProjectiles(game.projectiles);
 
         const level = levels[game.level];
-        game.setSteps(portal.position, castle.position, level.enemy.SPEED);
+        game.setSteps(level.enemy.SPEED);
         game.setupEnemySpawn(level);
         setGoldReward(() => level.gold);
     };
@@ -130,6 +131,7 @@ export default function GameDisplay({game, assets}) {
         <StructureView structures={game.towers}/>
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
+        {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x,y)])} />}
 
         <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput}/>
     </>

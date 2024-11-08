@@ -108,6 +108,7 @@ export default function BuyMenu({game}) {
                 const tower = new towerType.create(x, y, z);
                 game.addTower(tower);
                 gameMap.addTower(x, y);
+                game.setPath();
             });
         } else if (selectedItem.name.startsWith("terraform")) {
             const terraform = TERRAFORMS.get(selectedItem.name);
@@ -151,6 +152,7 @@ export default function BuyMenu({game}) {
                 } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
                     gameMap.removeTile(x, y, z);
                 }
+                game.setPath();
             });
         }
     }, [selectedItem])

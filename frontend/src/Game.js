@@ -30,15 +30,21 @@ export default class Game {
 
         this.animationFunctions = [];
         this.spawnFunction = () => null;
+        this.path = [];
         this.steps = [];
         this.gold = 500;
 
         this.mouseInput = new MouseInput();
+        this.setPath(this.portal.position, this.castle.position);
     }
 
-    setSteps = (spawn, goal, speed ) => {
-        const path = dijkstra(this.gameMap, spawn, goal);
-        this.steps = getSteps(path, this.gameMap, speed || 1);
+    setPath = () => {
+        this.path = dijkstra(this.gameMap, this.portal.position, this.castle.position);
+    }
+
+    setSteps = (speed = 1) => {
+        this.setPath();
+        this.steps = getSteps(this.path, this.gameMap, speed);
     }
 
     spawnEnemy = (enemy) => {

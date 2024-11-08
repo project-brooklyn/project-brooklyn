@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -13,7 +13,7 @@ const SignUp = () => {
     const { login, logout } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(logout,[]);
+    useEffect(logout);
     
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -21,7 +21,7 @@ const SignUp = () => {
             ...prevData,
             [name]: value,
         }));
-    };
+    }
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,9 +41,9 @@ const SignUp = () => {
         } catch (err) {
             setUsernameError(err.response.data.username);
             setPasswordError(err.response.data.password);
-        };
+        }
 
-    };
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -73,7 +73,7 @@ const SignUp = () => {
             <br />
             <button type="submit">Sign Up</button>
         </form>
-    );
-};
+    )
+}
 
 export default SignUp;

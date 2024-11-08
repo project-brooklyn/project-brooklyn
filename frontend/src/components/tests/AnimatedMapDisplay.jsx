@@ -116,6 +116,7 @@ const AnimatedMapDisplay = ({gameMap, tileConfig, path, enemies}) => {
         };
     
         tick();
+    // eslint-disable-next-line
     }, []);
 
     return <div ref={mapRef}/>

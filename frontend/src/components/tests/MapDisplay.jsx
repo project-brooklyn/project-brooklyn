@@ -95,6 +95,7 @@ const MapDisplay = ({gameMap, tileConfig, path}) => {
         };
     
         tick();
+    // eslint-disable-next-line
     }, []);
 
     return <div ref={mapRef}/>

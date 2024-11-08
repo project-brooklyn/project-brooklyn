@@ -6,7 +6,6 @@ class ZigZagMap extends GameMap {
         super();
         const width = 12;
         const depth = 12;
-        const height = 12;
 
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < depth; y++) {

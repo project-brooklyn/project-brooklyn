@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 const COLOR_GREEN = new THREE.Color("green")
 const COLOR_YELLOW = new THREE.Color("yellow")
@@ -26,7 +26,7 @@ export default function HpView({hpFraction, position, width = 0.5, mode = "slide
             }
             materialRef.current.color = color
         }
-    }, [hpFraction])
+    }, [hpFraction, mode])
 
     return <>
         <sprite scale={[width, 0.04, 0]} position={[position[0], position[1] + modelHeight, position[2]]} >

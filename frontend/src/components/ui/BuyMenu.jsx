@@ -72,6 +72,7 @@ export default function BuyMenu({game}) {
     useEffect(() => {
         // Handle game state changes
         deselectAll();
+    //eslint-disable-next-line
     }, [game.phase, game.over])
 
     useEffect(() => {
@@ -155,6 +156,7 @@ export default function BuyMenu({game}) {
                 game.setPath();
             });
         }
+    //eslint-disable-next-line
     }, [selectedItem])
 
     let menuIndex = depth + 3;

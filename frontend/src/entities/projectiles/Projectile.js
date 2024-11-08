@@ -20,5 +20,5 @@ export default class Projectile extends Entity {
             this.setPosition(...this.path[this.stepIndex]);
             this.stepIndex++;
         }
-    };
-};
+    }
+}

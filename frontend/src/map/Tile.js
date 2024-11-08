@@ -16,7 +16,7 @@ export class TileType {
             color: colors[name] ?? colors['unknown']
         }
     }
-};
+}
 
 export class Tile {
     constructor(x, y, z, type) {
@@ -25,6 +25,6 @@ export class Tile {
         this.z = z
         this.type = type
     }
-};
+}
 
 export default Tile;

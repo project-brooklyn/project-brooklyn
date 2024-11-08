@@ -116,13 +116,23 @@ export default function GameDisplay({game, assets}) {
 
     return <>
         <axesHelper args={[width, depth, height]}/>
-        {game.phase === BUILD && <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
+        {game.phase === BUILD && <Text
+            onClick={startDefendPhase}
+            position={[width/2-0.5, height/2 + 1, 0]}
+        >
             {game.over ? 'GAME OVER' : 'START'}
         </Text>}
+        {game.phase === BUILD && <Text
+            onClick={() => game.gold += 100}
+            position={[width/2-0.5, 0, -0.51]}
+            rotation={[0, Math.PI, 0]}
+            fontSize={0.2}
+        >
+            FREE GOLD!
+        </Text>}
+
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
-        {game.phase === BUILD &&
-            <BuyMenu game={game}/>
-        }
+        {game.phase === BUILD && <BuyMenu game={game}/> }
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

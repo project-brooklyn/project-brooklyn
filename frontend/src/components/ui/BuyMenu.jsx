@@ -82,30 +82,33 @@ export default function BuyMenu({game}) {
 
         if (selectedItem.name.endsWith("Tower")) {
             // Tower handling
-            const t = TOWERS.get(selectedItem.name);
+            const towerType = TOWERS.get(selectedItem.name);
 
             mouseInput.addHoverCallback(NAME, (x, y, z) => {
+                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
+                    return;
+                }
+
                 if (!selectedItem.targetPosition) {
                     selectedItem.targetPosition = new Vector3();
                 }
                 selectedItem.targetPosition.set(x, y, z);
-                setNewTower(new t.create(x, y, z));
+                setNewTower(new towerType.create(x, y, z));
             });
 
-            const buildTower = () => {
-                if (game.gold < t.price) return;
+            mouseInput.addClickCallback(NAME, () => {
+                if (game.gold < towerType.price) return;
 
                 const {x, y, z} = selectedItem.targetPosition;
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
-                chargeCost(t.price);
+                chargeCost(towerType.price);
 
-                const tower = new t.create(x, y, z);
+                const tower = new towerType.create(x, y, z);
                 game.addTower(tower);
                 gameMap.addTower(x, y);
-            };
-            mouseInput.addClickCallback(NAME, buildTower);
+            });
         } else if (selectedItem.name.startsWith("terraform")) {
             const terraform = TERRAFORMS.get(selectedItem.name);
 

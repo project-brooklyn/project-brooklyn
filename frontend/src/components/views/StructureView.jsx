@@ -6,7 +6,7 @@ import HpView from "./HpView";
 
 const renderStructure = (structure) => {
     if (!structure) return null;
-    const { scale, name, hp, maxHp, offset } = structure;
+    const { scale, name, hp, maxHp, offset, rotation } = structure;
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
@@ -34,6 +34,7 @@ const renderStructure = (structure) => {
             <primitive
                 object={isObjModel ? modelLoader : modelLoader.scene.clone(true)}
                 scale={scale}
+                rotation={rotation}
             />
         </group>
     );

@@ -13,4 +13,4 @@ export default function GameInfo({level, phase, height, depth, gold}) {
             {`Gold: ${gold}\n`}
         </Text>
     )
-};
+}

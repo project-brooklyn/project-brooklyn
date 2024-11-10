@@ -32,11 +32,11 @@ const TERRAFORM_EXCAVATE = "terraformExcavate";
 const TERRAFORMS = new Map([
     [TERRAFORM_FILL, {
         label: "Fill",
-        price: 100,
+        price: 10,
     }],
     [TERRAFORM_EXCAVATE, {
         label: "Excavate",
-        price: 100,
+        price: 10,
     }],
 ]);
 
@@ -72,6 +72,7 @@ export default function BuyMenu({game}) {
     useEffect(() => {
         // Handle game state changes
         deselectAll();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game.phase, game.over])
 
     useEffect(() => {
@@ -155,6 +156,7 @@ export default function BuyMenu({game}) {
                 game.setPath();
             });
         }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedItem])
 
     let menuIndex = depth + 3;

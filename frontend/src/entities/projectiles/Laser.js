@@ -7,6 +7,6 @@ export default class Laser extends Projectile {
 
         super(x, y, z, 0.005, quaternion, path);
         this.name = "laser";
-    };
+    }
 
-};
+}

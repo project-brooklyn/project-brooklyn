@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -12,7 +12,7 @@ const LogIn = () => {
     const { login, logout } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(logout,[]);
+    useEffect(logout);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,7 +37,7 @@ const LogIn = () => {
             navigate('/');
         } catch (err) {
             setError(err.response.data.error);
-        };
+        }
     };
 
     return (

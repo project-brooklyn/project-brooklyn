@@ -45,4 +45,34 @@ export const levels = [
         delay: 25,
         gold: 100,
     },
+    {
+        enemy: Lamb,
+        count: 200,
+        delay: 5,
+        gold: 100,
+    },
+    {
+        enemy: Guy,
+        count: 50,
+        delay: 20,
+        gold: 100,
+    },
+    {
+        enemy: Guy,
+        count: 50,
+        delay: 15,
+        gold: 100,
+    },
+    {
+        enemy: Guy,
+        count: 75,
+        delay: 10,
+        gold: 100,
+    },
+    {
+        enemy: Guy,
+        count: 100,
+        delay: 7.5,
+        gold: 100,
+    },
 ];

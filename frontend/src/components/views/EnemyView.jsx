@@ -1,10 +1,10 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils";
-import { render, useLoader } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const renderEnemy = (enemy, i) => {
-    const { scale, name, hp, maxHp, offset, spawnedAt, rotation } = enemy;
+    const { scale, name, hp, maxHp, offset, rotation } = enemy;
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 

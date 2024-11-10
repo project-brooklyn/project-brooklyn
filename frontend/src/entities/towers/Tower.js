@@ -5,4 +5,4 @@ export default class Tower extends Entity {
         super(x, y, z, scale);
         this.hp = Infinity;
     }
-};
+}

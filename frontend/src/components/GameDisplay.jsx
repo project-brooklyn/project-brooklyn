@@ -36,7 +36,7 @@ export default function GameDisplay({game, assets}) {
     })
 
     const startDefendPhase = () => {
-        if (game.phase !== BUILD || game.level === levels.length-1 || game.over) return;
+        if (game.phase !== BUILD || game.over) return;
         game.phase = DEFEND;
         game.spawningEnemies = true;
         game.enemies = [];
@@ -108,6 +108,11 @@ export default function GameDisplay({game, assets}) {
             game.gold += goldReward;
             game.level++;
 
+            if (game.level == levels.length - 1) {
+                game.over = true;
+                return
+            }
+
             // TODO: implement score phase
             game.phase = SCORE;
             setTimeout(() => game.phase = BUILD, 2000);
@@ -116,13 +121,23 @@ export default function GameDisplay({game, assets}) {
 
     return <>
         <axesHelper args={[width, depth, height]}/>
-        {game.phase === BUILD && <Text onClick={startDefendPhase} position={[width/2-0.5, height/2 + 1, 0]}>
-            {game.over ? 'GAME OVER' : 'START'}
+        {game.phase === BUILD && <Text
+            onClick={startDefendPhase}
+            position={[width/2-0.5, height/2 + 1, 0]}
+        >
+            {!game.over ? 'START' : castle.hp ? 'YOU WIN' : 'GAME OVER'}
         </Text>}
+        {game.phase === BUILD && <Text
+            onClick={() => game.gold += 100}
+            position={[width/2-0.5, 0, -0.51]}
+            rotation={[0, Math.PI, 0]}
+            fontSize={0.2}
+        >
+            FREE GOLD!
+        </Text>}
+
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
-        {game.phase === BUILD &&
-            <BuyMenu game={game}/>
-        }
+        {game.phase === BUILD && <BuyMenu game={game}/> }
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

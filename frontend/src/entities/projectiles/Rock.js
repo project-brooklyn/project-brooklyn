@@ -9,6 +9,6 @@ export default class Rock extends Projectile {
         const quaternion = new THREE.Quaternion();
         super(x, y, z, scale, quaternion, path);
         this.name = "rock";
-    };
+    }
 
-};
+}

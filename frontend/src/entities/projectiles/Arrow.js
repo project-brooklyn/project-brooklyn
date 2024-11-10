@@ -27,7 +27,7 @@ export default class Arrow extends Projectile {
 
         super(x, y, z, scale, quaternion, path);
         this.name = "arrow";
-    };
+    }
 
 
-};
+}

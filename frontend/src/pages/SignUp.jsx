@@ -10,10 +10,10 @@ const SignUp = () => {
     });
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const { login, logout } = useAuth();
+    const { user, login, logout } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(logout);
+    useEffect(() => {if (user) logout()}, [user, logout]);
     
     const handleChange = (e) => {
         const {name, value} = e.target;

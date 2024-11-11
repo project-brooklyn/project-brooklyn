@@ -20,12 +20,12 @@ const TopBar = ({user, logout}) => {
         <h1>Project Brooklyn</h1>
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <div>
-                {user ? <p>You are logged in as ${user.username}</p> : <p>You are not logged in</p>}
+                {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
             { 
                 user ? 
-                    <p onClick={logout}>Log Out</p>
+                    <p style={{color: 'blue'}} onClick={logout}>Log Out</p>
                 :
                     <p>
                         <a href="/signup">Sign Up</a>

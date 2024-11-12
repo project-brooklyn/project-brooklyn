@@ -5,6 +5,7 @@ import { Text } from "@react-three/drei"
 import { Tile, TileType } from '/src/map/Tile.js';
 import { tileKey } from '/src/map/GameMap.js';
 import BuildGhostView from "../views/BuildGhostView";
+import { BUILD } from "../../Game";
 
 import ArrowTower from "../../entities/towers/ArrowTower";
 import RockTower from "../../entities/towers/RockTower";
@@ -214,8 +215,8 @@ export default function BuyMenu({game}) {
         )
     });
 
-    return (
-        <>
+    const showBuyMenu = (game.phase === BUILD) && !game.over;
+    return showBuyMenu && <>
             <Text
                 position={[width/2, 0,  depth + 2]}
                 rotation={[-Math.PI/2, 0, 0]}
@@ -226,5 +227,4 @@ export default function BuyMenu({game}) {
             {buyTerraformButtons}
             {newTower && <BuildGhostView structure={newTower} />}
         </>
-    )
 }

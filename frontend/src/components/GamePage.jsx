@@ -17,14 +17,17 @@ const GamePage = ({gameMap}) => {
 
 const TopBar = ({user, logout}) => {
     return (<div style={{display: 'flex', justifyContent: 'space-around'}}>
-        <h1>Project Brooklyn</h1>
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div>
+            <h1>Project Brooklyn</h1>
+            <h2>A tower defense game</h2>
+        </div>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>
             <div>
                 {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
-            { 
-                user ? 
+            {
+                user ?
                     <p style={{color: 'blue'}} onClick={logout}>Log Out</p>
                 :
                     <p>
@@ -46,7 +49,7 @@ const GameContainer = ({game}) => {
                 <GameDisplay game={game} assets={assets} />
             </Canvas>
         </div>
-        <h6>Footer</h6>
+        <h6>© 2024, BK Studios.</h6>
     </div>
 }
 

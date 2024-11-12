@@ -137,7 +137,7 @@ export default function GameDisplay({game, assets}) {
         </Text>}
 
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
-        {game.phase === BUILD && <BuyMenu game={game}/> }
+        <BuyMenu game={game}/>
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

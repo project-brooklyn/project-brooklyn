@@ -7,11 +7,11 @@ import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useState } from "react";
 
-const GamePage = ({gameMap}) => {
+const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
     const game = new Game(new gameMap());
 
-    const [modalShow, setModalShow] = useState(true);
+    const [modalShow, setModalShow] = useState(showWelcome);
 
     return (<>
         <WelcomeModal

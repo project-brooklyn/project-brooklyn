@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import { TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
+import { Test0, TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
 
 const router = createBrowserRouter([
     {
@@ -23,6 +23,10 @@ const router = createBrowserRouter([
     {
         path: '/signup',
         element: <SignUp />,
+    },
+    {
+        path: '/test0',
+        element: <Test0 />,
     },
     {
         path: '/testa',

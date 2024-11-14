@@ -11,12 +11,12 @@ const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
     const game = new Game(new gameMap());
 
-    const [modalShow, setModalShow] = useState(showWelcome);
+    const [showModal, setShowModal] = useState(showWelcome);
 
     return (<>
         <WelcomeModal
-          show={modalShow}
-          onHide={() => setModalShow(false)}
+          show={showModal}
+          onHide={() => setShowModal(false)}
         />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />

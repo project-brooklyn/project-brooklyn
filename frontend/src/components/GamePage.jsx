@@ -4,12 +4,20 @@ import { useAuth } from "../AuthContext";
 import Game from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
+import WelcomeModal from "./ui/WelcomeModal";
+import { useState } from "react";
 
-const GamePage = ({gameMap}) => {
+const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
     const game = new Game(new gameMap());
 
+    const [showModal, setShowModal] = useState(showWelcome);
+
     return (<>
+        <WelcomeModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+        />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </>)

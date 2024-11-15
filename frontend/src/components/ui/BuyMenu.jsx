@@ -11,7 +11,7 @@ import ArrowTower from "../../entities/towers/ArrowTower";
 import RockTower from "../../entities/towers/RockTower";
 import LaserTower from "../../entities/towers/LaserTower";
 
-const NAME = "BuyMenu"
+const NAME = "BuyMenu";
 
 const TOWERS = new Map([
     ["arrowTower", {
@@ -56,6 +56,7 @@ export default function BuyMenu({game}) {
 
     const [selectedItem, setSelectedItem] = useState(null);
     const [newTower, setNewTower] = useState(null);
+    const [undoStack, setUndoStack] = useState([]);
 
     const deselectAll = () => {
         setSelectedItem(null);
@@ -73,6 +74,7 @@ export default function BuyMenu({game}) {
     useEffect(() => {
         // Handle game state changes
         deselectAll();
+        setUndoStack([]);
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game.phase, game.over])
 
@@ -110,6 +112,7 @@ export default function BuyMenu({game}) {
                 const tower = new towerType.create(x, y, z);
                 game.addTower(tower);
                 gameMap.addTower(x, y);
+                setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
                 game.setPath();
             });
         } else if (selectedItem.name.startsWith("terraform")) {
@@ -148,12 +151,15 @@ export default function BuyMenu({game}) {
 
                 game.gameMapOverrides.clear();
 
+                let tileType;
                 if (selectedItem.name == TERRAFORM_FILL) {
                     z += 1;
                     gameMap.addTile(x, y, z, new Tile(x, y, z, TileType.Stone));
                 } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
+                    tileType = gameMap.getTile(x, y, z).type;
                     gameMap.removeTile(x, y, z);
                 }
+                setUndoStack(prevStack => [...prevStack, {x, y, z, ...terraform, tileType}]);
                 game.setPath();
             });
         }
@@ -215,6 +221,31 @@ export default function BuyMenu({game}) {
         )
     });
 
+    const undoBuild = () => {
+        if (!undoStack.length) return;
+        deselectAll();
+        const {x, y, z, label, price, tileType} = undoStack.at(-1);
+        
+        switch (label) {
+            case 'BuildTower':
+                game.removeTower(x, y);
+                gameMap.removeTower(x, y);
+                break;
+            case 'Fill':
+                gameMap.removeTile(x, y, z);
+                break;
+            case 'Excavate':
+                gameMap.addTile(x, y, z, new Tile(x, y, z, tileType));
+                break;
+            default:
+                console.error("Unknown undo label", label);
+        }
+
+        game.gold += price;
+        setUndoStack((prevStack) => prevStack.slice(0, -1));
+        game.setPath();
+    }
+
     const showBuyMenu = (game.phase === BUILD) && !game.over;
     return showBuyMenu && <>
             <Text
@@ -225,6 +256,13 @@ export default function BuyMenu({game}) {
             </Text>
             {buyTowerButtons}
             {buyTerraformButtons}
+            {undoStack.length && <Text
+                onClick={undoBuild}
+                position={[width/2, 0,  depth + 8]}
+                rotation={[-Math.PI/2, 0, 0]}
+            >
+                Undo Last Buy
+            </Text>}
             {newTower && <BuildGhostView structure={newTower} />}
         </>
 }

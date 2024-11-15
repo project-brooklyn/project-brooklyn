@@ -82,6 +82,10 @@ class GameMap {
     addTower(x, y) {
         this.towers.set(cellKey(x, y), true);
     }
+
+    removeTower(x, y) {
+        this.towers.delete(cellKey(x, y));
+    }
 }
 
 export default GameMap;

@@ -83,6 +83,10 @@ export default class Game {
         this.towers[x][y] = tower;
     };
 
+    removeTower = (x, y) => {
+        this.towers[x][y] = null;
+    };
+
     tick = () => {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();

@@ -26,6 +26,7 @@ export default class ArrowTower extends Tower {
 
     createProjectile = (path) => {
         this.currentCooldown = this.cooldown;
+        this.rotateTowardsTarget(path.at(-1));
         return new Arrow(...this.position, path);
     };
 }

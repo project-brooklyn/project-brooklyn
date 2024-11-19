@@ -27,6 +27,7 @@ export default class RockTower extends Tower {
 
     createProjectile = (path) => {
         this.currentCooldown = this.cooldown;
+        this.rotateTowardsTarget(path.at(-1));
         return new Rock(...this.position, path);
     };
 }

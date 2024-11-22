@@ -146,7 +146,7 @@ export default function GameDisplay({game, assets}) {
         <StructureView structures={game.towers}/>
         <EnemyView enemies={enemies}/>
         <ProjectileView projectiles={projectiles}/>
-        {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x,y)])} />}
+        {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x,y,true)])} />}
 
         <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput}/>
     </>

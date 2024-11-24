@@ -1,9 +1,15 @@
 import Entity from "../Entity";
 
+export const Status = {
+    PENDING: Symbol("pending"),
+    BUILT: Symbol("built"),
+};
+
 export default class Tower extends Entity {
-    constructor (x, y, z, scale) {
+    constructor (x, y, z, scale, status) {
         super(x, y, z, scale);
         this.hp = Infinity;
+        this.status = status;
     }
 
     rotateTowardsTarget(target) {

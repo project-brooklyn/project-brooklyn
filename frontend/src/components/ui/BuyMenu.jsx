@@ -10,6 +10,7 @@ import { BUILD } from "../../Game";
 import ArrowTower from "../../entities/towers/ArrowTower";
 import RockTower from "../../entities/towers/RockTower";
 import LaserTower from "../../entities/towers/LaserTower";
+import { Status as TowerStatus } from "../../entities/towers/Tower";
 
 const NAME = "BuyMenu";
 
@@ -97,7 +98,7 @@ export default function BuyMenu({game}) {
                     selectedItem.targetPosition = new Vector3();
                 }
                 selectedItem.targetPosition.set(x, y, z);
-                setNewTower(new towerType.create(x, y, z));
+                setNewTower(new towerType.create(x, y, z, TowerStatus.PENDING));
             });
 
             mouseInput.addClickCallback(NAME, () => {
@@ -109,7 +110,7 @@ export default function BuyMenu({game}) {
                 }
                 chargeCost(towerType.price);
 
-                const tower = new towerType.create(x, y, z);
+                const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
                 game.addTower(tower);
                 gameMap.addTower(x, y);
                 setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
@@ -216,7 +217,7 @@ export default function BuyMenu({game}) {
                 rotation={[-Math.PI/2, 0, 0]}
                 onClick={handleClick}
             >
-                    {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
+                {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
             </Text>
         )
     });

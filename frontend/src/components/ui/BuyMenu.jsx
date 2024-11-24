@@ -246,23 +246,27 @@ export default function BuyMenu({game}) {
         game.setPath();
     }
 
+    const undoButton = (
+        Boolean(undoStack.length) && <Text
+            onClick={undoBuild}
+            position={[width/2, 0, menuIndex++]}
+            rotation={[-Math.PI/2, 0, 0]}
+        >
+            Undo Last Buy
+        </Text>
+    )
+
     const showBuyMenu = (game.phase === BUILD) && !game.over;
     return showBuyMenu && <>
             <Text
-                position={[width/2, 0,  depth + 2]}
+                position={[width/2, 0, depth + 2]}
                 rotation={[-Math.PI/2, 0, 0]}
             >
                 {"Buy Menu\n"}
             </Text>
             {buyTowerButtons}
             {buyTerraformButtons}
-            {undoStack.length && <Text
-                onClick={undoBuild}
-                position={[width/2, 0,  depth + 8]}
-                rotation={[-Math.PI/2, 0, 0]}
-            >
-                Undo Last Buy
-            </Text>}
+            {undoButton}
             {newTower && <BuildGhostView structure={newTower} />}
         </>
 }

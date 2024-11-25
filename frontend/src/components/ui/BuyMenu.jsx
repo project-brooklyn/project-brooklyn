@@ -14,7 +14,7 @@ import { Status as TowerStatus } from "../../entities/towers/Tower";
 
 const NAME = "BuyMenu";
 
-const TOWERS = new Map([
+export const TOWERS = new Map([
     ["arrowTower", {
         create: ArrowTower,
         price: 50,

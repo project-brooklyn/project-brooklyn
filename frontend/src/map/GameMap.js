@@ -45,6 +45,11 @@ class GameMap {
         return this.tileData.get(tileKey(x, y, z)) || undefined;
     }
 
+    getTower(x, y) {
+        // TODO: Reconsider this.towers (boolean values) and game.towers
+        return this.towers.get(cellKey(x, y)) || undefined;
+    }
+
     isOccupied(x, y, z) {
         return this.getTile(x, y, z) != undefined;
     }

@@ -10,10 +10,11 @@ import { BUILD } from "../../Game";
 import ArrowTower from "../../entities/towers/ArrowTower";
 import RockTower from "../../entities/towers/RockTower";
 import LaserTower from "../../entities/towers/LaserTower";
+import { Status as TowerStatus } from "../../entities/towers/Tower";
 
 const NAME = "BuyMenu";
 
-const TOWERS = new Map([
+export const TOWERS = new Map([
     ["arrowTower", {
         create: ArrowTower,
         price: 50,
@@ -97,7 +98,7 @@ export default function BuyMenu({game}) {
                     selectedItem.targetPosition = new Vector3();
                 }
                 selectedItem.targetPosition.set(x, y, z);
-                setNewTower(new towerType.create(x, y, z));
+                setNewTower(new towerType.create(x, y, z, TowerStatus.PENDING));
             });
 
             mouseInput.addClickCallback(NAME, () => {
@@ -109,7 +110,7 @@ export default function BuyMenu({game}) {
                 }
                 chargeCost(towerType.price);
 
-                const tower = new towerType.create(x, y, z);
+                const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
                 game.addTower(tower);
                 gameMap.addTower(x, y);
                 setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
@@ -216,7 +217,7 @@ export default function BuyMenu({game}) {
                 rotation={[-Math.PI/2, 0, 0]}
                 onClick={handleClick}
             >
-                    {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
+                {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
             </Text>
         )
     });
@@ -246,23 +247,27 @@ export default function BuyMenu({game}) {
         game.setPath();
     }
 
+    const undoButton = (
+        Boolean(undoStack.length) && <Text
+            onClick={undoBuild}
+            position={[width/2, 0, menuIndex++]}
+            rotation={[-Math.PI/2, 0, 0]}
+        >
+            Undo Last Buy
+        </Text>
+    )
+
     const showBuyMenu = (game.phase === BUILD) && !game.over;
     return showBuyMenu && <>
             <Text
-                position={[width/2, 0,  depth + 2]}
+                position={[width/2, 0, depth + 2]}
                 rotation={[-Math.PI/2, 0, 0]}
             >
                 {"Buy Menu\n"}
             </Text>
             {buyTowerButtons}
             {buyTerraformButtons}
-            {undoStack.length && <Text
-                onClick={undoBuild}
-                position={[width/2, 0,  depth + 8]}
-                rotation={[-Math.PI/2, 0, 0]}
-            >
-                Undo Last Buy
-            </Text>}
+            {undoButton}
             {newTower && <BuildGhostView structure={newTower} />}
         </>
 }

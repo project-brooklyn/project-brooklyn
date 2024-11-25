@@ -25,9 +25,9 @@ class MouseInput {
         return this.clickCallbacks.delete(key);
     }
 
-    triggerClick() {
+    triggerClick(x, y, z) {
         this.clickCallbacks.forEach((fn) => {
-            fn();
+            fn(x, y, z);
         })
     }
 }

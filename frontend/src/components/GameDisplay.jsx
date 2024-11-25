@@ -12,7 +12,9 @@ import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
 import GameInfo from "./ui/GameInfo";
 import BuyMenu from "./ui/BuyMenu";
+import SellMenu from "./ui/SellMenu";
 import PathView from "./views/PathView";
+import { Status as TowerStatus } from "../entities/towers/Tower";
 
 export default function GameDisplay({game, assets}) {
     const { gameMap, castle } = game;
@@ -35,6 +37,15 @@ export default function GameDisplay({game, assets}) {
         checkLevelOver();
     })
 
+    const commitTowers = () => {
+        for (let tower of game.towers.flat()) {
+            if (tower && "status" in tower) {
+                // TODO: Remove portal and castle from towers array
+                tower.status = TowerStatus.BUILT;
+            }
+        }
+    }
+
     const startDefendPhase = () => {
         if (game.phase !== BUILD || game.over) return;
         game.phase = DEFEND;
@@ -42,6 +53,7 @@ export default function GameDisplay({game, assets}) {
         game.enemies = [];
         game.projectiles = [];
 
+        commitTowers();
         setEnemies(game.enemies);
         setProjectiles(game.projectiles);
 
@@ -138,6 +150,7 @@ export default function GameDisplay({game, assets}) {
 
         <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
         <BuyMenu game={game}/>
+        <SellMenu game={game}/>
 
         <PerspectiveCamera makeDefault fov={50} position={ [20, 15, 20] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

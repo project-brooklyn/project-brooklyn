@@ -3,8 +3,8 @@ import Arrow from "../projectiles/Arrow";
 import Tower from "./Tower";
 
 export default class ArrowTower extends Tower {
-    constructor (x, y, z) {
-        super(x, y, z, 0.01);
+    constructor (x, y, z, status) {
+        super(x, y, z, 0.01, status);
         this.name = 'arrowTower';
         this.cooldown = 25;
         this.currentCooldown = 0;

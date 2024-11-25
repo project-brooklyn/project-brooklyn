@@ -18,23 +18,19 @@ export default function SellMenu({ game }) {
     const { width, depth } = gameMap;
     const [selectedTower, setSelectedTower] = useState(null);
 
-    const reset = () => {
-        setSelectedTower(null);
-    }
-
     useEffect(() => {
-        reset();
+        setSelectedTower(null);
 
         if (!game.over && game.phase == BUILD) {
             mouseInput.addClickCallback(NAME, (x, y, _z) => {
                 if (!gameMap.getTower(x, y)) {
-                    reset();
+                    setSelectedTower(null);
                     return;
                 }
 
                 const tower = game.towers[x][y];
                 if (tower.status != TowerStatus.BUILT) {
-                    reset();
+                    setSelectedTower(null);
                     return;
                 }
 

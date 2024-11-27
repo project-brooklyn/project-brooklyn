@@ -2,6 +2,8 @@ import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import MouseInput from "./components/MouseInput";
+import { levels } from "./levels";
+import { Status as TowerStatus } from "./entities/towers/Tower";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -33,6 +35,7 @@ export default class Game {
         this.path = [];
         this.steps = [];
         this.gold = 500;
+        this.goldReward = 0;
 
         this.mouseInput = new MouseInput();
         this.setPath(this.portal.position, this.castle.position);
@@ -90,6 +93,102 @@ export default class Game {
     tick = () => {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();
+
+        this.handleEnemiesAtCastle();
+        this.towersAttack();
+        this.checkLevelOver();
+    };
+
+    
+    startDefendPhase = () => {
+        if (this.phase !== BUILD || this.over) return;
+        this.phase = DEFEND;
+
+        this.spawningEnemies = true;
+        this.enemies = [];
+        this.projectiles = [];
+        
+        this.commitTowers();
+        
+        const level = levels[this.level];
+        this.setSteps(level.enemy.SPEED);
+        this.setupEnemySpawn(level);
+        this.goldReward = level.gold;
+    };
+    
+    commitTowers = () => {
+        for (let tower of this.towers.flat()) {
+            if (tower && "status" in tower) {
+                // TODO: Remove portal and castle from towers array
+                tower.status = TowerStatus.BUILT;
+            }
+        }
+    }
+
+    towersAttack = () => {
+        for (let tower of this.towers.flat()) {
+            // handle null, portal, and castle
+            if (!tower || !tower.getProjectilePath) continue;
+
+            // handle tower cooldown
+            if (tower.currentCooldown) {
+                --tower.currentCooldown;
+                continue;
+            }
+
+            // check all enemies, attack first (farthest along path)
+            for (let enemy of this.enemies) {
+                if (!enemy.hp) continue;
+                const path = tower.getProjectilePath(enemy.position, this.gameMap);
+                // console.log(tower, enemy, path)
+                if (path.length) {
+                    const projectile = tower.createProjectile(path);
+                    this.addProjectile(projectile);
+
+                    // TODO: this is instant damage, convert to when projectile hits?
+                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
+    
+                    break;
+                }
+            }
+        }
+    }
+
+    handleEnemiesAtCastle = () => {
+        for (const enemy of this.enemies)  {
+            if (
+                enemy.position[0] === this.castle.position[0] &&
+                enemy.position[1] === this.castle.position[1] &&
+                enemy.position[2] === this.castle.position[2] &&
+                enemy.hp // enemy is alive at castle
+            ) {
+                this.castle.takeDamage(enemy.hp);
+                if (this.castle.hp <= 0) this.over = true;
+                enemy.hp = 0;
+            }
+        }
+    };
+    
+    checkLevelOver = () => {
+        if (
+            this.phase === DEFEND &&
+            !this.spawningEnemies &&
+            !this.enemies.some(enemy => !!enemy.hp)
+        ) {
+            this.enemies = [];
+            this.projectiles = [];
+            this.gold += this.goldReward;
+            this.level++;
+
+            if (this.level == levels.length - 1) {
+                this.over = true;
+                return
+            }
+
+            // TODO: implement score phase
+            this.phase = SCORE;
+            setTimeout(() => this.phase = BUILD, 2000);
+        }
     };
 }
 

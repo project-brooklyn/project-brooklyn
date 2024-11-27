@@ -20,7 +20,7 @@ class ZigZagMap extends GameMap {
                         z===tileHeight ? TileType.Grass :
                         z===0 ? TileType.Stone :
                         TileType.Dirt;
-                    this.addTile(x, y, z, new Tile(x, y, z, tileType));
+                    this.addTile(new Tile(x, y, z, tileType));
                 }
             }
         }

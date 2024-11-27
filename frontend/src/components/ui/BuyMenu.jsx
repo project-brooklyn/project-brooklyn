@@ -155,7 +155,7 @@ export default function BuyMenu({game}) {
                 let tileType;
                 if (selectedItem.name == TERRAFORM_FILL) {
                     z += 1;
-                    gameMap.addTile(x, y, z, new Tile(x, y, z, TileType.Stone));
+                    gameMap.addTile(new Tile(x, y, z, TileType.Stone));
                 } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
                     tileType = gameMap.getTile(x, y, z).type;
                     gameMap.removeTile(x, y, z);
@@ -236,7 +236,7 @@ export default function BuyMenu({game}) {
                 gameMap.removeTile(x, y, z);
                 break;
             case 'Excavate':
-                gameMap.addTile(x, y, z, new Tile(x, y, z, tileType));
+                gameMap.addTile(new Tile(x, y, z, tileType));
                 break;
             default:
                 console.error("Unknown undo label", label);

@@ -1,11 +1,12 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game from "../Game";
+import Game, { BUILD } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useState } from "react";
+
 
 const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
@@ -51,14 +52,42 @@ const TopBar = ({user, logout}) => {
 
 const GameContainer = ({game}) => {
     return <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <div style={{border: "2px solid blue", height: "80vh", aspectRatio: "16/9"}}>
-            <Stats showPanel={0} className="stats" />
-            <Canvas>
-                <GameDisplay game={game} assets={assets} />
-            </Canvas>
+        <div style={{display: "flex", height: "80vh"}} >
+            <div style={{border: "2px solid blue", aspectRatio: "4/3"}}>
+                <Stats showPanel={0} className="stats" />
+                <Canvas>
+                    <GameDisplay game={game} assets={assets} />
+                </Canvas>
+            </div>
+            <HtmlUI game={game} phase={game.phase}/>
         </div>
         <h6>© 2024, BK Studios.</h6>
     </div>
 }
 
 export default GamePage;
+
+const HtmlUI = ({game}) => {
+    const [level, setLevel] = useState(game.level);
+    const [gold, setGold] = useState(game.gold);
+    const [phase, setPhase] = useState(game.phase);
+
+    setInterval(() => {
+        setLevel(game.level);
+        setGold(game.gold);
+        setPhase(game.phase);
+    }, 100); // substiture for useFrame, which can't be used outside Canvas
+
+    return <div style={{width: "20vw", border: "2px solid red", display: "flex", flexDirection: "column"}}>
+        <div style={{display: "flex", justifyContent: "space-between"}}>
+            <span>{`Level: ${level}`}</span>
+            <span>{`Gold: ${gold}`}</span>
+            <span>{`Phase: ${phase.toUpperCase()}`}</span>
+        </div>
+
+
+        {phase === BUILD && <div style={{display: "flex", justifyContent: "center", marginTop: "auto", marginBottom: "40px"}}>
+            <button onClick={game.startDefendPhase}>START NEXT LEVEL</button>
+        </div>}
+    </div>
+}

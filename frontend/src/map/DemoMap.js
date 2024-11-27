@@ -13,26 +13,29 @@ class DemoMap extends GameMap {
                 for (let z = 0; z < height; z++) {
                     if (z > 0) {
                         const tileType = (x == 4 || x == 5 || z < height-1) ? TileType.Dirt : TileType.Grass;
-                        this.addTile(x, y, z, new Tile(x, y, z, tileType));
+                        this.addTile(new Tile(x, y, z, tileType));
                     }
                     else {
-                        this.addTile(x, y, z, new Tile(x, y, z, TileType.Stone));
+                        this.addTile(new Tile(x, y, z, TileType.Stone));
                     }
                 }
             }
         }
 
         for (let x = 0; x < 4; x++) {
-            for (let z = height-1; z < height+2; z++) {
-                this.addTile(x, 1, z, new Tile(x, 1, z, TileType.Stone));
+            for (let z = height-1; z < height+3; z++) {
+                this.addTile(new Tile(x, 1, z, TileType.Stone));
             }
         }
 
         for (let x = 6; x < width; x++) {
-            for (let z = height-1; z < height+2; z++) {
-                this.addTile(x, depth-2, z, new Tile(x, depth-2, z, TileType.Stone));
+            for (let z = height-1; z < height+3; z++) {
+                this.addTile(new Tile(x, depth-2, z, TileType.Stone));
             }
         }
+
+        // to show climbing on default map
+        this.addTile(new Tile(2, 0, 4, TileType.Stone));
     }
 }
 

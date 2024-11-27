@@ -3,12 +3,12 @@ import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils
 import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
-const renderEnemy = (enemy, i) => {
+const EnemyRender = (enemy, i) => {
+    const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const { scale, name, hp, maxHp, offset, rotation } = enemy;
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const position = [coordinates.x, coordinates.y, coordinates.z];
     return (<group position={position} key={name+i}>
         <HpView hpFraction={hp/maxHp} position={[0, 0.5, 0]} />
@@ -21,7 +21,7 @@ const renderEnemy = (enemy, i) => {
 }
 
 export default function EnemyView({enemies}) {
-    const enemyComponents = enemies.map((enemy, i) => renderEnemy(enemy, i));
+    const enemyComponents = enemies.map((enemy, i) => EnemyRender(enemy, i));
     return <>
         {enemyComponents}
     </>

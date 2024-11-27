@@ -12,7 +12,7 @@ class BigMap extends GameMap {
             for (let y = 0; y < depth; y++) {
                 for (let z = 0; z < height; z++) {
                     const tileType = (z === height-1) ? TileType.Grass : TileType.Dirt;
-                    this.addTile(x, y, z, new Tile(x, y, z, tileType));
+                    this.addTile(new Tile(x, y, z, tileType));
                 }
             }
         }

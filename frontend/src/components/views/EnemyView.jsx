@@ -4,8 +4,8 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const EnemyRender = (enemy, i) => {
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const { scale, name, hp, maxHp, offset, rotation } = enemy;
+    const gltf = useLoader(GLTFLoader, modelFiles[name]);
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 

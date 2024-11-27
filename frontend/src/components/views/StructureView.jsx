@@ -5,14 +5,12 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 
 const StructureRender = (structure) => {
-    const modelLoader = useLoader(!isObjModel ? GLTFLoader : OBJLoader, modelFile)
-    if (!structure) return null;
     const { scale, name, hp, maxHp, offset, rotation } = structure;
-    if (!hp) return null;
     const coordinates = convertToRenderCoordinates(structure, offset);
-
+    
     const modelFile = modelFiles[name];
     const isObjModel = modelFile.slice(-3) === 'obj';
+    const modelLoader = useLoader(!isObjModel ? GLTFLoader : OBJLoader, modelFile)
     
 
     // prevent real towers from becoming transparent when ghost view is present
@@ -41,7 +39,7 @@ const StructureRender = (structure) => {
 }
 
 export default function StructureView({ structures }) {
-    const structureComponents = structures.flat().map(StructureRender);
+    const structureComponents = structures.flat().filter(s => !!s && s.hp).map(StructureRender);
     return <>
         {structureComponents}
     </>

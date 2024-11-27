@@ -7,27 +7,10 @@ import { tileKey } from '/src/map/GameMap.js';
 import BuildGhostView from "../views/BuildGhostView";
 import { BUILD } from "../../Game";
 
-import ArrowTower from "../../entities/towers/ArrowTower";
-import RockTower from "../../entities/towers/RockTower";
-import LaserTower from "../../entities/towers/LaserTower";
 import { Status as TowerStatus } from "../../entities/towers/Tower";
+import TOWERS from "../../entities/towers/towers";
 
 const NAME = "BuyMenu";
-
-export const TOWERS = new Map([
-    ["arrowTower", {
-        create: ArrowTower,
-        price: 50,
-    }],
-    ["rockTower", {
-        create: RockTower,
-        price: 100,
-    }],
-    ["laserTower", {
-        create: LaserTower,
-        price: 200,
-    }],
-]);
 
 const TERRAFORM_FILL = "terraformFill";
 const TERRAFORM_EXCAVATE = "terraformExcavate";

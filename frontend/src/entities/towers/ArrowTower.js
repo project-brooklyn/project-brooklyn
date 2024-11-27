@@ -3,12 +3,14 @@ import Arrow from "../projectiles/Arrow";
 import Tower from "./Tower";
 
 export default class ArrowTower extends Tower {
+    static price = 50;
     constructor (x, y, z, status) {
         super(x, y, z, 0.01, status);
         this.name = 'arrowTower';
         this.cooldown = 25;
         this.currentCooldown = 0;
         this.damage = 10;
+        this.price = ArrowTower.price;
     }
 
     getProjectilePath = (target, gameMap) => {

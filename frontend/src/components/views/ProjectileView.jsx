@@ -4,8 +4,9 @@ import { useLoader } from "@react-three/fiber";
 import { Line } from '@react-three/drei';
 
 const ProjectileRender = (projectile) => {
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
     const { name, offset, spawnedAt, quaternion, scale, hp} = projectile;
+    const gltf = useLoader(GLTFLoader, modelFiles[name]);
+    
     if (!hp) return null;
     if (name==='laser') return renderLaser(projectile); // TODO: clean this up if adding more projectiles
 

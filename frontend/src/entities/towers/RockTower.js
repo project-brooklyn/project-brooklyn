@@ -9,8 +9,8 @@ export default class RockTower extends Tower {
         this.cooldown = 50;
         this.currentCooldown = 0;
         this.damage = 20;
-        this.minRange = 5;
-        this.maxRange = 15;
+        this.minRange = 3;
+        this.maxRange = 8;
     }
 
     getProjectilePath = (target, gameMap) => {

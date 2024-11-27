@@ -9,8 +9,8 @@ export default class LaserTower extends Tower {
         this.cooldown = 40;
         this.currentCooldown = 0;
         this.damage = 40;
-        this.minRange = 5;
-        this.maxRange = 100;
+        this.minRange = 0;
+        this.maxRange = 10;
     }
 
     getProjectilePath = (target, heightMap) => {

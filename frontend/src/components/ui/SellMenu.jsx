@@ -5,7 +5,7 @@ import { Cone, Text } from '@react-three/drei';
 import { convertToRenderCoordinates } from "../../utils/render_utils";
 import { BUILD } from "../../Game";
 import { Status as TowerStatus } from "../../entities/towers/Tower";
-import TOWERS from '../../entities/towers/towers';
+import { TOWERS } from '../../entities/buildables';
 
 const NAME = "SellMenu";
 

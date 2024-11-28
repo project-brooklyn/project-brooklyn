@@ -9,12 +9,10 @@ import MapView from "./views/MapView";
 import EnemyView from "./views/EnemyView";
 import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
-import GameInfo from "./ui/GameInfo";
-import BuyMenu from "./ui/BuyMenu";
-import SellMenu from "./ui/SellMenu";
 import PathView from "./views/PathView";
+import SelectedTowerView from "./views/SelectedTowerView";
 
-export default function GameDisplay({game, assets}) {
+export default function GameDisplay({game, assets, selectedTower}) {
     const { gameMap } = game;
     const { width, depth, height } = gameMap;
 
@@ -38,9 +36,7 @@ export default function GameDisplay({game, assets}) {
             FREE GOLD!
         </Text>}
 
-        <GameInfo level={game.level} phase={game.phase} height={height} depth={depth} gold={game.gold} />
-        <BuyMenu game={game}/>
-        <SellMenu game={game}/>
+        {selectedTower && <SelectedTowerView selectedTower={selectedTower} />}
 
         <PerspectiveCamera makeDefault fov={50} position={ [15, 10, 15] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

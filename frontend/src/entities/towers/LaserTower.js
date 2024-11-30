@@ -12,7 +12,7 @@ export default class LaserTower extends Tower {
         this.currentCooldown = 0;
         this.damage = 40;
         this.price = LaserTower.price
-        this.minRange = 0;
+        this.minRange = 1;
         this.maxRange = 10;
     }
 

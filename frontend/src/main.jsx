@@ -3,13 +3,13 @@ import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
-import { AuthProvider } from './AuthContext.jsx';
 import HomePage from './pages/HomePage.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import { Test0, TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
+import { AuthProvider } from './AuthProvider.jsx';
 
 const router = createBrowserRouter([
     {

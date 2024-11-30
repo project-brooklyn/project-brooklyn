@@ -1,29 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Tile, { TileType } from "../../map/Tile";
 import { Vector3 } from "three";
-import { Text } from "@react-three/drei"
-
-import { Tile, TileType } from '/src/map/Tile.js';
+import { TOWERS, TERRAFORMS, TERRAFORM_DIG, TERRAFORM_FILL } from "../../entities/buildables";
+import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
-import BuildGhostView from "../views/SelectedTowerView";
 import { BUILD } from "../../Game";
 
-import { Status as TowerStatus } from "../../entities/towers/Tower";
-import { TOWERS } from "../../entities/buildables";
-
-const NAME = "BuyMenu";
-
-const TERRAFORM_FILL = "terraformFill";
-const TERRAFORM_EXCAVATE = "terraformExcavate";
-const TERRAFORMS = new Map([
-    [TERRAFORM_FILL, {
-        label: "Fill",
-        price: 10,
-    }],
-    [TERRAFORM_EXCAVATE, {
-        label: "Excavate",
-        price: 10,
-    }],
-]);
+const BUY = "Buy";
+const SELL = "Sell";
 
 function isTop(gameMap, x, y, z) {
     return gameMap.getElevation(x, y) === z;
@@ -34,33 +18,47 @@ function isOccupied(game, x, y, z) {
     return tower && (tower.z === z);
 }
 
-export default function BuyMenu({game}) {
+export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     const {gameMap, mouseInput} = game;
-    const {width, depth} = gameMap;
 
     const [selectedItem, setSelectedItem] = useState(null);
-    const [newTower, setNewTower] = useState(null);
     const [undoStack, setUndoStack] = useState([]);
-
-    const deselectAll = () => {
-        setSelectedItem(null);
-        setNewTower(null);
-        mouseInput.removeHoverCallback(NAME);
-        mouseInput.removeClickCallback(NAME);
-        game.gameMapOverrides.clear();
-    };
-
-    const chargeCost = (price) => {
-        game.gold -= price;
-        if (game.gold < price) deselectAll();
-    };
 
     useEffect(() => {
         // Handle game state changes
         deselectAll();
         setUndoStack([]);
+
+        if (!game.over && game.phase == BUILD) {
+            mouseInput.addClickCallback(SELL, (x, y, _z) => {
+                if (!gameMap.getTower(x, y)) {
+                    return;
+                }
+
+                const tower = game.towers[x][y];
+                setSelectedTower(tower);
+            })
+        }
+        else {
+            mouseInput.removeClickCallback(SELL);
+        }
+
+
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game.phase, game.over])
+
+    const deselectAll = () => {
+        setSelectedItem(null);
+        setSelectedTower(null);
+        mouseInput.removeHoverCallback(BUY);
+        mouseInput.removeClickCallback(BUY);
+        game.gameMapOverrides.clear();
+    }
+
+    const chargeCost = (price) => {
+        game.gold -= price;
+        if (game.gold < price) deselectAll();
+    }
 
     useEffect(() => {
         // Handle selected item
@@ -72,7 +70,7 @@ export default function BuyMenu({game}) {
             // Tower handling
             const towerType = TOWERS.get(selectedItem.name);
 
-            mouseInput.addHoverCallback(NAME, (x, y, z) => {
+            mouseInput.addHoverCallback(BUY, (x, y, z) => {
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -81,10 +79,10 @@ export default function BuyMenu({game}) {
                     selectedItem.targetPosition = new Vector3();
                 }
                 selectedItem.targetPosition.set(x, y, z);
-                setNewTower(new towerType.create(x, y, z, TowerStatus.PENDING));
+                setSelectedTower(new towerType.create(x, y, z, TowerStatus.PENDING));
             });
 
-            mouseInput.addClickCallback(NAME, () => {
+            mouseInput.addClickCallback(BUY, () => {
                 if (game.gold < towerType.price) return;
 
                 const {x, y, z} = selectedItem.targetPosition;
@@ -102,7 +100,7 @@ export default function BuyMenu({game}) {
         } else if (selectedItem.name.startsWith("terraform")) {
             const terraform = TERRAFORMS.get(selectedItem.name);
 
-            mouseInput.addHoverCallback(NAME, (x, y, z) => {
+            mouseInput.addHoverCallback(BUY, (x, y, z) => {
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -114,13 +112,13 @@ export default function BuyMenu({game}) {
                 if (selectedItem.name == TERRAFORM_FILL) {
                     selectedItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
-                } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
+                } else if (selectedItem.name == TERRAFORM_DIG) {
                     selectedItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
                 }
             });
 
-            mouseInput.addClickCallback(NAME, () => {
+            mouseInput.addClickCallback(BUY, () => {
                 if (!selectedItem.targetPosition) return;
                 let {x, y, z} = selectedItem.targetPosition;
                 if (z < 1) {
@@ -139,7 +137,7 @@ export default function BuyMenu({game}) {
                 if (selectedItem.name == TERRAFORM_FILL) {
                     z += 1;
                     gameMap.addTile(new Tile(x, y, z, TileType.Stone));
-                } else if (selectedItem.name == TERRAFORM_EXCAVATE) {
+                } else if (selectedItem.name == TERRAFORM_DIG) {
                     tileType = gameMap.getTile(x, y, z).type;
                     gameMap.removeTile(x, y, z);
                 }
@@ -149,62 +147,7 @@ export default function BuyMenu({game}) {
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedItem])
-
-    let menuIndex = depth + 3;
-    const buyTowerButtons = Array.from(TOWERS.keys(), (towerKey) => {
-        const handleClick = () => {
-            if (selectedItem?.name == towerKey) {
-                deselectAll();
-            } else {
-                deselectAll();
-                setSelectedItem({
-                    name: towerKey,
-                    targetPosition: null,
-                });
-            }
-        };
-
-        const index = menuIndex++;
-        return (
-            <Text
-                key={index}
-                position={[width/2, 0,  index]}
-                rotation={[-Math.PI/2, 0, 0]}
-                onClick={handleClick}
-            >
-                {`${selectedItem?.name == towerKey ? '>' : ' '} ${towerKey}: ${TOWERS.get(towerKey).price}\n`}
-            </Text>
-        )
-    });
-
-    const buyTerraformButtons = Array.from(TERRAFORMS.keys(), (terraformKey) => {
-        const handleClick = () => {
-            if (selectedItem?.name == terraformKey) {
-                deselectAll();
-            } else {
-                deselectAll();
-                setSelectedItem({
-                    name: terraformKey,
-                    targetPosition: null,
-                });
-            }
-        };
-
-        const index = menuIndex++;
-        const label = TERRAFORMS.get(terraformKey).label;
-        const price = TERRAFORMS.get(terraformKey).price;
-        return (
-            <Text
-                key={index}
-                position={[width/2, 0,  index]}
-                rotation={[-Math.PI/2, 0, 0]}
-                onClick={handleClick}
-            >
-                {`${selectedItem?.name == terraformKey ? '>' : ' '} ${label}: ${price}`}
-            </Text>
-        )
-    });
-
+    
     const undoBuild = () => {
         if (!undoStack.length) return;
         deselectAll();
@@ -218,7 +161,7 @@ export default function BuyMenu({game}) {
             case 'Fill':
                 gameMap.removeTile(x, y, z);
                 break;
-            case 'Excavate':
+            case 'Dig':
                 gameMap.addTile(new Tile(x, y, z, tileType));
                 break;
             default:
@@ -230,27 +173,83 @@ export default function BuyMenu({game}) {
         game.setPath();
     }
 
-    const undoButton = (
-        Boolean(undoStack.length) && <Text
-            onClick={undoBuild}
-            position={[width/2, 0, menuIndex++]}
-            rotation={[-Math.PI/2, 0, 0]}
-        >
-            Undo Last Buy
-        </Text>
-    )
+    const sellTower = () => {
+        game.towers[selectedTower.x][selectedTower.y] = undefined;
+        gameMap.removeTower(selectedTower.x, selectedTower.y);
 
-    const showBuyMenu = (game.phase === BUILD) && !game.over;
-    return showBuyMenu && <>
-            <Text
-                position={[width/2, 0, depth + 2]}
-                rotation={[-Math.PI/2, 0, 0]}
-            >
-                {"Buy Menu\n"}
-            </Text>
-            {buyTowerButtons}
-            {buyTerraformButtons}
-            {undoButton}
-            {newTower && <BuildGhostView structure={newTower} />}
-        </>
+        const t = TOWERS.get(selectedTower.name);
+        game.gold += 0.5 * t.price;
+        game.setPath();
+        deselectAll();
+    }
+
+    return <div>
+        Buy/Sell Menu
+
+        {Array.from(TOWERS.entries()).map(([towerKey, {_create, price}]) => {
+            return <p key={towerKey}>
+                <input
+                    type="checkbox"
+                    checked={selectedItem?.name == towerKey}
+                    onChange={() => {
+                        if (selectedItem?.name == towerKey) {
+                            deselectAll();
+                        } else {
+                            deselectAll();
+                            setSelectedItem({
+                                name: towerKey,
+                                targetPosition: null,
+                            });
+                        }
+                    }}
+                />
+                {towerKey}: {price}
+            </p>
+        })}
+        {Array.from(TERRAFORMS.entries()).map(([terraformKey, {label, price}]) => {
+            return <p key={terraformKey}>
+                <input
+                    type="checkbox"
+                    checked={selectedItem?.name == terraformKey}
+                    onChange={() => {
+                        if (selectedItem?.name == terraformKey) {
+                            deselectAll();
+                        } else {
+                            deselectAll();
+                            setSelectedItem({
+                                name: terraformKey,
+                                targetPosition: null,
+                            });
+                        }
+                    }}
+                />
+                {label}: {price}
+            </p>
+        })}
+        <div style={{display: "flex", flexDirection: "column"}}>
+            {!!undoStack.length && <button onClick={undoBuild}>Undo</button>}
+            {selectedTower && selectedTower.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
+        </div>
+        <SelectedTowerInfo selectedTower={selectedTower} />
+        
+    </div>
+}
+
+const SelectedTowerInfo = ({selectedTower}) => {
+    if (!selectedTower) {
+        return <div>
+            <h5>Selected Tower</h5>
+            <p>No tower selected</p>
+        </div>
+    }
+
+    const { name, price, damage, cooldown, minRange, maxRange } = selectedTower
+    return <div>
+        <h5>Selected Tower</h5>
+        <p>Type: {name}</p>
+        <p>Price: {price}</p>
+        <p>Damage: {damage}</p>
+        <p>Cooldown: {cooldown}</p>
+        {/* <p>Range: {minRange} - {maxRange}</p> */}
+    </div>
 }

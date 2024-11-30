@@ -3,13 +3,15 @@ import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils
 import { useLoader } from "@react-three/fiber";
 import { Line } from '@react-three/drei';
 
-const renderProjectile = (projectile) => {
-    const { name, offset, spawnedAt, quaternion, scale, hp} = projectile;
-    if (!hp) return null;
+const ProjectileRender = (projectile) => {
+    const { name, offset, spawnedAt, quaternion, scale, hp } = projectile;
+    if (hp <= 0) return null; // allows lasers to disappear
     if (name==='laser') return renderLaser(projectile); // TODO: clean this up if adding more projectiles
+    
+    // TODO: prevent early return before useLoader to avoid eslint error
+    const gltf = useLoader(GLTFLoader, modelFiles[name]);
 
     const coordinates = convertToRenderCoordinates(projectile, offset);
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
 
     return (<primitive
         key={name+spawnedAt+projectile.position}
@@ -34,7 +36,7 @@ const renderLaser = (laser) => {
 }
 
 export default function ProjectileView({projectiles}) {
-    const projectileComponents = projectiles.map(renderProjectile)
+    const projectileComponents = projectiles.map(ProjectileRender)
     return <>
         {projectileComponents}
     </>

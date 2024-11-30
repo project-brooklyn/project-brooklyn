@@ -6,6 +6,8 @@ import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useState } from "react";
+import { HtmlUI } from "./ui/HtmlUI";
+
 
 const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
@@ -50,12 +52,17 @@ const TopBar = ({user, logout}) => {
 }
 
 const GameContainer = ({game}) => {
+    const [selectedTower, setSelectedTower] = useState(null);
+
     return <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <div style={{border: "2px solid blue", height: "80vh", aspectRatio: "16/9"}}>
-            <Stats showPanel={0} className="stats" />
-            <Canvas>
-                <GameDisplay game={game} assets={assets} />
-            </Canvas>
+        <div style={{display: "flex", height: "80vh"}} >
+            <div style={{border: "2px solid blue", aspectRatio: "4/3"}}>
+                <Stats showPanel={0} className="stats" />
+                <Canvas>
+                    <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
+                </Canvas>
+            </div>
+            <HtmlUI game={game} phase={game.phase} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
         </div>
         <h6>© 2024, BK Studios.</h6>
     </div>

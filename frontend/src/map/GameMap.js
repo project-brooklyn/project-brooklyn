@@ -62,8 +62,9 @@ class GameMap {
         return mapHeight + maybeTowerHeight ;
     }
 
-    addTile(x, y, z, tile) {
+    addTile(tile) {
         // Adds (or updates) a tile.
+        const { x, y, z } = tile;
         this.tileData.set(tileKey(x, y, z), tile);
 
         const cell = cellKey(x, y);

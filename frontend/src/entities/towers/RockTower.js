@@ -3,12 +3,15 @@ import Rock from "../projectiles/Rock";
 import Tower from "./Tower";
 
 export default class RockTower extends Tower {
+    static price = 100;
+
     constructor (x, y, z, status) {
         super(x, y, z, 0.01, status);
         this.name = 'rockTower';
         this.cooldown = 50;
         this.currentCooldown = 0;
         this.damage = 20;
+        this.price = RockTower.price;
     }
 
     getProjectilePath = (target, gameMap) => {

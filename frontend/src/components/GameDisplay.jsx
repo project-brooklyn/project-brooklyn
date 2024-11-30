@@ -22,6 +22,7 @@ export default function GameDisplay({game, assets, selectedTower}) {
         game.tick();
 
         setTicks(ticks + 1); // this is a hack to make the canvas re-render
+        // otherwise, the display won't rerender at all during defend phase
     })
 
 

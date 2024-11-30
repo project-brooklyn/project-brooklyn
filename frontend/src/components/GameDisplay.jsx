@@ -21,7 +21,7 @@ export default function GameDisplay({game, assets, selectedTower}) {
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
 
-        setTicks(ticks + 1); // this is a hack to make the canvas re-render, open to improvements
+        setTicks(ticks + 1); // this is a hack to make the canvas re-render
     })
 
 

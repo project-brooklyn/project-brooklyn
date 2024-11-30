@@ -11,6 +11,7 @@ import StructureView from "./views/StructureView";
 import ProjectileView from "./views/ProjectileView";
 import PathView from "./views/PathView";
 import SelectedTowerView from "./views/SelectedTowerView";
+import { RangeIndicatorView } from "./views/RangeIndicatorView";
 
 export default function GameDisplay({game, assets, selectedTower}) {
     const { gameMap } = game;
@@ -21,7 +22,8 @@ export default function GameDisplay({game, assets, selectedTower}) {
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
 
-        setTicks(ticks + 1); // this is a hack to make the canvas re-render, open to improvements
+        setTicks(ticks + 1); // this is a hack to make the canvas re-render
+        // without this, display will not rerender during DEFEND phase (but still calculate defending)
     })
 
 
@@ -36,7 +38,10 @@ export default function GameDisplay({game, assets, selectedTower}) {
             FREE GOLD!
         </Text>}
 
-        {selectedTower && <SelectedTowerView selectedTower={selectedTower} />}
+        {selectedTower && <>
+            <SelectedTowerView selectedTower={selectedTower} />
+            <RangeIndicatorView tower={selectedTower} />
+        </>}
 
         <PerspectiveCamera makeDefault fov={50} position={ [15, 10, 15] }/>
         <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>

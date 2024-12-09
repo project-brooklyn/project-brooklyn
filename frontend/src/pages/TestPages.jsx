@@ -5,7 +5,6 @@ import MazeMap from "../map/MazeMap";
 import RandomMap from "../map/RandomMap";
 import RectangleMap from "../map/RectangleMap";
 import ZigZagMap from "../map/ZigZagMap";
-import './Test.css'
 
 export const Test0 = () => <GamePage gameMap={DemoMap} />
 export const TestA = () => <GamePage gameMap={RandomMap} />

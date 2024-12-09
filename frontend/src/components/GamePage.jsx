@@ -15,30 +15,30 @@ const GamePage = ({gameMap, showWelcome = false}) => {
 
     const [showModal, setShowModal] = useState(showWelcome);
 
-    return (<>
+    return (<div className="d-flex flex-column bg-secondary vh-100">
         <WelcomeModal
           show={showModal}
           onHide={() => setShowModal(false)}
         />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
-    </>)
+    </div>)
 }
 
 const TopBar = ({user, logout}) => {
-    return (<div style={{display: 'flex', justifyContent: 'space-around'}}>
-        <div>
+    return (<div className="d-flex justify-content-around">
+        <div className="">
             <h1>Project Brooklyn</h1>
             <h2>A tower defense game</h2>
         </div>
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>
+        <div className="d-flex flex-column justify-content-center align-items-center">
             <div>
                 {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
             {
                 user ?
-                    <p style={{color: 'blue'}} onClick={logout}>Log Out</p>
+                    <p className="text-primary" onClick={logout}>Log Out</p>
                 :
                     <p>
                         <a href="/signup">Sign Up</a>
@@ -54,18 +54,24 @@ const TopBar = ({user, logout}) => {
 const GameContainer = ({game}) => {
     const [selectedTower, setSelectedTower] = useState(null);
 
-    return <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <div style={{display: "flex", height: "80vh"}} >
-            <div style={{border: "2px solid blue", aspectRatio: "4/3"}}>
-                <Stats showPanel={0} className="stats" />
+    return <div className="d-flex flex-column align-items-center flex-grow-1">
+        <div className="d-flex flex-grow-1 w-100">
+            <div className="w-75 border border-2 border-primary m-2">
+                <Stats showPanel={0} />
                 <Canvas>
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
             </div>
-            <HtmlUI game={game} phase={game.phase} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+            <HtmlUI
+                game={game}
+                phase={game.phase}
+                selectedTower={selectedTower}
+                setSelectedTower={setSelectedTower}
+            />
         </div>
-        <h6>© 2024, BK Studios.</h6>
+        <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
     </div>
+  
 }
 
 export default GamePage;

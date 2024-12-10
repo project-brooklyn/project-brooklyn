@@ -244,7 +244,6 @@ const SelectedTowerInfo = ({selectedTower}) => {
             <p>No tower selected</p>
         </div>
     }
-    console.log(selectedTower)
 
     const { name, price, damage, cooldown, minRange, maxRange } = selectedTower
     return <div>

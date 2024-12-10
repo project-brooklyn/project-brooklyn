@@ -19,19 +19,21 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         game.startDefendPhase();
     }
 
-    return <div style={{width: "20vw", border: "2px solid red", display: "flex", flexDirection: "column"}}>
-        <div style={{display: "flex", justifyContent: "space-between"}}>
+    return <div className="w-25 border border-2 border-danger d-flex flex-column p-2 m-2">
+        <div className="d-flex justify-content-between">
             <span>{`Level: ${level}`}</span>
             <span>{`Gold: ${gold}`}</span>
             <span>{`Phase: ${phase.toUpperCase()}`}</span>
         </div>
 
-        {phase === BUILD 
-            ? <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-            : <LevelInfo game={game}/>        
-        }
+        <div className="my-4">
+            {phase === BUILD 
+                ? <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                : <LevelInfo game={game}/>        
+            }
+        </div>
 
-        {phase === BUILD && <div style={{display: "flex", justifyContent: "center", marginTop: "auto", marginBottom: "40px"}}>
+        {phase === BUILD && <div className="d-flex justify-content-center mt-auto mb-4">
             <button onClick={handleClick}>START NEXT LEVEL</button>
         </div>}
     </div>

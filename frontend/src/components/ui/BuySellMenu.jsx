@@ -184,7 +184,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     }
 
     return <div>
-        Buy/Sell Menu
+        <h5>Buy/Sell Menu</h5>
 
         {Array.from(TOWERS.entries()).map(([towerKey, {_create, price}]) => {
             return <p key={towerKey}>
@@ -202,6 +202,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                             });
                         }
                     }}
+                    className="mx-2"
                 />
                 {towerKey}: {price}
             </p>
@@ -222,6 +223,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                             });
                         }
                     }}
+                    className="mx-2"
                 />
                 {label}: {price}
             </p>

@@ -1,6 +1,7 @@
 import Entity from "../Entity";
 
 export const Status = {
+    PLANNING: Symbol("planning"),
     PENDING: Symbol("pending"),
     BUILT: Symbol("built"),
 };

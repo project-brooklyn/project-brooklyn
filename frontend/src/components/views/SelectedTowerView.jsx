@@ -8,9 +8,9 @@ export default function SelectedTowerView({ selectedTower }) {
     const { scale, name, offset, status } = selectedTower;
     const coordinates = convertToRenderCoordinates(selectedTower, offset);
 
-    if (status === Status.BUILT) {
+    if (status === Status.BUILT || status === Status.PENDING) {
         return <SelectedTowerIndicatorView coordinates={coordinates} />
-    } else if (status === Status.PENDING) {
+    } else if (status === Status.PLANNING) {
         return <GhostTowerView name={name} coordinates={coordinates} scale={scale} />;
     } else {
         console.error("Error with Selected Tower: ", selectedTower);

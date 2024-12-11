@@ -16,7 +16,7 @@ class DemoMap extends GameMap {
                         this.addTile(new Tile(x, y, z, tileType));
                     }
                     else {
-                        this.addTile(new Tile(x, y, z, TileType.Stone));
+                        this.addTile(new Tile(x, y, z, TileType.Bedrock));
                     }
                 }
             }

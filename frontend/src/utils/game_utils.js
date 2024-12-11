@@ -157,3 +157,12 @@ export const getParabolicPath = (start, end, gameMap, timeInterval=0.02) => {
     if (pythagorean(path.at(-1), end) > tolerance) return [];
     return path;
 };
+
+export function isTop(gameMap, x, y, z) {
+    return gameMap.getElevation(x, y) === z;
+}
+
+export function isOccupied(game, x, y, z) {
+    const tower = game.towers[x][y];
+    return tower && (tower.z === z);
+}

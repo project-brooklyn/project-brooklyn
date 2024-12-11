@@ -13,7 +13,7 @@ const SELL = "Sell";
 export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     const {gameMap, mouseInput} = game;
 
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [purchasingItem, setPurchasingItem] = useState(null);
     const [undoStack, setUndoStack] = useState([]);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     }, [game.phase, game.over])
 
     const deselectAll = () => {
-        setSelectedItem(null);
+        setPurchasingItem(null);
         setSelectedTower(null);
         mouseInput.removeHoverCallback(BUY);
         mouseInput.removeClickCallback(BUY);
@@ -52,31 +52,31 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     }
 
     useEffect(() => {
-        // Handle selected item
-        if (!selectedItem) {
+        // Handle purchasing item
+        if (!purchasingItem) {
             return;
         }
 
-        if (selectedItem.name.endsWith("Tower")) {
+        if (purchasingItem.name.endsWith("Tower")) {
             // Tower handling
-            const towerType = TOWERS.get(selectedItem.name);
+            const towerType = TOWERS.get(purchasingItem.name);
 
             mouseInput.addHoverCallback(BUY, (x, y, z) => {
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
 
-                if (!selectedItem.targetPosition) {
-                    selectedItem.targetPosition = new Vector3();
+                if (!purchasingItem.targetPosition) {
+                    purchasingItem.targetPosition = new Vector3();
                 }
-                selectedItem.targetPosition.set(x, y, z);
+                purchasingItem.targetPosition.set(x, y, z);
                 setSelectedTower(new towerType.create(x, y, z, TowerStatus.PLANNING));
             });
 
             mouseInput.addClickCallback(BUY, () => {
                 if (game.gold < towerType.price) return;
 
-                const {x, y, z} = selectedItem.targetPosition;
+                const {x, y, z} = purchasingItem.targetPosition;
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -96,30 +96,30 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     setSelectedTower(tower);
                 })
             });
-        } else if (selectedItem.name.startsWith("terraform")) {
-            const terraform = TERRAFORMS.get(selectedItem.name);
+        } else if (purchasingItem.name.startsWith("terraform")) {
+            const terraform = TERRAFORMS.get(purchasingItem.name);
 
             mouseInput.addHoverCallback(BUY, (x, y, z) => {
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
 
-                if (!selectedItem.targetPosition) {
-                    selectedItem.targetPosition = new Vector3();
+                if (!purchasingItem.targetPosition) {
+                    purchasingItem.targetPosition = new Vector3();
                 }
 
-                if (selectedItem.name == TERRAFORM_FILL) {
-                    selectedItem.targetPosition.set(x, y, z);
+                if (purchasingItem.name == TERRAFORM_FILL) {
+                    purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
-                } else if (selectedItem.name == TERRAFORM_DIG) {
-                    selectedItem.targetPosition.set(x, y, z);
+                } else if (purchasingItem.name == TERRAFORM_DIG) {
+                    purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
                 }
             });
 
             mouseInput.addClickCallback(BUY, () => {
-                if (!selectedItem.targetPosition) return;
-                let {x, y, z} = selectedItem.targetPosition;
+                if (!purchasingItem.targetPosition) return;
+                let {x, y, z} = purchasingItem.targetPosition;
                 if (z < 1) {
                     // Not allowed to excavate lowest tile level.
                     return;
@@ -127,16 +127,16 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
 
                 if (game.gold < terraform.price) return;
 
-                selectedItem.targetPosition = null;
+                purchasingItem.targetPosition = null;
                 chargeCost(terraform.price);
 
                 game.gameMapOverrides.clear();
 
                 let tileType;
-                if (selectedItem.name == TERRAFORM_FILL) {
+                if (purchasingItem.name == TERRAFORM_FILL) {
                     z += 1;
                     gameMap.addTile(new Tile(x, y, z, TileType.Stone));
-                } else if (selectedItem.name == TERRAFORM_DIG) {
+                } else if (purchasingItem.name == TERRAFORM_DIG) {
                     tileType = gameMap.getTile(x, y, z).type;
                     gameMap.removeTile(x, y, z);
                 }
@@ -145,7 +145,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
             });
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedItem])
+    }, [purchasingItem])
     
     const undoBuild = () => {
         if (!undoStack.length) return;
@@ -197,13 +197,13 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     <label role='button'>
                     <input
                         type="checkbox"
-                        checked={selectedItem?.name == towerKey}
+                        checked={purchasingItem?.name == towerKey}
                         onChange={() => {
-                            if (selectedItem?.name == towerKey) {
+                            if (purchasingItem?.name == towerKey) {
                                 deselectAll();
                             } else {
                                 deselectAll();
-                                setSelectedItem({
+                                setPurchasingItem({
                                     name: towerKey,
                                     targetPosition: null,
                                 });
@@ -220,13 +220,13 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     <label role='button'>
                         <input
                             type="checkbox"
-                            checked={selectedItem?.name == terraformKey}
+                            checked={purchasingItem?.name == terraformKey}
                             onChange={() => {
-                                if (selectedItem?.name == terraformKey) {
+                                if (purchasingItem?.name == terraformKey) {
                                     deselectAll();
                                 } else {
                                     deselectAll();
-                                    setSelectedItem({
+                                    setPurchasingItem({
                                         name: terraformKey,
                                         targetPosition: null,
                                     });
@@ -243,7 +243,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         <div style={{display: "flex", flexDirection: "column"}}>
             {!!undoStack.length && <button onClick={undoBuild}>Undo</button>}
         </div>
-        <SelectedTowerInfo selectedTower={selectedTower} selectedItem={selectedItem}/>
+        <SelectedTowerInfo selectedTower={selectedTower} purchasingItem={purchasingItem}/>
         <div style={{display: "flex", flexDirection: "column"}}>
             {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
             {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}
@@ -251,9 +251,9 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     </div>
 }
 
-const SelectedTowerInfo = ({selectedTower, selectedItem}) => {
-    if (selectedItem?.name.startsWith("terraform")) {
-        const terraform = TERRAFORMS.get(selectedItem.name);
+const SelectedTowerInfo = ({selectedTower, purchasingItem}) => {
+    if (purchasingItem?.name.startsWith("terraform")) {
+        const terraform = TERRAFORMS.get(purchasingItem.name);
         return <div>
             <h5>Selected Item</h5>
             <p>Type: {terraform.label} Terrain</p>

@@ -188,7 +188,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         setUndoStack(prevStack => [...prevStack, {x: selectedTower.x, y: selectedTower.y, label: 'SellTower', price: -t.price/2, tower: selectedTower}]);
     }
 
-    return <div>
+    return <div className="h-100 overflow-auto border border-2 border-info">
         <h5>Buy/Sell Menu</h5>
 
         <ul className="list-unstyled">
@@ -276,10 +276,12 @@ const SelectedTowerInfo = ({selectedTower, purchasingItem}) => {
     const { name, price, damage, cooldown, minRange, maxRange } = selectedTower
     return <div>
         <h5>Selected Tower</h5>
-        <p>Type: {name}</p>
-        <p>Price: {price}</p>
-        <p>Damage: {damage}</p>
-        <p>Cooldown: {cooldown}</p>
-        {minRange && maxRange && <p>Range: {minRange} - {maxRange}</p>}
+        <ul>
+            <li>Type: {name}</li>
+            <li>Price: {price}</li>
+            <li>Damage: {damage}</li>
+            <li>Cooldown: {cooldown}</li>
+            {minRange && maxRange && <li>Range: {minRange} - {maxRange}</li>}
+        </ul>
     </div>
 }

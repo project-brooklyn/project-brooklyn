@@ -11,8 +11,8 @@ export const levels = [
     },
     {
         enemy: Cow,
-        count: 1,
-        delay: 25,
+        count: 3,
+        delay: 200,
         gold: 100,
     },
     {

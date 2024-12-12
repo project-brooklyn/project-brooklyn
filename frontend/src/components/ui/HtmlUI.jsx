@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BUILD } from "../../Game";
+import { BUILD, DEFEND } from "../../Game";
 import { BuySellMenu } from "./BuySellMenu";
 import { LevelInfo } from "./LevelInfo";
 
@@ -27,10 +27,8 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         </div>
 
         <div className="my-4">
-            {phase === BUILD 
-                ? <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-                : <LevelInfo game={game}/>        
-            }
+            {phase === BUILD && <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />}
+            {phase === DEFEND && <LevelInfo game={game} />}
         </div>
 
         {phase === BUILD && <div className="d-flex justify-content-center mt-auto mb-4">

@@ -1,9 +1,9 @@
 import Entity from "../Entity";
 
 export const Status = {
-    PLANNING: Symbol("planning"),
-    PENDING: Symbol("pending"),
-    BUILT: Symbol("built"),
+    PLANNING: Symbol("planning"),  // Not yet added to the map, used for preview
+    PENDING: Symbol("pending"),    // Added to the map during the current build phase
+    BUILT: Symbol("built"),        // Added to the map during a prior build phase
 };
 
 export default class Tower extends Entity {

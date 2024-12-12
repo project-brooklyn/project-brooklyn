@@ -19,7 +19,7 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         game.startDefendPhase();
     }
 
-    return <div className="w-25 border border-2 border-danger d-flex flex-column p-2 m-2">
+    return <div className="w-25 flex-grow-1 border border-2 border-danger m-2 d-flex flex-column overflow-scroll">
         <div className="d-flex justify-content-between">
             <span>{`Level: ${level}`}</span>
             <span>{`Gold: ${gold}`}</span>

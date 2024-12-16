@@ -12,9 +12,11 @@ export const LevelInfo = ({game}) => {
     });
 
     return enemy && <div>
+        <h5>Level Info</h5>
         <p>{`${count} total enemies, spawning every ${delay} ticks.`}</p>
         <p>{`${game.enemies.filter(e => !!e.hp).length} enemies still alive.`}</p>
         <p>{`${remaining} enemies yet to spawn.`}</p>
-        <p>{`Enemy: ${enemy.name}, Health: ${enemy.MAX_HP}, Speed: ${enemy.SPEED}`}</p>
+        <p>{`Enemy: ${enemy.NAME.charAt(0).toUpperCase() + enemy.NAME.slice(1)}, Health: ${enemy.MAX_HP}, Speed: ${enemy.SPEED}`}</p>
+        <p>{`Castle HP: ${game.castle.hp}/${game.castle.maxHp}`}</p>
     </div>
 }

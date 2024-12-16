@@ -83,8 +83,8 @@ class GameMap {
         this.elevationData.set(cell, this.elevationData.get(cell) - 1);
     }
 
-    addTower(x, y) {
-        this.towers.set(cellKey(x, y), true);
+    addTower(x, y, tower) {
+        this.towers.set(cellKey(x, y), tower);
     }
 
     removeTower(x, y) {

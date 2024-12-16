@@ -6,6 +6,7 @@ import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
 import { BUILD } from "../../Game";
 import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
+import { SelectedTowerInfo } from "./SelectedTowerInfo";
 
 const BUY = "Buy";
 const SELL = "Sell";
@@ -30,9 +31,6 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 const tower = game.towers[x][y];
                 setSelectedTower(tower);
             })
-        }
-        else {
-            mouseInput.removeClickCallback(SELL);
         }
 
     //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,7 +82,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
 
                 const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
                 game.addTower(tower);
-                gameMap.addTower(x, y);
+                gameMap.addTower(x, y, tower);
                 setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
                 game.setPath();
                 mouseInput.addClickCallback(SELL, (x, y, _z) => {
@@ -168,7 +166,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 break;
             case 'SellTower':
                 game.towers[x][y] = tower;
-                gameMap.addTower(x, y);
+                gameMap.addTower(x, y, tower);
                 break;
             default:
                 console.error("Unknown undo label", label);
@@ -246,45 +244,10 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         <div style={{display: "flex", flexDirection: "column"}}>
             {!!undoStack.length && <button onClick={undoBuild}>Undo</button>}
         </div>
-        <SelectedTowerInfo selectedTower={selectedTower} purchasingItem={purchasingItem}/>
+        <SelectedTowerInfo selectedTower={selectedTower} purchasingItem={purchasingItem} setSelectedTower={setSelectedTower}/>
         <div style={{display: "flex", flexDirection: "column"}}>
             {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
             {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}
         </div>
-    </div>
-}
-
-const SelectedTowerInfo = ({selectedTower, purchasingItem}) => {
-    if (purchasingItem?.name.startsWith("terraform")) {
-        const terraform = TERRAFORMS.get(purchasingItem.name);
-        return <div>
-            <h5>Selected Item</h5>
-            <p>Type: {terraform.label} Terrain</p>
-            <p>Price: {terraform.price}</p>
-            {
-                terraform.label === "Fill"
-                ? <p>Increase the height of a terrain tile, forcing enemies to climb over or path around.</p>
-                : <p>Remove a terrain tile (until bedrock), forcing enemies to climb down or path around.</p>
-            }
-        </div>
-    }
-
-    if (!selectedTower) {
-        return <div>
-            <h5>Selected Tower</h5>
-            <p>No tower selected</p>
-        </div>
-    }
-
-    const { name, price, damage, cooldown, minRange, maxRange } = selectedTower
-    return <div>
-        <h5>Selected Tower</h5>
-        <ul>
-            <li>Type: {name}</li>
-            <li>Price: {price}</li>
-            <li>Damage: {damage}</li>
-            <li>Cooldown: {cooldown}</li>
-            {minRange && maxRange && <li>Range: {minRange} - {maxRange}</li>}
-        </ul>
     </div>
 }

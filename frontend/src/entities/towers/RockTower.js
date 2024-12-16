@@ -13,7 +13,7 @@ export default class RockTower extends Tower {
         this.damage = 20;
         this.price = RockTower.price;
         this.minRange = 2.5;
-        this.maxRange = 8;
+        this.maxRange = 6;
     }
 
     getProjectilePath = (target, gameMap) => {

@@ -11,7 +11,7 @@ export default class ArrowTower extends Tower {
         this.currentCooldown = 0;
         this.damage = 10;
         this.price = ArrowTower.price;
-        this.minRange = 2;
+        this.minRange = 1.5;
         this.maxRange = 4;
     }
 
@@ -24,6 +24,10 @@ export default class ArrowTower extends Tower {
         );
         return path;
     };
+
+    canHit = (target, gameMap) => { 
+        return !!this.getProjectilePath(target, gameMap).length;
+    }
 
     createProjectile = (path) => {
         this.currentCooldown = this.cooldown;

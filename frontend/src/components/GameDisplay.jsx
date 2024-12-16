@@ -40,7 +40,7 @@ export default function GameDisplay({game, assets, selectedTower}) {
 
         {selectedTower && <>
             <SelectedTowerView selectedTower={selectedTower} />
-            <RangeIndicatorView tower={selectedTower} />
+            <RangeIndicatorView tower={selectedTower} gameMap={gameMap}/>
         </>}
 
         <PerspectiveCamera makeDefault fov={50} position={ [15, 10, 15] }/>

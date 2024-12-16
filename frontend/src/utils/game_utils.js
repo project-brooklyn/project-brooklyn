@@ -100,9 +100,11 @@ const isAboveGround = (x, y, z, gameMap) => {
 
 export const getStraightPath = (tower, end, gameMap, speed=0.1) => {
     const {x, y, z, minRange, maxRange} = tower;
-    const start = [x, y, z+3]; // shoot from top of tower, not ground
-    if (pythagorean(start, end) < minRange) return [];
-    if (pythagorean(start, end) > maxRange) return [];
+    const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
+
+    if (pythagorean([x,y], [end[0], end[1]]) < minRange) return []; // ignoring z for range calculation
+    if (pythagorean([x,y], [end[0], end[1]]) > maxRange) return []; // greatly improves range indicator ux
+    if (z + tower.height < end[2]) return []; // prevent shooting upwards (through ground)
 
     // start and end are [x,y,z] coordinates
     // returns a series of points, separated by distance 'speed', that follow a straight path
@@ -121,7 +123,7 @@ export const getStraightPath = (tower, end, gameMap, speed=0.1) => {
 
 export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
     const {x, y, z, minRange, maxRange} = tower;
-    const start = [x, y, z+3]; // shoot from top of tower, not ground
+    const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
     if (pythagorean(start, end) < minRange) return [];
     if (pythagorean(start, end) > maxRange) return [];
 

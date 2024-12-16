@@ -12,7 +12,7 @@ export default class RockTower extends Tower {
         this.currentCooldown = 0;
         this.damage = 20;
         this.price = RockTower.price;
-        this.minRange = 3;
+        this.minRange = 2.5;
         this.maxRange = 8;
     }
 
@@ -25,6 +25,10 @@ export default class RockTower extends Tower {
         );
         return path;
     };
+
+    canHit = (target, gameMap) => { 
+        return !!this.getProjectilePath(target, gameMap).length;
+    }
 
     createProjectile = (path) => {
         this.currentCooldown = this.cooldown;

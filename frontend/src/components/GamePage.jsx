@@ -15,7 +15,7 @@ const GamePage = ({gameMap, showWelcome = false}) => {
 
     const [showModal, setShowModal] = useState(showWelcome);
 
-    return (<div className="d-flex flex-column bg-secondary vh-100">
+    return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
         <WelcomeModal
           show={showModal}
           onHide={() => setShowModal(false)}
@@ -54,8 +54,8 @@ const TopBar = ({user, logout}) => {
 const GameContainer = ({game}) => {
     const [selectedTower, setSelectedTower] = useState(null);
 
-    return <div className="d-flex flex-column align-items-center flex-grow-1">
-        <div className="d-flex flex-grow-1 w-100">
+    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">
+        <div className="d-flex w-100 h-100">
             <div className="w-75 border border-2 border-primary m-2">
                 <Stats showPanel={0} />
                 <Canvas>

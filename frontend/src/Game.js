@@ -27,6 +27,7 @@ export default class Game {
         this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
 
         this.enemies = [];
+        this.enemyInfo = {};
         this.spawningEnemies = false;
         this.projectiles = [];
 
@@ -58,6 +59,7 @@ export default class Game {
 
     setupEnemySpawn = (level) => {
         let {enemy, count, delay} = level;
+        this.enemyInfo = {enemy, count, delay, remaining: count};
         let currentDelay = 0;
         this.spawningEnemies = true;
         this.spawnFunction = () => {
@@ -67,6 +69,7 @@ export default class Game {
                 if (count) {
                     this.spawnEnemy(enemy);
                     count--;
+                    this.enemyInfo.remaining--;
                 } else {
                     this.spawnFunction = () => null;
                     this.spawningEnemies = false;
@@ -176,6 +179,7 @@ export default class Game {
             !this.enemies.some(enemy => !!enemy.hp)
         ) {
             this.enemies = [];
+            this.enemyInfo = {};
             this.projectiles = [];
             this.gold += this.goldReward;
             this.level++;

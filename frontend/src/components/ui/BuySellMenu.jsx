@@ -5,7 +5,7 @@ import { TOWERS, TERRAFORMS, TERRAFORM_DIG, TERRAFORM_FILL } from "../../entitie
 import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
 import { BUILD } from "../../Game";
-import { isOccupied, isTop } from "../../utils/game_utils";
+import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
 
 const BUY = "Buy";
 const SELL = "Sell";
@@ -112,6 +112,13 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
                 } else if (purchasingItem.name == TERRAFORM_DIG) {
+                    if (isBottom(gameMap, x, y, z)) {
+                        // Not allowed to excavate lowest tile level.
+                        purchasingItem.targetPosition = null;
+                        game.gameMapOverrides.clear();
+                        return;
+                    }
+
                     purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
                 }
@@ -120,10 +127,6 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
             mouseInput.addClickCallback(BUY, () => {
                 if (!purchasingItem.targetPosition) return;
                 let {x, y, z} = purchasingItem.targetPosition;
-                if (z < 1) {
-                    // Not allowed to excavate lowest tile level.
-                    return;
-                }
 
                 if (game.gold < terraform.price) return;
 
@@ -146,12 +149,12 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
-    
+
     const undoBuild = () => {
         if (!undoStack.length) return;
         deselectAll();
         const {x, y, z, label, price, tileType, tower} = undoStack.at(-1);
-        
+
         switch (label) {
             case 'BuildTower':
                 game.removeTower(x, y);

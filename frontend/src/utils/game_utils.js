@@ -162,6 +162,10 @@ export function isTop(gameMap, x, y, z) {
     return gameMap.getElevation(x, y) === z;
 }
 
+export function isBottom(_gameMap, _x, _y, z) {
+    return z == 0;
+}
+
 export function isOccupied(game, x, y, z) {
     const tower = game.towers[x][y];
     return tower && (tower.z === z);

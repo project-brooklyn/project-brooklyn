@@ -69,7 +69,7 @@ export default class Game {
                 if (count) {
                     this.spawnEnemy(enemy);
                     count--;
-                    this.enemyInfo = {...this.enemyInfo, remaining: count};
+                    this.enemyInfo.remaining--;
                 } else {
                     this.spawnFunction = () => null;
                     this.spawningEnemies = false;

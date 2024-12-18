@@ -1,5 +1,5 @@
 import { pythagorean, round } from '../../utils/math_utils';
-import { convertToRenderCoordinates } from '../../utils/render_utils';
+import { convertToRenderCoordinates, tileConfig } from '../../utils/render_utils';
 
 export const RangeIndicatorView = ({ tower, gameMap }) => {
     const { minRange, maxRange } = tower;

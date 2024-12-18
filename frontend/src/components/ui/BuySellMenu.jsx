@@ -9,7 +9,7 @@ import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
 import { SelectedTowerInfo } from "./SelectedTowerInfo";
 
 const BUY = "Buy";
-const SELL = "Sell";
+const SELECT = "Select";
 
 export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
     const {gameMap, mouseInput} = game;
@@ -23,7 +23,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         setUndoStack([]);
 
         if (!game.over && game.phase == BUILD) {
-            mouseInput.addClickCallback(SELL, (x, y, _z) => {
+            mouseInput.addClickCallback(SELECT, (x, y, _z) => {
                 if (!gameMap.getTower(x, y)) {
                     return;
                 }
@@ -85,7 +85,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 gameMap.addTower(x, y, tower);
                 setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
                 game.setPath();
-                mouseInput.addClickCallback(SELL, (x, y, _z) => {
+                mouseInput.addClickCallback(SELECT, (x, y, _z) => {
                     if (!gameMap.getTower(x, y)) {
                         return;
                     }

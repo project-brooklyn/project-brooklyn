@@ -55,7 +55,8 @@ class GameMap {
     getElevation(x, y, includeTower=false) {
         const cell = cellKey(x, y);
         const mapHeight = this.elevationData.get(cell) || 0;
-        const maybeTowerHeight = (includeTower && this.towers.get(cell)) ? this.towers.get(cell).height : 0;
+        const tower = this.towers.get(cell);
+        const maybeTowerHeight = (includeTower && tower) ? tower.height : 0;
 
         return mapHeight + maybeTowerHeight;
     }

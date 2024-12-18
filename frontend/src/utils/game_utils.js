@@ -102,8 +102,10 @@ export const getStraightPath = (tower, end, gameMap, speed=0.1) => {
     const {x, y, z, minRange, maxRange} = tower;
     const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
 
-    if (pythagorean([x,y], [end[0], end[1]]) < minRange) return []; // ignoring z for range calculation
-    if (pythagorean([x,y], [end[0], end[1]]) > maxRange) return []; // greatly improves range indicator ux
+    const dist2d = pythagorean([x, y], [end[0], end[1]]);
+    // ignoring z for range calculation greatly improves range indicator ux
+    if (dist2d < minRange) return [];
+    if (dist2d > maxRange) return [];
     if (z + tower.height < end[2]) return []; // prevent shooting upwards (through ground)
 
     // start and end are [x,y,z] coordinates
@@ -124,8 +126,10 @@ export const getStraightPath = (tower, end, gameMap, speed=0.1) => {
 export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
     const {x, y, z, minRange, maxRange} = tower;
     const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
-    if (pythagorean(start, end) < minRange) return [];
-    if (pythagorean(start, end) > maxRange) return [];
+
+    const dist2d = pythagorean([x, y], [end[0], end[1]]);
+    if (dist2d < minRange) return [];
+    if (dist2d > maxRange) return [];
 
     // start and end are [x,y,z] coordinates
     // returns a series (separated by timeInterval) of points that follow a parabolic path

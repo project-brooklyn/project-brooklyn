@@ -3,7 +3,7 @@ import { convertToRenderCoordinates } from '../../utils/render_utils';
 
 export const RangeIndicatorView = ({ tower, gameMap }) => {
     const { minRange, maxRange } = tower;
-    const SQUARE_SIZE = 1/3;
+    const SQUARE_SIZE = tileConfig.width/3;
 
     let tiles = [];
     for (let x = -SQUARE_SIZE; x < gameMap.width-SQUARE_SIZE; x += SQUARE_SIZE) {

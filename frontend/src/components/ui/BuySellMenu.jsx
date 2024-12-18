@@ -244,7 +244,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
         <div style={{display: "flex", flexDirection: "column"}}>
             {!!undoStack.length && <button onClick={undoBuild}>Undo</button>}
         </div>
-        <SelectedTowerInfo selectedTower={selectedTower} purchasingItem={purchasingItem} setSelectedTower={setSelectedTower}/>
+        <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower} purchasingItem={purchasingItem}/>
         <div style={{display: "flex", flexDirection: "column"}}>
             {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
             {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}

@@ -16,7 +16,6 @@ export default function SelectedTowerView({ selectedTower }) {
         console.error("Error with Selected Tower: ", selectedTower);
         return null;
     }
-
 }
 
 const GhostTowerView = ({ name, coordinates, scale }) => {

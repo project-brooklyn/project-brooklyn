@@ -12,19 +12,22 @@ export default class LaserTower extends Tower {
         this.currentCooldown = 0;
         this.damage = 40;
         this.price = LaserTower.price
+        this.minRange = 2.5;
+        this.maxRange = 10;
     }
 
     getProjectilePath = (target, heightMap) => {
         const path = getStraightPath(
-            [
-                this.position[0],
-                this.position[1],
-                this.position[2] + 3, // Add 3 to shoot from above the ground
-            ],
+            this,
             target, 
             heightMap,
-            0.4);
+            0.4
+        );
         return path;
+    }
+    
+    canHit = (target, gameMap) => { 
+        return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {

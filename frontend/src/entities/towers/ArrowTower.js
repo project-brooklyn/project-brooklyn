@@ -11,20 +11,23 @@ export default class ArrowTower extends Tower {
         this.currentCooldown = 0;
         this.damage = 10;
         this.price = ArrowTower.price;
+        this.minRange = 1.5;
+        this.maxRange = 4;
     }
 
     getProjectilePath = (target, gameMap) => {
         const path = getStraightPath(
-            [
-                this.position[0],
-                this.position[1],
-                this.position[2] + 3, // Add 3 to shoot from above the ground
-            ],
+            this,
             target,
             gameMap,
-            0.2);
+            0.2
+        );
         return path;
     };
+
+    canHit = (target, gameMap) => { 
+        return !!this.getProjectilePath(target, gameMap).length;
+    }
 
     createProjectile = (path) => {
         this.currentCooldown = this.cooldown;

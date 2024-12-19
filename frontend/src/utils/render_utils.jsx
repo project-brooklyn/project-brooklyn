@@ -17,6 +17,7 @@ export const modelFiles = {
     arrowTower: './basic/ballista_tower.glb',
     rockTower: './basic/cannon_tower.glb',
     laserTower: './basic/laser_tower.glb',
+    placeholder: './pointer.glb',
 };
 
 // Converts map coordinates to render coordinates.

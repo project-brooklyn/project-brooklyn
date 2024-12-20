@@ -12,11 +12,15 @@ export const modelFiles = {
     portal: './basic/portal.glb',
     castle: './basic/house.glb',
     flag: './basic/flag.glb',
-    arrow: './basic/arrow.glb',
-    rock: './basic/cannonball.glb',
     arrowTower: './basic/ballista_tower.glb',
+    arrow: './basic/arrow.glb',
     rockTower: './basic/cannon_tower.glb',
+    rock: './basic/cannonball.glb',
     laserTower: './basic/laser_tower.glb',
+    sawTower: './basic/saw_tower.glb',
+    sawBlade: './basic/saw_blade.glb',
+    spikeTower: './basic/spike_tower.glb',
+    spikes: './basic/arrow.glb', // reuse arrows as spikes
     placeholder: './pointer.glb',
 };
 

@@ -31,7 +31,6 @@ export default class LaserTower extends Tower {
     }
 
     createProjectile = (path) => {
-        this.currentCooldown = this.cooldown;
         this.rotateTowardsTarget(path.at(-1));
         return new Laser(...this.position, path);
     }

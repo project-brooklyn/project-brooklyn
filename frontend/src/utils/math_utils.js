@@ -8,6 +8,11 @@ export const pythagorean = (p1, p2) => {
     return Math.sqrt(sumOfSquares);
 };
 
+export const manhattan = (p1, p2) => {
+    if (p1.length !== p2.length) throw new Error('Incompatibile Vector Dimensions');
+    return p1.reduce((acc,curr,idx) => acc + Math.abs(curr - p2[idx]), 0);
+};
+
 export const round = (num, decimals=5) => {
     const inverse = 10**decimals;
     return Math.round(num*inverse) / inverse;

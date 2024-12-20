@@ -77,21 +77,21 @@ export default class Game {
                 currentDelay = delay;
             }
         }
-    };
+    }
 
     addProjectile = (projectile) => {
         this.projectiles.push(projectile);
         this.animationFunctions.push(projectile.getMoveFunction());
-    };
+    }
 
     addTower = (tower) => {
         const [x, y, _] = tower.position;
         this.towers[x][y] = tower;
-    };
+    }
 
     removeTower = (x, y) => {
         this.towers[x][y] = null;
-    };
+    }
 
     tick = () => {
         for (let fn of this.animationFunctions) fn();
@@ -100,7 +100,7 @@ export default class Game {
         this.handleEnemiesAtCastle();
         this.towersAttack();
         this.checkLevelOver();
-    };
+    }
 
     
     startDefendPhase = () => {
@@ -117,7 +117,7 @@ export default class Game {
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
-    };
+    }
     
     commitTowers = () => {
         for (let tower of this.towers.flat()) {
@@ -140,20 +140,25 @@ export default class Game {
             }
 
             // check all enemies, attack first (farthest along path)
+            let towerAttacked = false;
             for (let enemy of this.enemies) {
                 if (!enemy.hp) continue;
                 const path = tower.getProjectilePath(enemy.position, this.gameMap);
-                // console.log(tower, enemy, path)
+
                 if (path.length) {
-                    const projectile = tower.createProjectile(path);
-                    this.addProjectile(projectile);
+                    if (!towerAttacked) { // prevent duplicate projectiles
+                        const projectile = tower.createProjectile(path);
+                        this.addProjectile(projectile);
+                    }
 
                     // TODO: this is instant damage, convert to when projectile hits?
                     enemy.hp = Math.max(enemy.hp - tower.damage, 0);
     
-                    break;
+                    towerAttacked = true;
+                    if (!tower.canAttackMultiple) break;
                 }
             }
+            if (towerAttacked) tower.currentCooldown = tower.cooldown;
         }
     }
 
@@ -170,7 +175,7 @@ export default class Game {
                 enemy.hp = 0;
             }
         }
-    };
+    }
     
     checkLevelOver = () => {
         if (
@@ -193,6 +198,7 @@ export default class Game {
             this.phase = SCORE;
             setTimeout(() => this.phase = BUILD, 2000);
         }
-    };
+    }
 }
+
 

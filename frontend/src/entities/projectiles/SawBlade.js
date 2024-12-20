@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import Projectile from "./Projectile";
 
-const DEFAULT_SCALE = 0.005
-
-export default class Rock extends Projectile {
-    constructor (x, y, z, path, scale=DEFAULT_SCALE) {
+export default class SawBlade extends Projectile {
+    constructor (x, y, z, path, scale=0.01) {
         const quaternion = new THREE.Quaternion();
         super(x, y, z, scale, quaternion, path);
-        this.name = "rock";
+        this.name = "sawBlade";
     }
 }

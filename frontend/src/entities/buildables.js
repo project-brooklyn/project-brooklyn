@@ -1,6 +1,8 @@
 import ArrowTower from "./towers/ArrowTower";
 import LaserTower from "./towers/LaserTower";
 import RockTower from "./towers/RockTower";
+import SawTower from "./towers/SawTower";
+import SpikeTower from "./towers/SpikeTower";
 
 export const TOWERS = new Map([
     ["arrowTower", {
@@ -14,6 +16,14 @@ export const TOWERS = new Map([
     ["laserTower", {
         create: LaserTower,
         price: LaserTower.price,
+    }],
+    ["sawTower", {
+        create: SawTower,
+        price: SawTower.price,
+    }],
+    ["spikeTower", {
+        create: SpikeTower,
+        price: SpikeTower.price,
     }],
 ]);
 

@@ -146,7 +146,7 @@ export default class Game {
                 const path = tower.getProjectilePath(enemy.position, this.gameMap);
 
                 if (path.length) {
-                    if (!towerAttacked) { // prevent duplicate projectiles
+                    if (!towerAttacked) { // prevent stacked projectiles hitting same tile
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }

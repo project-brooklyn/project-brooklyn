@@ -2,6 +2,7 @@ import { round } from "../../utils/math_utils";
 import Spikes from "../projectiles/Spikes";
 import Tower from "./Tower";
 
+const SPIKE_TICK_DURATION = 20;
 
 export default class SpikeTower extends Tower {
     static price = 100;
@@ -24,7 +25,7 @@ export default class SpikeTower extends Tower {
 
     getProjectilePath = (target, gameMap) => {
         if (!this.canHit(target, gameMap)) return [];
-        return Array(20).fill(this.position);
+        return Array(SPIKE_TICK_DURATION).fill(this.position);
     }
 
     createProjectile = (path) => {

@@ -169,12 +169,13 @@ export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
 }
 
 export const getAdjacentTilePath = (tower, end) => {
+    const SAW_TICK_DURATION = 20;
     const [endX, endY, endZ] = [round(end[0], 0), round(end[1], 0), end[2]];
     if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return [];
     if (tower.z + (tower.height/2) < endZ || tower.z > endZ + (tower.height/2)) return [];
     const avgX = (tower.x + endX)/2;
     const avgY = (tower.y + endY)/2;
-    return Array(20).fill([avgX, avgY, tower.z + (tower.height/2)]);
+    return Array(SAW_TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
 }
 
 export function isTop(gameMap, x, y, z) {

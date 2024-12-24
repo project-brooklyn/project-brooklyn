@@ -30,7 +30,7 @@ const renderSpikes = (spikes, gltf) => {
     return (<group key={projectileKey(spikes)}>
         {spikesArray.map((coordinates) => {
             return <primitive
-                key={`spike,${coordinates.x},${coordinates.y},${coordinates.z}`}
+                key={`${projectileKey(spikes)},${coordinates.x},${coordinates.y},${coordinates.z}`}
                 object={gltf.scene.clone(true)}
                 scale={scale}
                 position={[coordinates.x, coordinates.y, coordinates.z]}
@@ -40,7 +40,7 @@ const renderSpikes = (spikes, gltf) => {
     </group>)
 }
 
-const specialProjectiles = {
+const SPECIAL_PROJECTILES = {
     laser: renderLaser,
     spikes: renderSpikes,
 }
@@ -55,7 +55,7 @@ const ProjectileRender = (projectile) => {
     const gltf = useLoader(GLTFLoader, modelFiles[name] || modelFiles.placeholder);
 
     if (hp <= 0) return null; // allows lasers to disappear
-    if (Object.keys(specialProjectiles).includes(name)) return specialProjectiles[name](projectile, gltf);
+    if (name in SPECIAL_PROJECTILES) return SPECIAL_PROJECTILES[name](projectile, gltf);
     
     const coordinates = convertToRenderCoordinates(projectile, offset);
 

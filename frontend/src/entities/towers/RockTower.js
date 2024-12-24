@@ -14,6 +14,7 @@ export default class RockTower extends Tower {
         this.price = RockTower.price;
         this.minRange = 2.5;
         this.maxRange = 6;
+        this.canAttackMultiple = false; // splash damage not implemented, this is for saw/spike towers
     }
 
     getProjectilePath = (target, gameMap) => {
@@ -31,7 +32,6 @@ export default class RockTower extends Tower {
     }
 
     createProjectile = (path) => {
-        this.currentCooldown = this.cooldown;
         this.rotateTowardsTarget(path.at(-1));
         return new Rock(...this.position, path);
     };

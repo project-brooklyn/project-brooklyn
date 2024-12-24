@@ -23,15 +23,14 @@ export default class ArrowTower extends Tower {
             0.2
         );
         return path;
-    };
+    }
 
     canHit = (target, gameMap) => { 
         return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {
-        this.currentCooldown = this.cooldown;
         this.rotateTowardsTarget(path.at(-1));
         return new Arrow(...this.position, path);
-    };
+    }
 }

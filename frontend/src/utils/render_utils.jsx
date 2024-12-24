@@ -6,18 +6,22 @@ export const tileConfig = {
 };
 
 export const modelFiles = { 
+    arrow: './basic/arrow.glb',
+    arrowTower: './basic/ballista_tower.glb',
+    castle: './basic/house.glb',
+    cow: './basic/spherical_cow.glb',
+    flag: './basic/flag.glb',
     guy: './basic/robot.glb',
     lamb: './basic/lamb.glb',
-    cow: './basic/spherical_cow.glb',
-    portal: './basic/portal.glb',
-    castle: './basic/house.glb',
-    flag: './basic/flag.glb',
-    arrow: './basic/arrow.glb',
-    rock: './basic/cannonball.glb',
-    arrowTower: './basic/ballista_tower.glb',
-    rockTower: './basic/cannon_tower.glb',
     laserTower: './basic/laser_tower.glb',
     placeholder: './pointer.glb',
+    portal: './basic/portal.glb',
+    rock: './basic/cannonball.glb',
+    rockTower: './basic/cannon_tower.glb',
+    sawBlade: './basic/saw_blade.glb',
+    sawTower: './basic/saw_tower.glb',
+    spikes: './basic/arrow.glb', // reuse arrows as spikes
+    spikeTower: './basic/spike_tower.glb',
 };
 
 // Converts map coordinates to render coordinates.

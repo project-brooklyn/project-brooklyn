@@ -1,4 +1,4 @@
-import { round, normalize, pythagorean, quadratic } from "./math_utils";
+import { round, normalize, pythagorean, quadratic, manhattan } from "./math_utils";
 
 const getNeighbors = (x, y, gameMap) => {
     const neighbors = [];
@@ -121,7 +121,7 @@ export const getStraightPath = (tower, end, gameMap, speed=0.1) => {
     const tolerance = 0.5;
     if (pythagorean(path.at(-1), end) > tolerance) return [];
     return path;
-};
+}
 
 export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
     const {x, y, z, minRange, maxRange} = tower;
@@ -166,7 +166,17 @@ export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
     const tolerance = 0.5;
     if (pythagorean(path.at(-1), end) > tolerance) return [];
     return path;
-};
+}
+
+export const getAdjacentTilePath = (tower, end) => {
+    const SAW_TICK_DURATION = 20;
+    const [endX, endY, endZ] = [round(end[0], 0), round(end[1], 0), end[2]];
+    if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return [];
+    if (tower.z + (tower.height/2) < endZ || tower.z > endZ + (tower.height/2)) return [];
+    const avgX = (tower.x + endX)/2;
+    const avgY = (tower.y + endY)/2;
+    return Array(SAW_TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
+}
 
 export function isTop(gameMap, x, y, z) {
     return gameMap.getElevation(x, y) === z;

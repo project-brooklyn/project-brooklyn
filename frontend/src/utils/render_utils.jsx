@@ -14,7 +14,7 @@ export const modelFiles = {
     guy: './basic/robot.glb',
     lamb: './basic/lamb.glb',
     laserTower: './basic/laser_tower.glb',
-    placeholder: './pointer.glb',
+    placeholder: './placeholder.glb',
     portal: './basic/portal.glb',
     rock: './basic/cannonball.glb',
     rockTower: './basic/cannon_tower.glb',

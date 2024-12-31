@@ -1,13 +1,11 @@
 import * as THREE from 'three';
-
 import Projectile from "./Projectile";
-
 import { convertToRenderCoordinates } from "../../utils/render_utils";
 
-const DEFAULT_SCALE = 0.01
+export const DEFAULT_ARROW_SCALE = 0.01
 
 export default class Arrow extends Projectile {
-    constructor (x, y, z, path, scale=DEFAULT_SCALE) {
+    constructor (x, y, z, path, scale=DEFAULT_ARROW_SCALE) {
         // Determine rotation based on the start and end of path.
         // We assume that models have a default orientation facing
         // forward along the positive y-axis. See GDD for more details.
@@ -28,6 +26,4 @@ export default class Arrow extends Projectile {
         super(x, y, z, scale, quaternion, path);
         this.name = "arrow";
     }
-
-
 }

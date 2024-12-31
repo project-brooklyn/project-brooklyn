@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BUILD, DEFEND } from "../../Game";
 import { BuySellMenu } from "./BuySellMenu";
 import { LevelInfo } from "./LevelInfo";
+import { SelectedTowerInfo } from "./SelectedTowerInfo";
 
 export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
     const [level, setLevel] = useState(game.level);
@@ -28,7 +29,10 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
 
         <div className="my-4">
             {phase === BUILD && <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />}
-            {phase === DEFEND && <LevelInfo game={game} />}
+            {phase === DEFEND && <>
+                <LevelInfo game={game} />
+                <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower}/>
+            </>}
         </div>
 
         {phase === BUILD && <div className="d-flex justify-content-center mt-auto mb-4">

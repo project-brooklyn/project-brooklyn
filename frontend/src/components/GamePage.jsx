@@ -8,7 +8,6 @@ import WelcomeModal from "./ui/WelcomeModal";
 import { useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
 
-
 const GamePage = ({gameMap, showWelcome = false}) => {
     const { user, logout } = useAuth();
     const game = new Game(new gameMap());

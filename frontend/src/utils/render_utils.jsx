@@ -40,6 +40,12 @@ export const modelFiles = {
     wrench: './basic/wrench.glb',
 };
 
+export const statusIcons = {
+    BUFFED: './buff.png',
+    SLOWED: './ice.png',
+    BURNED: './fire.png',
+};
+
 // Converts map coordinates to render coordinates.
 export function convertToRenderCoordinates(mapVector, offset = { x: 0, y: 0, z: 0 }) {
     return new THREE.Vector3(

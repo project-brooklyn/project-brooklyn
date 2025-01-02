@@ -37,7 +37,7 @@ const StructureRender = (assets, structure) => {
                 scale={scale}
                 rotation={rotation}
             />
-        </group>
+        </group >
     );
 }
 

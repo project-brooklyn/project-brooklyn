@@ -5,7 +5,7 @@ import HpView from "./HpView";
 import { StatusView } from "./StatusView";
 
 const positionAboveEnemy = [0, 0.5, 0];
-const enemyHeight = 1; // fix if enemies have different heights
+const enemyHeight = 2; // fix if enemies have different heights
 
 const EnemyRender = (enemy, i) => {
     const { scale, name, hp, maxHp, offset, rotation, statuses } = enemy;

@@ -1,6 +1,7 @@
 import ArrowTower from "./towers/ArrowTower";
 import BuffTower from "./towers/BuffTower";
 import FireTower from "./towers/FireTower";
+import IceTower from "./towers/IceTower";
 import LaserTower from "./towers/LaserTower";
 import RockTower from "./towers/RockTower";
 import SawTower from "./towers/SawTower";
@@ -39,6 +40,10 @@ export const TOWERS = new Map([
     ["slowTower", {
         create: SlowTower,
         price: SlowTower.price,
+    }],
+    ["iceTower", {
+        create: IceTower,
+        price: IceTower.price,
     }],
 ]);
 

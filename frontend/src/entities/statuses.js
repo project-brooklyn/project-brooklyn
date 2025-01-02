@@ -3,7 +3,7 @@ export const SLOWED = 'SLOWED';
 export const FROZEN = 'FROZEN';
 
 const FIRE_DAMAGE = 0.2;
-const FREEZE_DURATION = 200;
+const FREEZE_DURATION = 100;
 
 export const statusFunctions = {
     BURNED: (enemy) => {
@@ -12,5 +12,14 @@ export const statusFunctions = {
     SLOWED: (enemy) => { // slowed enemies move every other tick
         enemy.cantMove = !enemy.cantMove;
     },
-    FROZEN: () => {},
+    FROZEN: (enemy) => {
+        if (!enemy.frozenTime) {
+            enemy.frozenTime = FREEZE_DURATION;
+        } else {
+            enemy.frozenTime--;
+            if (!enemy.frozenTime) {
+                enemy.statuses.FROZEN = false;
+            }
+        }
+    },
 }

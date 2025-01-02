@@ -108,8 +108,8 @@ export default class Game {
 
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
-            for (let status of enemy.statuses) {
-                statusFunctions[status](enemy);
+            for (let [status, hasStatus] of Object.entries(enemy.statuses)) {
+                if (hasStatus) statusFunctions[status](enemy);
             }
         }
     }
@@ -159,11 +159,11 @@ export default class Game {
 
                 if (path.length) {
                     if (!towerAttacked) { // prevent stacked projectiles hitting same tile
-                        if (tower.appliedStatus ) {
-                            if (enemy.statuses.includes(tower.appliedStatus)) {
+                        if (tower.appliedStatus) {
+                            if (enemy.statuses[tower.appliedStatus]) {
                                 continue;
                             }
-                            enemy.statuses.push(tower.appliedStatus);
+                            enemy.statuses[tower.appliedStatus] = true;
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
                         const damage = tower.buffs.includes(BUFFED) ? tower.damage * 2 : tower.damage;

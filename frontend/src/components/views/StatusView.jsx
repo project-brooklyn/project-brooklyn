@@ -14,5 +14,4 @@ export const StatusView = ({ statuses, position, height }) => {
             />
          </sprite>)}
     </>
-    
 }

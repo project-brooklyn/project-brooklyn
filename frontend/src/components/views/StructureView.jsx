@@ -28,7 +28,7 @@ const StructureRender = (structure) => {
     return (
         <group position={[coordinates.x, coordinates.y, coordinates.z]} key={key}>
             {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
-            {buffs?.length && <StatusView position={[0, 0.5, 0]} statuses={buffs} height={height} />}
+            {buffs?.length ? <StatusView position={[0, 0.5, 0]} statuses={buffs} height={height} /> : null}
             <primitive
                 object={isObjModel ? modelLoader : modelLoader.scene.clone(true)}
                 scale={scale}

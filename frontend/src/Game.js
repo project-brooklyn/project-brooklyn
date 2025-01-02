@@ -5,6 +5,7 @@ import MouseInput from "./components/MouseInput";
 import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
+import { statusFunctions } from "./entities/statuses";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -81,6 +82,7 @@ export default class Game {
     }
 
     addProjectile = (projectile) => {
+        if (!projectile) return;
         this.projectiles.push(projectile);
         this.animationFunctions.push(projectile.getMoveFunction());
     }
@@ -98,11 +100,19 @@ export default class Game {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();
 
+        this.handleEnemyStatus();
         this.handleEnemiesAtCastle();
         this.towersAttack();
         this.checkLevelOver();
     }
 
+    handleEnemyStatus = () => {
+        for (let enemy of this.enemies) {
+            for (let status of enemy.statuses) {
+                statusFunctions[status](enemy);
+            }
+        }
+    }
     
     startDefendPhase = () => {
         if (this.phase !== BUILD || this.over) return;
@@ -149,13 +159,19 @@ export default class Game {
 
                 if (path.length) {
                     if (!towerAttacked) { // prevent stacked projectiles hitting same tile
+                        if (tower.appliedStatus ) {
+                            if (enemy.statuses.includes(tower.appliedStatus)) {
+                                continue;
+                            }
+                            enemy.statuses.push(tower.appliedStatus);
+                        }
+                        // TODO: this is instant damage, convert to when projectile hits?
+                        const damage = tower.buffs.includes(BUFFED) ? tower.damage * 2 : tower.damage;
+                        enemy.hp = Math.max(enemy.hp - damage, 0);
+
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }
-
-                    // TODO: this is instant damage, convert to when projectile hits?
-                    const damage = tower.buffs.includes(BUFFED) ? tower.damage * 2 : tower.damage;
-                    enemy.hp = Math.max(enemy.hp - damage, 0);
     
                     towerAttacked = true;
                     if (!tower.canAttackMultiple) break;

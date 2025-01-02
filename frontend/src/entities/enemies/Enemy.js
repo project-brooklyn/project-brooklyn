@@ -10,6 +10,7 @@ export default class Enemy extends Entity {
         this.stepIndex = 1;
         
         return () => {
+            if (this.cantMove) return;
             const curr = steps[this.stepIndex-1];
             const next = steps[this.stepIndex];
 

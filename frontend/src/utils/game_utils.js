@@ -190,3 +190,7 @@ export function isOccupied(game, x, y, z) {
     const tower = game.towers[x][y];
     return tower && (tower.z === z);
 }
+
+export function isSameCell(source, target) {
+    return round(target[0], 0) === source.x && round(target[1], 0) === source.y;
+}

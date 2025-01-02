@@ -41,9 +41,10 @@ export const modelFiles = {
 };
 
 export const statusIcons = {
-    BUFFED: './buff.png',
-    SLOWED: './ice.png',
-    BURNED: './fire.png',
+    BUFFED: './icons/buff.png',
+    SLOWED: './icons/snail.png',
+    BURNED: './icons/fire.png',
+    FROZEN: './icons/ice.png',
 };
 
 // Converts map coordinates to render coordinates.

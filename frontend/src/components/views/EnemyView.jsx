@@ -5,7 +5,7 @@ import HpView from "./HpView";
 
 const EnemyRender = (enemy, i) => {
     const { scale, name, hp, maxHp, offset, rotation } = enemy;
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
+    const gltf = useLoader(GLTFLoader, modelFiles[name] || modelFiles.placeholder);
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 

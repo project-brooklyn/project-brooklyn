@@ -3,6 +3,7 @@ import Entity from "../Entity";
 export default class Enemy extends Entity {
     constructor (x, y, z, scale) {
         super(x, y, z, scale);
+        this.statuses = [];
     }
     
     getMoveFunction = (steps) => {

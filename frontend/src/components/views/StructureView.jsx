@@ -8,10 +8,9 @@ const StructureRender = (structure) => {
     const { scale, name, hp, maxHp, offset, rotation } = structure;
     const coordinates = convertToRenderCoordinates(structure, offset);
     
-    const modelFile = modelFiles[name];
+    const modelFile = modelFiles[name] || modelFiles.placeholder;
     const isObjModel = modelFile.slice(-3) === 'obj';
-    const modelLoader = useLoader(!isObjModel ? GLTFLoader : OBJLoader, modelFile)
-    
+    const modelLoader = useLoader(isObjModel ? OBJLoader : GLTFLoader, modelFile)
 
     // prevent real towers from becoming transparent when ghost view is present
     if (!isObjModel) {

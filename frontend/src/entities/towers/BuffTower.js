@@ -1,20 +1,15 @@
 import { getAdjacentTilePath } from "../../utils/game_utils";
-import SawBlade from "../projectiles/SawBlade";
 import Tower from "./Tower";
 
-export default class SawTower extends Tower {
-    static price = 150;
+export default class BuffTower extends Tower {
+    static price = 100;
     constructor (x, y, z, status) {
         super(x, y, z, 0.012, status);
-        this.name = 'sawTower';
-        this.cooldown = 20;
-        this.currentCooldown = 0;
-        this.damage = 30;
-        this.price = SawTower.price;
+        this.name = 'buffTower';
+        this.price = BuffTower.price;
         this.minRange = 0;
         this.maxRange = 1;
         this.height = 3;
-        this.canAttackMultiple = true;
     }
 
     getProjectilePath = (target, gameMap) => {
@@ -25,8 +20,4 @@ export default class SawTower extends Tower {
         return !!this.getProjectilePath(target, gameMap).length;
     }
 
-    createProjectile = (path) => {
-        this.currentCooldown = this.cooldown;
-        return new SawBlade(...this.position, path);
-    }
 }

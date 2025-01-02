@@ -1,6 +1,8 @@
 import { getAdjacentTilePath } from "../../utils/game_utils";
 import Tower from "./Tower";
 
+export const BUFFED = "BUFFED";
+
 export default class BuffTower extends Tower {
     static price = 100;
     constructor (x, y, z, status) {

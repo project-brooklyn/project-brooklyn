@@ -11,7 +11,6 @@ const StructureRender = (assets, structure) => {
     const { scale, name, hp, maxHp, offset, rotation, height } = structure;
     const buffs = structure.getBuffs() || NO_BUFFS;
     const coordinates = convertToRenderCoordinates(structure, offset);
-
     const modelFile = modelFiles[name] || modelFiles.placeholder;
     const isObjModel = modelFile.slice(-3) === 'obj';
     const modelLoader = useLoader(isObjModel ? OBJLoader : GLTFLoader, modelFile)

@@ -11,7 +11,7 @@ export default class BuffTower extends Tower {
         this.price = BuffTower.price;
         this.minRange = 0;
         this.maxRange = 1;
-        this.height = 3;
+        this.height = 5;
     }
 
     getProjectilePath = (target, gameMap) => {

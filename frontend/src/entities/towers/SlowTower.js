@@ -5,7 +5,7 @@ import { SLOWED } from "../statuses";
 export default class SlowTower extends Tower {
     static price = 100;
     constructor (x, y, z, status) {
-        super(x, y, z, 0.012, status);
+        super(x, y, z, 0.01, status);
         this.name = 'slowTower';
         this.cooldown = 0;
         this.currentCooldown = 0;

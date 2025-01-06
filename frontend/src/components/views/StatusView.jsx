@@ -3,7 +3,7 @@ import { statusIcons } from '../../utils/render_utils'
 
 const STATUS_SPACING = 0.1;
 
-export const StatusView = ({ statuses, position, height }) => {
+export const StatusView = ({ statuses = {}, position, height }) => {
     const statusCount = Object.values(statuses).filter(Boolean).length;
     return <>
         {Object.entries(statuses).map(([status, hasStatus], i) => {

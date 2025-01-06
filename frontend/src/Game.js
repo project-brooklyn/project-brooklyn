@@ -166,7 +166,7 @@ export default class Game {
                             enemy.statuses[tower.appliedStatus] = true;
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
-                        const damage = tower.buffs.includes(BUFFED) ? tower.damage * 2 : tower.damage;
+                        const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
                         enemy.hp = Math.max(enemy.hp - damage, 0);
 
                         const projectile = tower.createProjectile(path);
@@ -221,12 +221,12 @@ export default class Game {
 
     applyBuffs = () => {
         for (const tower of this.towers.flat().filter(tower => !!tower)) {
-            tower.buffs = [];
+            tower.buffs = {};
         }
         for (const buffTower of this.towers.flat().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.towers.flat().filter(t => t && t.name !== 'buffTower')) {
                 if (buffTower.canHit(otherTower.position, this.gameMap)) {
-                    otherTower.buffs.push(BUFFED);
+                    otherTower.buffs[BUFFED] = true;
                 }
             }
         }

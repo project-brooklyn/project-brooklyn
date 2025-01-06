@@ -29,7 +29,7 @@ export const SelectedTowerInfo = ({selectedTower, purchasingItem, setSelectedTow
         <ul>
             <li>Type: {name}</li>
             <li>Price: {price}</li>
-            <li>Damage: {buffs.includes(BUFFED) ? damage * 2 : damage}</li>
+            <li>Damage: {buffs[BUFFED] ? damage * 2 : damage}</li>
             <li>Cooldown: {cooldown}</li>
             {minRange 
                 ? <li>Range: {minRange} - {maxRange}</li>

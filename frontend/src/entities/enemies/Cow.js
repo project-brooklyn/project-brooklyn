@@ -1,7 +1,7 @@
 import Enemy from "./Enemy";
 
 export default class Cow extends Enemy {
-    static SPEED = 0.5;
+    static SPEED = 1;
     static MAX_HP = 200;
     static NAME = "cow";
 

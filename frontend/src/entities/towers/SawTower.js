@@ -2,7 +2,6 @@ import { getAdjacentTilePath } from "../../utils/game_utils";
 import SawBlade from "../projectiles/SawBlade";
 import Tower from "./Tower";
 
-
 export default class SawTower extends Tower {
     static price = 150;
     constructor (x, y, z, status) {

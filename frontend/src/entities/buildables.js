@@ -1,11 +1,7 @@
 import ArrowTower from "./towers/ArrowTower";
-import BuffTower from "./towers/BuffTower";
-import FireTower from "./towers/FireTower";
-import IceTower from "./towers/IceTower";
 import LaserTower from "./towers/LaserTower";
 import RockTower from "./towers/RockTower";
 import SawTower from "./towers/SawTower";
-import SlowTower from "./towers/SlowTower";
 import SpikeTower from "./towers/SpikeTower";
 
 export const TOWERS = new Map([
@@ -28,22 +24,6 @@ export const TOWERS = new Map([
     ["spikeTower", {
         create: SpikeTower,
         price: SpikeTower.price,
-    }],
-    ["buffTower", {
-        create: BuffTower,
-        price: BuffTower.price,
-    }],
-    ["fireTower", {
-        create: FireTower,
-        price: FireTower.price,
-    }],
-    ["slowTower", {
-        create: SlowTower,
-        price: SlowTower.price,
-    }],
-    ["iceTower", {
-        create: IceTower,
-        price: IceTower.price,
     }],
 ]);
 

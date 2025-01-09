@@ -3,14 +3,12 @@ import Entity from "../Entity";
 export default class Enemy extends Entity {
     constructor (x, y, z, scale) {
         super(x, y, z, scale);
-        this.statuses = {};
     }
     
     getMoveFunction = (steps) => {
         this.stepIndex = 1;
         
         return () => {
-            if (this.cantMove || this.statuses.FROZEN) return;
             const curr = steps[this.stepIndex-1];
             const next = steps[this.stepIndex];
 

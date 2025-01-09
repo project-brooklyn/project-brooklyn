@@ -8,14 +8,10 @@ export const tileConfig = {
 export const modelFiles = { 
     arrow: './basic/arrow.glb',
     arrowTower: './basic/ballista_tower.glb',
-    buffTower: './basic/buff_tower.glb',
     castle: './basic/house.glb',
     cow: './basic/spherical_cow.glb',
-    fireTower: './basic/flame_tower.glb',
     flag: './basic/flag.glb',
-    flame: './basic/flame.glb',
     guy: './basic/robot.glb',
-    iceTower: './basic/ice_tower.glb',
     lamb: './basic/lamb.glb',
     laserTower: './basic/laser_tower.glb',
     placeholder: './placeholder.glb',
@@ -24,17 +20,8 @@ export const modelFiles = {
     rockTower: './basic/cannon_tower.glb',
     sawBlade: './basic/saw_blade.glb',
     sawTower: './basic/saw_tower.glb',
-    slowTower: './basic/slow_tower.glb',
-    snowball: './basic/snowball.glb',
     spikes: './basic/arrow.glb', // reuse arrows as spikes
     spikeTower: './basic/spike_tower.glb',
-};
-
-export const statusIcons = {
-    BUFFED: './icons/buff.png',
-    SLOWED: './icons/snail.png',
-    BURNED: './icons/fire.png',
-    FROZEN: './icons/ice.png',
 };
 
 // Converts map coordinates to render coordinates.

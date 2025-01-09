@@ -4,8 +4,6 @@ import Portal from "./entities/Portal";
 import MouseInput from "./components/MouseInput";
 import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
-import { BUFFED } from "./entities/towers/BuffTower";
-import { statusFunctions } from "./entities/statuses";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -82,7 +80,6 @@ export default class Game {
     }
 
     addProjectile = (projectile) => {
-        if (!projectile) return;
         this.projectiles.push(projectile);
         this.animationFunctions.push(projectile.getMoveFunction());
     }
@@ -100,19 +97,11 @@ export default class Game {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();
 
-        this.handleEnemyStatus();
         this.handleEnemiesAtCastle();
         this.towersAttack();
         this.checkLevelOver();
     }
 
-    handleEnemyStatus = () => {
-        for (let enemy of this.enemies) {
-            for (let [status, hasStatus] of Object.entries(enemy.statuses)) {
-                if (hasStatus) statusFunctions[status](enemy);
-            }
-        }
-    }
     
     startDefendPhase = () => {
         if (this.phase !== BUILD || this.over) return;
@@ -123,7 +112,6 @@ export default class Game {
         this.projectiles = [];
         
         this.commitTowers();
-        this.applyBuffs();
         
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
@@ -143,7 +131,7 @@ export default class Game {
     towersAttack = () => {
         for (let tower of this.towers.flat()) {
             // handle null, portal, and castle
-            if (!tower || !tower.getProjectilePath || !tower.createProjectile) continue;
+            if (!tower || !tower.getProjectilePath) continue;
 
             // handle tower cooldown
             if (tower.currentCooldown) {
@@ -159,19 +147,12 @@ export default class Game {
 
                 if (path.length) {
                     if (!towerAttacked) { // prevent stacked projectiles hitting same tile
-                        if (tower.appliedStatus) {
-                            if (enemy.statuses[tower.appliedStatus]) {
-                                continue;
-                            }
-                            enemy.statuses[tower.appliedStatus] = true;
-                        }
-                        // TODO: this is instant damage, convert to when projectile hits?
-                        const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
-                        enemy.hp = Math.max(enemy.hp - damage, 0);
-
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }
+
+                    // TODO: this is instant damage, convert to when projectile hits?
+                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
     
                     towerAttacked = true;
                     if (!tower.canAttackMultiple) break;
@@ -216,19 +197,6 @@ export default class Game {
             // TODO: implement score phase
             this.phase = SCORE;
             setTimeout(() => this.phase = BUILD, 2000);
-        }
-    }
-
-    applyBuffs = () => {
-        for (const tower of this.towers.flat().filter(tower => !!tower)) {
-            tower.buffs = {};
-        }
-        for (const buffTower of this.towers.flat().filter(t => t?.name === 'buffTower')) {
-            for (const otherTower of this.towers.flat().filter(t => t && t.name !== 'buffTower')) {
-                if (buffTower.canHit(otherTower.position, this.gameMap)) {
-                    otherTower.buffs[BUFFED] = true;
-                }
-            }
         }
     }
 }

@@ -12,7 +12,6 @@ export default class Tower extends Entity {
         this.hp = Infinity;
         this.status = status;
         this.height = 2.5; // default height for projectile launch
-        this.buffs = {};
     }
 
     rotateTowardsTarget(target) {

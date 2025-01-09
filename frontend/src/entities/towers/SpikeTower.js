@@ -1,6 +1,6 @@
-import Tower from "./Tower";
+import { round } from "../../utils/math_utils";
 import Spikes from "../projectiles/Spikes";
-import { isSameCell } from "../../utils/game_utils";
+import Tower from "./Tower";
 
 const SPIKE_TICK_DURATION = 20;
 
@@ -20,7 +20,7 @@ export default class SpikeTower extends Tower {
     }
 
     canHit = (target, _gameMap) => {
-        return isSameCell(this, target);
+        return round(target[0], 0) === this.x && round(target[1], 0) === this.y;
     }
 
     getProjectilePath = (target, gameMap) => {

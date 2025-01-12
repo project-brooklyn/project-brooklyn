@@ -30,7 +30,7 @@ export default class SlowTower extends Tower {
     }
 
     createProjectile = (_path) => {
-        this.currentCooldown = this.cooldown; // does nothing, currently cooldown == 0
+        // current iteration has no cooldown, otherwise cooldown would be set here
         return null
     }
 }

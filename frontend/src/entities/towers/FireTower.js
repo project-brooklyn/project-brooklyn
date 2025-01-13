@@ -24,7 +24,7 @@ export default class FireTower extends Tower {
             this,
             target,
             gameMap,
-            0.2
+            0.05,
         );
         return path;
     }

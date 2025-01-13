@@ -1,6 +1,7 @@
 import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
+import KeyboardInput from "./components/KeyboardInput";
 import MouseInput from "./components/MouseInput";
 import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
@@ -21,12 +22,12 @@ export default class Game {
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
-            gameMap.width-1,
-            gameMap.depth-1, 
-            gameMap.getElevation(gameMap.width-1, gameMap.depth-1)
+            gameMap.width - 1,
+            gameMap.depth - 1,
+            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
         );  // Assumes map is rectangular
         this.towers[0][0] = this.portal;
-        this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
+        this.towers[gameMap.width - 1][gameMap.depth - 1] = this.castle;
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -40,6 +41,7 @@ export default class Game {
         this.gold = 500;
         this.goldReward = 0;
 
+        this.keyboardInput = new KeyboardInput();
         this.mouseInput = new MouseInput();
         this.setPath(this.portal.position, this.castle.position);
     }
@@ -60,8 +62,8 @@ export default class Game {
     }
 
     setupEnemySpawn = (level) => {
-        let {enemy, count, delay} = level;
-        this.enemyInfo = {enemy, count, delay, remaining: count};
+        let { enemy, count, delay } = level;
+        this.enemyInfo = { enemy, count, delay, remaining: count };
         let currentDelay = 0;
         this.spawningEnemies = true;
         this.spawnFunction = () => {
@@ -113,7 +115,7 @@ export default class Game {
             }
         }
     }
-    
+
     startDefendPhase = () => {
         if (this.phase !== BUILD || this.over) return;
         this.phase = DEFEND;
@@ -121,16 +123,16 @@ export default class Game {
         this.spawningEnemies = true;
         this.enemies = [];
         this.projectiles = [];
-        
+
         this.commitTowers();
         this.applyBuffs();
-        
+
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
     }
-    
+
     commitTowers = () => {
         for (let tower of this.towers.flat()) {
             if (tower && "status" in tower) {
@@ -172,7 +174,7 @@ export default class Game {
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }
-    
+
                     towerAttacked = true;
                     if (!tower.canAttackMultiple) break;
                 }
@@ -182,7 +184,7 @@ export default class Game {
     }
 
     handleEnemiesAtCastle = () => {
-        for (const enemy of this.enemies)  {
+        for (const enemy of this.enemies) {
             if (
                 enemy.position[0] === this.castle.position[0] &&
                 enemy.position[1] === this.castle.position[1] &&
@@ -195,7 +197,7 @@ export default class Game {
             }
         }
     }
-    
+
     checkLevelOver = () => {
         if (
             this.phase === DEFEND &&

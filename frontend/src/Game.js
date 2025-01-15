@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
@@ -44,6 +45,22 @@ export default class Game {
         this.keyboardInput = new KeyboardInput();
         this.mouseInput = new MouseInput();
         this.setPath(this.portal.position, this.castle.position);
+
+        this.cameraTarget = null;
+        this.resetCameraTarget();
+        this.configureCameraControls();
+    }
+
+    resetCameraTarget = () => {
+        this.cameraTarget = new THREE.Vector3(this.gameMap.width / 2 - .5, 0, this.gameMap.depth / 2 - .5);
+    }
+
+    configureCameraControls = () => {
+        const name = "CameraController";
+        this.keyboardInput.addKeyDownCallback('c', name, () => {
+            this.resetCameraTarget();
+        });
+        // TODO: wsad keys
     }
 
     setPath = () => {

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as THREE from "three";
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
@@ -13,8 +12,9 @@ import PathView from "./views/PathView";
 import SelectedTowerView from "./views/SelectedTowerView";
 import { RangeIndicatorView } from "./views/RangeIndicatorView";
 
-export default function GameDisplay({game, assets, selectedTower}) {
-    const { gameMap } = game;
+
+export default function GameDisplay({ game, assets, selectedTower }) {
+    const { gameMap, cameraTarget } = game;
     const { width, depth, height } = gameMap;
 
     const [ticks, setTicks] = useState(0);
@@ -28,10 +28,10 @@ export default function GameDisplay({game, assets, selectedTower}) {
 
 
     return <>
-        <axesHelper args={[width, depth, height]}/>
+        <axesHelper args={[width, depth, height]} />
         {game.phase === BUILD && <Text
             onClick={() => game.gold += 100}
-            position={[width/2-0.5, 0, -0.51]}
+            position={[width / 2 - 0.5, 0, -0.51]}
             rotation={[0, Math.PI, 0]}
             fontSize={0.2}
         >
@@ -40,18 +40,24 @@ export default function GameDisplay({game, assets, selectedTower}) {
 
         {selectedTower && <>
             <SelectedTowerView selectedTower={selectedTower} />
-            <RangeIndicatorView tower={selectedTower} gameMap={gameMap}/>
+            <RangeIndicatorView tower={selectedTower} gameMap={gameMap} />
         </>}
 
-        <PerspectiveCamera makeDefault fov={50} position={ [15, 10, 15] }/>
-        <OrbitControls target={new THREE.Vector3(width/2-.5, 0, depth/2-.5)}/>
+        <PerspectiveCamera makeDefault fov={50} position={[15, 10, 15]} />
+        <OrbitControls
+            target={cameraTarget.clone()}
+            enablePan={false}
+            minDistance={[5]}
+            maxDistance={[50]}
+            maxPolarAngle={[Math.PI / 2]}
+        />
         <ambientLight intensity={2} />
 
-        <StructureView structures={game.towers}/>
-        <EnemyView enemies={game.enemies}/>
-        <ProjectileView projectiles={game.projectiles}/>
-        {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x,y,true)])} />}
+        <StructureView structures={game.towers} />
+        <EnemyView enemies={game.enemies} />
+        <ProjectileView projectiles={game.projectiles} />
+        {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x, y, true)])} />}
 
-        <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput}/>
+        <MapView assets={assets} gameMap={gameMap} overrides={game.gameMapOverrides} mouseInput={game.mouseInput} />
     </>
 }

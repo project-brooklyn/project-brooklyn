@@ -45,8 +45,8 @@ export default function GameDisplay({ game, assets, selectedTower }) {
 
         <PerspectiveCamera makeDefault fov={50} position={[15, 10, 15]} />
         <OrbitControls
-            target={cameraTarget.clone()}
-            enablePan={false}
+            target={cameraTarget}
+            enablePan={true}
             minDistance={[5]}
             maxDistance={[50]}
             maxPolarAngle={[Math.PI / 2]}

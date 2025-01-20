@@ -60,7 +60,6 @@ export default class Game {
         this.keyboardInput.addKeyDownCallback('c', name, () => {
             this.resetCameraTarget();
         });
-        // TODO: wsad keys
     }
 
     setPath = () => {

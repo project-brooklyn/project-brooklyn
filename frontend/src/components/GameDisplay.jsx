@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
@@ -17,7 +17,20 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     const { gameMap, cameraTarget } = game;
     const { width, depth, height } = gameMap;
 
+    const [ready, setReady] = useState(false);
     const [ticks, setTicks] = useState(0);
+
+    const orbitControls = useRef();
+
+    useEffect(() => {
+        setReady(true);
+    }, [])
+
+    useEffect(() => {
+        if (ready && orbitControls.current) {
+            orbitControls.current.listenToKeyEvents(window);
+        }
+    }, [orbitControls, ready])
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
@@ -45,11 +58,19 @@ export default function GameDisplay({ game, assets, selectedTower }) {
 
         <PerspectiveCamera makeDefault fov={50} position={[15, 10, 15]} />
         <OrbitControls
+            ref={orbitControls}
             target={cameraTarget}
             enablePan={true}
             minDistance={[5]}
             maxDistance={[50]}
             maxPolarAngle={[Math.PI / 2]}
+            keys={{
+                LEFT: 'KeyA',
+                UP: 'KeyW',
+                RIGHT: 'KeyD',
+                BOTTOM: 'KeyS'
+            }}
+            keyPanSpeed={25.0}
         />
         <ambientLight intensity={2} />
 

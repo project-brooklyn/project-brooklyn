@@ -19,7 +19,7 @@ export default function SelectedTowerView({ selectedTower }) {
 }
 
 const GhostTowerView = ({ name, coordinates, scale }) => {
-    const gltf = useLoader(GLTFLoader, modelFiles[name]);
+    const gltf = useLoader(GLTFLoader, modelFiles[name] || modelFiles.placeholder);
     gltf.scene.traverse((child) => {
         if (child.isMesh) {
             child.material = child.material.clone();

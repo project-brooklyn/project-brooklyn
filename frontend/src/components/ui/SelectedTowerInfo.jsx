@@ -1,4 +1,5 @@
 import { TERRAFORMS } from "../../entities/buildables";
+import { BUFFED } from "../../entities/towers/BuffTower";
 
 export const SelectedTowerInfo = ({selectedTower, purchasingItem, setSelectedTower}) => {
     if (purchasingItem?.name.startsWith("terraform")) {
@@ -22,13 +23,13 @@ export const SelectedTowerInfo = ({selectedTower, purchasingItem, setSelectedTow
         </div>
     }
 
-    const { name, price, damage, cooldown, minRange, maxRange } = selectedTower
+    const { name, price, damage, cooldown, minRange, maxRange, buffs } = selectedTower
     return <div onClick={() => setSelectedTower(null)}>
         <h5>Selected Tower</h5>
         <ul>
             <li>Type: {name}</li>
             <li>Price: {price}</li>
-            <li>Damage: {damage}</li>
+            <li>Damage: {buffs[BUFFED] ? damage * 2 : damage}</li>
             <li>Cooldown: {cooldown}</li>
             {minRange 
                 ? <li>Range: {minRange} - {maxRange}</li>

@@ -1,9 +1,13 @@
+import * as THREE from "three";
 import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
+import KeyboardInput from "./components/KeyboardInput";
 import MouseInput from "./components/MouseInput";
 import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
+import { BUFFED } from "./entities/towers/BuffTower";
+import { statusFunctions } from "./entities/statuses";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -19,12 +23,12 @@ export default class Game {
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
-            gameMap.width-1,
-            gameMap.depth-1, 
-            gameMap.getElevation(gameMap.width-1, gameMap.depth-1)
+            gameMap.width - 1,
+            gameMap.depth - 1,
+            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
         );  // Assumes map is rectangular
         this.towers[0][0] = this.portal;
-        this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
+        this.towers[gameMap.width - 1][gameMap.depth - 1] = this.castle;
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -38,8 +42,24 @@ export default class Game {
         this.gold = 500;
         this.goldReward = 0;
 
+        this.keyboardInput = new KeyboardInput();
         this.mouseInput = new MouseInput();
         this.setPath(this.portal.position, this.castle.position);
+
+        this.cameraTarget = null;
+        this.resetCameraTarget();
+        this.configureCameraControls();
+    }
+
+    resetCameraTarget = () => {
+        this.cameraTarget = new THREE.Vector3(this.gameMap.width / 2 - .5, 0, this.gameMap.depth / 2 - .5);
+    }
+
+    configureCameraControls = () => {
+        const name = "CameraController";
+        this.keyboardInput.addKeyDownCallback('c', name, () => {
+            this.resetCameraTarget();
+        });
     }
 
     setPath = () => {
@@ -58,8 +78,8 @@ export default class Game {
     }
 
     setupEnemySpawn = (level) => {
-        let {enemy, count, delay} = level;
-        this.enemyInfo = {enemy, count, delay, remaining: count};
+        let { enemy, count, delay } = level;
+        this.enemyInfo = { enemy, count, delay, remaining: count };
         let currentDelay = 0;
         this.spawningEnemies = true;
         this.spawnFunction = () => {
@@ -80,6 +100,7 @@ export default class Game {
     }
 
     addProjectile = (projectile) => {
+        if (!projectile) return;
         this.projectiles.push(projectile);
         this.animationFunctions.push(projectile.getMoveFunction());
     }
@@ -97,12 +118,20 @@ export default class Game {
         for (let fn of this.animationFunctions) fn();
         this.spawnFunction();
 
+        this.handleEnemyStatus();
         this.handleEnemiesAtCastle();
         this.towersAttack();
         this.checkLevelOver();
     }
 
-    
+    handleEnemyStatus = () => {
+        for (let enemy of this.enemies) {
+            for (let [status, hasStatus] of Object.entries(enemy.statuses)) {
+                if (hasStatus) statusFunctions[status](enemy);
+            }
+        }
+    }
+
     startDefendPhase = () => {
         if (this.phase !== BUILD || this.over) return;
         this.phase = DEFEND;
@@ -110,15 +139,16 @@ export default class Game {
         this.spawningEnemies = true;
         this.enemies = [];
         this.projectiles = [];
-        
+
         this.commitTowers();
-        
+        this.applyBuffs();
+
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
     }
-    
+
     commitTowers = () => {
         for (let tower of this.towers.flat()) {
             if (tower && "status" in tower) {
@@ -131,7 +161,7 @@ export default class Game {
     towersAttack = () => {
         for (let tower of this.towers.flat()) {
             // handle null, portal, and castle
-            if (!tower || !tower.getProjectilePath) continue;
+            if (!tower || !tower.getProjectilePath || !tower.createProjectile) continue;
 
             // handle tower cooldown
             if (tower.currentCooldown) {
@@ -147,13 +177,20 @@ export default class Game {
 
                 if (path.length) {
                     if (!towerAttacked) { // prevent stacked projectiles hitting same tile
+                        if (tower.appliedStatus) {
+                            if (enemy.statuses[tower.appliedStatus]) {
+                                continue;
+                            }
+                            enemy.statuses[tower.appliedStatus] = true;
+                        }
+                        // TODO: this is instant damage, convert to when projectile hits?
+                        const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
+                        enemy.hp = Math.max(enemy.hp - damage, 0);
+
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }
 
-                    // TODO: this is instant damage, convert to when projectile hits?
-                    enemy.hp = Math.max(enemy.hp - tower.damage, 0);
-    
                     towerAttacked = true;
                     if (!tower.canAttackMultiple) break;
                 }
@@ -163,7 +200,7 @@ export default class Game {
     }
 
     handleEnemiesAtCastle = () => {
-        for (const enemy of this.enemies)  {
+        for (const enemy of this.enemies) {
             if (
                 enemy.position[0] === this.castle.position[0] &&
                 enemy.position[1] === this.castle.position[1] &&
@@ -176,7 +213,7 @@ export default class Game {
             }
         }
     }
-    
+
     checkLevelOver = () => {
         if (
             this.phase === DEFEND &&
@@ -197,6 +234,19 @@ export default class Game {
             // TODO: implement score phase
             this.phase = SCORE;
             setTimeout(() => this.phase = BUILD, 2000);
+        }
+    }
+
+    applyBuffs = () => {
+        for (const tower of this.towers.flat().filter(tower => !!tower)) {
+            tower.buffs = {};
+        }
+        for (const buffTower of this.towers.flat().filter(t => t?.name === 'buffTower')) {
+            for (const otherTower of this.towers.flat().filter(t => t && t.name !== 'buffTower')) {
+                if (buffTower.canHit(otherTower.position, this.gameMap)) {
+                    otherTower.buffs[BUFFED] = true;
+                }
+            }
         }
     }
 }

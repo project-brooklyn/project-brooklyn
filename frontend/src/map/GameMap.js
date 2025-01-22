@@ -1,6 +1,3 @@
-import { TERRAFORMS } from "../entities/buildables";
-import { ActionType, GameAction } from "../utils/UndoManager";
-
 export function tileKey(x, y, z) {
     return [x, y, z].join(',');
 }
@@ -64,7 +61,7 @@ export class GameMap {
         return mapHeight + maybeTowerHeight;
     }
 
-    addTile(tile, isUndo = false) {
+    addTile(tile) {
         // Adds (or updates) a tile.
         const { x, y, z } = tile;
         this.tileData.set(tileKey(x, y, z), tile);
@@ -75,28 +72,12 @@ export class GameMap {
         this.maxX = Math.max(this.maxX, x + 1);
         this.maxY = Math.max(this.maxY, y + 1);
         this.maxZ = Math.max(this.maxZ, z + 1);
-
-        if (this.undoManager && !isUndo) {
-            this.undoManager.push(new GameAction(
-                x, y, z, ActionType.FILL, 
-                TERRAFORMS.get(ActionType.FILL).price,
-                null, tile.type
-            ));
-        }
     }
 
-    removeTile(x, y, z, isUndo = false) {
+    removeTile(x, y, z) {
         // Assumes that tiles can only be removed from the top layer of the map.
         // Removing a tile will update the elevation data accordingly but will
         // not reduce the overall max bounds of the map.
-        if (!isUndo) {
-            this.undoManager.push(new GameAction(
-                x, y, z, ActionType.DIG, 
-                TERRAFORMS.get(ActionType.DIG).price,
-                null, this.getTile(x, y, z).type
-            ));
-        }
-
         this.tileData.delete(tileKey(x, y, z));
 
         const cell = cellKey(x, y);

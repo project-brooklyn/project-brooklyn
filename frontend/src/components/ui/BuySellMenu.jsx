@@ -102,10 +102,10 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     purchasingItem.targetPosition = new Vector3();
                 }
 
-                if (purchasingItem.name == TERRAFORM_FILL) {
+                if (purchasingItem.name === TERRAFORM_FILL) {
                     purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
-                } else if (purchasingItem.name == TERRAFORM_DIG) {
+                } else if (purchasingItem.name === TERRAFORM_DIG) {
                     if (isBottom(gameMap, x, y, z)) {
                         // Not allowed to excavate lowest tile level.
                         purchasingItem.targetPosition = null;
@@ -129,11 +129,11 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
 
                 game.gameMapOverrides.clear();
 
-                if (purchasingItem.name == TERRAFORM_FILL) {
+                if (purchasingItem.name === TERRAFORM_FILL) {
                     z += 1;
-                    gameMap.addTile(new Tile(x, y, z, TileType.Stone));
-                } else if (purchasingItem.name == TERRAFORM_DIG) {
-                    gameMap.removeTile(x, y, z);
+                    game.addTile(new Tile(x, y, z, TileType.Stone));
+                } else if (purchasingItem.name === TERRAFORM_DIG) {
+                    game.removeTile(x, y, z);
                 }
                 game.setPath();
             });

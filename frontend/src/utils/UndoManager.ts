@@ -1,7 +1,6 @@
-import { TERRAFORM_DIG, TERRAFORM_FILL, TOWERS } from "../entities/buildables";
+import { TERRAFORM_DIG, TERRAFORM_FILL, TOWERS, TowerType } from "../entities/buildables";
 import { Status } from "../entities/towers/Tower";
 import Game from "../Game";
-import GameMap from "../map/GameMap";
 import Tile, { TileType } from "../map/Tile";
 
 export enum ActionType {
@@ -10,27 +9,18 @@ export enum ActionType {
     FILL = TERRAFORM_FILL,
     DIG = TERRAFORM_DIG,
 }
-
-// thanks chatgpt
-type TowerMap = typeof TOWERS;
-type TowerCreateFunctions = TowerMap extends Map<string, infer U>
-    ? U extends { create: infer C }
-        ? C
-        : never
-    : never;
-
 export class GameAction {
     x: number;
     y: number;
     z: number;
     actionType: ActionType;
     cost: number;
-    towerCreateFn: TowerCreateFunctions | null;
+    towerType: TowerType | null;
     tileType: TileType | null;
 
     constructor (x: number, y: number, z: number, 
         actionType: ActionType, cost: number, 
-        towerCreateFn: TowerCreateFunctions | null = null,
+        towerType: TowerType | null = null,
         tileType: TileType | null = null,
     ) {
         this.x = x;
@@ -38,22 +28,18 @@ export class GameAction {
         this.z = z;
         this.actionType = actionType;
         this.cost = cost;
-        this.towerCreateFn = towerCreateFn;
+        this.towerType = towerType;
         this.tileType = tileType;
     }
 }
 
 export default class UndoManager {
     game: Game;
-    gameMap: GameMap;
     undoStack: GameAction[];
     redoStack: GameAction[];
 
-    constructor (game, gameMap) {
+    constructor (game) {
         this.game = game;
-        this.gameMap = gameMap;
-        game.undoManager = this;
-        gameMap.undoManager = this;
         this.undoStack = [];
         this.redoStack = [];
     }
@@ -90,22 +76,25 @@ export default class UndoManager {
     }
 
     handleUndo = (action: GameAction) => {
-        const { x, y, z, actionType, cost, towerCreateFn, tileType } = action;
+        const { x, y, z, actionType, cost, towerType, tileType } = action;
         switch (actionType) {
             case ActionType.BUILD:
-                this.game.removeTower(x, y, true);
+                this.game.removeTower(x, y, false);
                 break;
             case ActionType.SELL:
-                if (!towerCreateFn) return;
-                const tower = new towerCreateFn(x, y, z, Status.BUILT);
-                this.game.addTower(tower, true);
+                if (!towerType) throw new Error('No towerCreateFn');
+                const towerData = TOWERS.get(towerType);
+                if (towerData) {
+                    const tower = new towerData.create(x, y, z, Status.BUILT);
+                    this.game.addTower(tower, false);
+                }
                 break;
             case ActionType.FILL:
-                this.gameMap.removeTile(x, y, z, true);
+                this.game.removeTile(x, y, z, false);
                 break;
             case ActionType.DIG:
                 const tile = new Tile(x, y, z, tileType);
-                this.gameMap.addTile(tile, true);
+                this.game.addTile(tile, false);
                 break;
         }
         this.game.gold += cost;
@@ -113,22 +102,25 @@ export default class UndoManager {
     }
 
     handleRedo = (action: GameAction) => {
-        const { x, y, z, actionType, cost, towerCreateFn, tileType } = action;
+        const { x, y, z, actionType, cost, towerType, tileType } = action;
         switch (actionType) {
             case ActionType.BUILD:
-                if (!towerCreateFn) return;
-                const tower = new towerCreateFn(x, y, z, Status.PENDING);
-                this.game.addTower(tower, true);
+                if (!towerType) throw new Error('No towerCreateFn');
+                const towerData = TOWERS.get(towerType);
+                if (towerData) {
+                    const tower = new towerData.create(x, y, z, Status.PENDING);
+                    this.game.addTower(tower, false);
+                }
                 break;
             case ActionType.SELL:
-                this.game.removeTower(x, y, true);
+                this.game.removeTower(x, y, false);
                 break;
             case ActionType.FILL:
                 const tile = new Tile(x, y, z, tileType);
-                this.gameMap.addTile(tile, true);
+                this.game.addTile(tile, false);
                 break;
             case ActionType.DIG:
-                this.gameMap.removeTile(x, y, z, true);
+                this.game.removeTile(x, y, z, false);
                 break;
         }
         this.game.gold -= cost;

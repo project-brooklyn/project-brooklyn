@@ -12,15 +12,13 @@ const BUY = "Buy";
 const SELECT = "Select";
 
 export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
-    const {gameMap, mouseInput} = game;
+    const {gameMap, mouseInput, undoManager} = game;
 
     const [purchasingItem, setPurchasingItem] = useState(null);
-    const [undoStack, setUndoStack] = useState([]);
 
     useEffect(() => {
         // Handle game state changes
         deselectAll();
-        setUndoStack([]);
 
         if (!game.over && game.phase == BUILD) {
             mouseInput.addClickCallback(SELECT, (x, y, _z) => {
@@ -82,8 +80,6 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
 
                 const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
                 game.addTower(tower);
-                gameMap.addTower(x, y, tower);
-                setUndoStack(prevStack => [...prevStack, {x, y, z, label: 'BuildTower', price: towerType.price}]);
                 game.setPath();
                 mouseInput.addClickCallback(SELECT, (x, y, _z) => {
                     if (!gameMap.getTower(x, y)) {
@@ -106,10 +102,10 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     purchasingItem.targetPosition = new Vector3();
                 }
 
-                if (purchasingItem.name == TERRAFORM_FILL) {
+                if (purchasingItem.name === TERRAFORM_FILL) {
                     purchasingItem.targetPosition.set(x, y, z);
                     game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
-                } else if (purchasingItem.name == TERRAFORM_DIG) {
+                } else if (purchasingItem.name === TERRAFORM_DIG) {
                     if (isBottom(gameMap, x, y, z)) {
                         // Not allowed to excavate lowest tile level.
                         purchasingItem.targetPosition = null;
@@ -133,60 +129,25 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
 
                 game.gameMapOverrides.clear();
 
-                let tileType;
-                if (purchasingItem.name == TERRAFORM_FILL) {
+                if (purchasingItem.name === TERRAFORM_FILL) {
                     z += 1;
-                    gameMap.addTile(new Tile(x, y, z, TileType.Stone));
-                } else if (purchasingItem.name == TERRAFORM_DIG) {
-                    tileType = gameMap.getTile(x, y, z).type;
-                    gameMap.removeTile(x, y, z);
+                    game.addTile(new Tile(x, y, z, TileType.Stone));
+                } else if (purchasingItem.name === TERRAFORM_DIG) {
+                    game.removeTile(x, y, z);
                 }
-                setUndoStack(prevStack => [...prevStack, {x, y, z, ...terraform, tileType}]);
                 game.setPath();
             });
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
 
-    const undoBuild = () => {
-        if (!undoStack.length) return;
-        deselectAll();
-        const {x, y, z, label, price, tileType, tower} = undoStack.at(-1);
-
-        switch (label) {
-            case 'BuildTower':
-                game.removeTower(x, y);
-                gameMap.removeTower(x, y);
-                break;
-            case 'Fill':
-                gameMap.removeTile(x, y, z);
-                break;
-            case 'Dig':
-                gameMap.addTile(new Tile(x, y, z, tileType));
-                break;
-            case 'SellTower':
-                game.towers[x][y] = tower;
-                gameMap.addTower(x, y, tower);
-                break;
-            default:
-                console.error("Unknown undo label", label);
-        }
-
-        game.gold += price;
-        setUndoStack((prevStack) => prevStack.slice(0, -1));
-        game.setPath();
-    }
-
     const sellTower = () => {
-        game.towers[selectedTower.x][selectedTower.y] = undefined;
-        gameMap.removeTower(selectedTower.x, selectedTower.y);
+        game.removeTower(selectedTower.x, selectedTower.y);
 
         const t = TOWERS.get(selectedTower.name);
         game.gold += 0.5 * t.price;
         game.setPath();
         deselectAll();
-
-        setUndoStack(prevStack => [...prevStack, {x: selectedTower.x, y: selectedTower.y, label: 'SellTower', price: -t.price/2, tower: selectedTower}]);
     }
 
     return <div className="h-100 overflow-auto border border-2 border-info">
@@ -241,11 +202,16 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
             })}
 
         </ul>
-        <div style={{display: "flex", flexDirection: "column"}}>
-            {!!undoStack.length && <button onClick={undoBuild}>Undo</button>}
+        <div className="d-flex">
+            <div className="d-flex w-50 justify-content-center">
+                {undoManager.hasUndos() && <button onClick={undoManager.undo}>Undo</button>}
+            </div>
+            <div className="d-flex w-50 justify-content-center">
+                {undoManager.hasRedos() && <button onClick={undoManager.redo}>Redo</button>}
+            </div>
         </div>
         <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower} purchasingItem={purchasingItem}/>
-        <div style={{display: "flex", flexDirection: "column"}}>
+        <div className="d-flex justify-content-center">
             {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
             {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}
         </div>

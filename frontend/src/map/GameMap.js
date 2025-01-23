@@ -6,7 +6,7 @@ function cellKey(x, y) {
     return [x, y].join(',');
 }
 
-class GameMap {
+export class GameMap {
     constructor() {
         // For simplicity, assume for now that the minimum value for each
         // dimension is 0.

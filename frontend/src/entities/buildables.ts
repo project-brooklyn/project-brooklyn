@@ -8,6 +8,18 @@ import SawTower from "./towers/SawTower";
 import SlowTower from "./towers/SlowTower";
 import SpikeTower from "./towers/SpikeTower";
 
+export enum TowerType {
+    ArrowTower = "arrowTower",
+    RockTower = "rockTower",
+    LaserTower = "laserTower",
+    SawTower = "sawTower",
+    SpikeTower = "spikeTower",
+    BuffTower = "buffTower",
+    FireTower = "fireTower",
+    SlowTower = "slowTower",
+    IceTower = "iceTower",
+}
+
 export const TOWERS = new Map([
     ["arrowTower", {
         create: ArrowTower,

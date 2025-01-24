@@ -8,6 +8,8 @@ import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
+import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
+import { TERRAFORMS } from "./entities/buildables";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -19,6 +21,7 @@ export default class Game {
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
+        this.undoManager = new UndoManager(this, gameMap);
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
@@ -105,13 +108,47 @@ export default class Game {
         this.animationFunctions.push(projectile.getMoveFunction());
     }
 
-    addTower = (tower) => {
-        const [x, y, _] = tower.position;
+    addTower = (tower, canUndo = true) => {
+        const [x, y, z] = tower.position;
         this.towers[x][y] = tower;
+        this.gameMap.addTower(x, y, tower);
+
+        if (canUndo) {
+            this.undoManager.push(new GameAction(x, y, z, ActionType.BUILD, tower.price, tower.name));
+        }
     }
 
-    removeTower = (x, y) => {
+    removeTower = (x, y, canUndo = true) => {
+        if (canUndo) {
+            const removed = this.towers[x][y];
+            this.undoManager.push(new GameAction(...removed.position, ActionType.SELL, -removed.price/2, removed.name));
+        }
+
         this.towers[x][y] = null;
+        this.gameMap.removeTower(x, y);
+    }
+
+    addTile(tile, canUndo = true) {
+        this.gameMap.addTile(tile, canUndo);
+        if (this.undoManager && canUndo) {
+            const { x, y, z, type } = tile;
+            this.undoManager.push(new GameAction(
+                x, y, z, ActionType.FILL, 
+                TERRAFORMS.get(ActionType.FILL).price,
+                null, type
+            ));
+        }
+    }
+
+    removeTile(x, y, z, canUndo = true) {
+        if (canUndo) {
+            this.undoManager.push(new GameAction(
+                x, y, z, ActionType.DIG, 
+                TERRAFORMS.get(ActionType.DIG).price,
+                null, this.gameMap.getTile(x, y, z).type
+            ));
+        }
+        this.gameMap.removeTile(x, y, z);
     }
 
     tick = () => {
@@ -147,6 +184,8 @@ export default class Game {
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
+
+        this.undoManager.clear();
     }
 
     commitTowers = () => {

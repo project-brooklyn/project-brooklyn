@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game, { BUILD } from "../Game";
+import Game from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -56,9 +56,7 @@ const GameContainer = ({ game }) => {
     const [selectedTower, setSelectedTower] = useState(null);
 
     useEffect(() => {
-        // Handle game state changes
         const mouseInput = game.mouseInput;
-
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
             if (!game.gameMap.getTower(x, y)) {
                 return;
@@ -67,6 +65,7 @@ const GameContainer = ({ game }) => {
             const tower = game.towers[x][y];
             setSelectedTower(tower);
         })
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">

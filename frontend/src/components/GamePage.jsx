@@ -1,14 +1,16 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game from "../Game";
+import Game, { BUILD } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
 
-const GamePage = ({gameMap, showWelcome = false}) => {
+const NAME = "GamePage";
+
+const GamePage = ({ gameMap, showWelcome = false }) => {
     const { user, logout } = useAuth();
     const game = new Game(new gameMap());
 
@@ -16,15 +18,15 @@ const GamePage = ({gameMap, showWelcome = false}) => {
 
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
         <WelcomeModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
+            show={showModal}
+            onHide={() => setShowModal(false)}
         />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)
 }
 
-const TopBar = ({user, logout}) => {
+const TopBar = ({ user, logout }) => {
     return (<div className="d-flex justify-content-around">
         <div className="">
             <h1>Project Brooklyn</h1>
@@ -35,23 +37,37 @@ const TopBar = ({user, logout}) => {
                 {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
-            {
-                user ?
-                    <p className="text-primary" onClick={logout}>Log Out</p>
-                :
-                    <p>
-                        <a href="/signup">Sign Up</a>
-                        {" | "}
-                        <a href="/login">Log In</a>
-                    </p>
-            }
+                {
+                    user ?
+                        <p className="text-primary" onClick={logout}>Log Out</p>
+                        :
+                        <p>
+                            <a href="/signup">Sign Up</a>
+                            {" | "}
+                            <a href="/login">Log In</a>
+                        </p>
+                }
             </div>
         </div>
     </div>)
 }
 
-const GameContainer = ({game}) => {
+const GameContainer = ({ game }) => {
     const [selectedTower, setSelectedTower] = useState(null);
+
+    useEffect(() => {
+        // Handle game state changes
+        const mouseInput = game.mouseInput;
+
+        mouseInput.addClickCallback(NAME, (x, y, _z) => {
+            if (!game.gameMap.getTower(x, y)) {
+                return;
+            }
+
+            const tower = game.towers[x][y];
+            setSelectedTower(tower);
+        })
+    }, [])
 
     return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">
         <div className="d-flex w-100 h-100">
@@ -70,7 +86,7 @@ const GameContainer = ({game}) => {
         </div>
         <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
     </div>
-  
+
 }
 
 export default GamePage;

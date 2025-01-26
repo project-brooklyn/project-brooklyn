@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { BUILD, DEFEND } from "../../Game";
-import { BuySellMenu } from "./BuySellMenu";
+import { BuyMenu } from "./BuyMenu";
 import { LevelInfo } from "./LevelInfo";
-import { SelectedTowerInfo } from "./SelectedTowerInfo";
+import { SellMenu } from "./SellMenu";
+import { UndoMenu } from "./UndoMenu";
+import { TowerInfo } from "./TowerInfo";
 
-export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
+export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
     const [level, setLevel] = useState(game.level);
     const [gold, setGold] = useState(game.gold);
     const [phase, setPhase] = useState(game.phase);
@@ -20,6 +22,15 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         game.startDefendPhase();
     }
 
+    function getBuildMenus() {
+        return <div className="h-100 overflow-auto border border-2 border-info">
+            <h5>Buy/Sell Menu</h5>
+            <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+            <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+            <UndoMenu game={game} />
+        </div >
+    }
+
     return <div className="w-25 flex-grow-1 border border-2 border-danger m-2 d-flex flex-column overflow-scroll">
         <div className="d-flex justify-content-between">
             <span>{`Level: ${level}`}</span>
@@ -28,10 +39,10 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         </div>
 
         <div className="my-4">
-            {phase === BUILD && <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />}
+            {phase === BUILD && getBuildMenus()}
             {phase === DEFEND && <>
                 <LevelInfo game={game} />
-                <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower}/>
+                <TowerInfo tower={selectedTower} />
             </>}
         </div>
 

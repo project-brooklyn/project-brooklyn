@@ -1,50 +1,39 @@
 import { useEffect, useState } from "react";
 import Tile, { TileType } from "../../map/Tile";
 import { Vector3 } from "three";
+import { BUILD } from "../../Game";
 import { TOWERS, TERRAFORMS, TERRAFORM_DIG, TERRAFORM_FILL } from "../../entities/buildables";
 import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
-import { BUILD } from "../../Game";
 import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
-import { SelectedTowerInfo } from "./SelectedTowerInfo";
+import { ItemInfo } from "./ItemInfo";
 
-const BUY = "Buy";
-const SELECT = "Select";
+const NAME = "Buy";
 
-export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
-    const {gameMap, mouseInput, undoManager} = game;
+export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
+    const { gameMap, mouseInput } = game;
 
     const [purchasingItem, setPurchasingItem] = useState(null);
 
-    useEffect(() => {
-        // Handle game state changes
-        deselectAll();
-
-        if (!game.over && game.phase == BUILD) {
-            mouseInput.addClickCallback(SELECT, (x, y, _z) => {
-                if (!gameMap.getTower(x, y)) {
-                    return;
-                }
-
-                const tower = game.towers[x][y];
-                setSelectedTower(tower);
-            })
-        }
-
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [game.phase, game.over])
-
-    const deselectAll = () => {
-        setPurchasingItem(null);
-        setSelectedTower(null);
-        mouseInput.removeHoverCallback(BUY);
-        mouseInput.removeClickCallback(BUY);
+    const clear = () => {
+        mouseInput.removeHoverCallback(NAME);
+        mouseInput.removeClickCallback(NAME);
         game.gameMapOverrides.clear();
+        setSelectedTower(null);
+        setPurchasingItem(null);
     }
 
     const chargeCost = (price) => {
         game.gold -= price;
-        if (game.gold < price) deselectAll();
+        if (game.gold < price) clear();
+    }
+
+    const isCallbackValid = () => {
+        if (game.over || game.phase !== BUILD) {
+            clear();
+            return false;
+        }
+        return true;
     }
 
     useEffect(() => {
@@ -57,7 +46,8 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
             // Tower handling
             const towerType = TOWERS.get(purchasingItem.name);
 
-            mouseInput.addHoverCallback(BUY, (x, y, z) => {
+            mouseInput.addHoverCallback(NAME, (x, y, z) => {
+                if (!isCallbackValid()) return;
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -69,10 +59,11 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 setSelectedTower(new towerType.create(x, y, z, TowerStatus.PLANNING));
             });
 
-            mouseInput.addClickCallback(BUY, () => {
+            mouseInput.addClickCallback(NAME, () => {
+                if (!isCallbackValid()) return;
                 if (game.gold < towerType.price) return;
 
-                const {x, y, z} = purchasingItem.targetPosition;
+                const { x, y, z } = purchasingItem.targetPosition;
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -81,19 +72,12 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
                 game.addTower(tower);
                 game.setPath();
-                mouseInput.addClickCallback(SELECT, (x, y, _z) => {
-                    if (!gameMap.getTower(x, y)) {
-                        return;
-                    }
-
-                    const tower = game.towers[x][y];
-                    setSelectedTower(tower);
-                })
             });
         } else if (purchasingItem.name.startsWith("terraform")) {
             const terraform = TERRAFORMS.get(purchasingItem.name);
 
-            mouseInput.addHoverCallback(BUY, (x, y, z) => {
+            mouseInput.addHoverCallback(NAME, (x, y, z) => {
+                if (!isCallbackValid()) return;
                 if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
                     return;
                 }
@@ -118,9 +102,10 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 }
             });
 
-            mouseInput.addClickCallback(BUY, () => {
+            mouseInput.addClickCallback(NAME, () => {
+                if (!isCallbackValid()) return;
                 if (!purchasingItem.targetPosition) return;
-                let {x, y, z} = purchasingItem.targetPosition;
+                let { x, y, z } = purchasingItem.targetPosition;
 
                 if (game.gold < terraform.price) return;
 
@@ -138,56 +123,41 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                 game.setPath();
             });
         }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
 
-    const sellTower = () => {
-        game.removeTower(selectedTower.x, selectedTower.y);
-
-        const t = TOWERS.get(selectedTower.name);
-        game.gold += 0.5 * t.price;
-        game.setPath();
-        deselectAll();
-    }
-
-    return <div className="h-100 overflow-auto border border-2 border-info">
-        <h5>Buy/Sell Menu</h5>
-
+    return <>
         <ul className="list-unstyled">
-            {Array.from(TOWERS.entries()).map(([towerKey, {_create, price}]) => {
+            {Array.from(TOWERS.entries()).map(([towerKey, { _create, price }]) => {
                 return <li key={towerKey} className="mb-2">
                     <label role='button'>
-                    <input
-                        type="checkbox"
-                        checked={purchasingItem?.name == towerKey}
-                        onChange={() => {
-                            if (purchasingItem?.name == towerKey) {
-                                deselectAll();
-                            } else {
-                                deselectAll();
-                                setPurchasingItem({
-                                    name: towerKey,
-                                    targetPosition: null,
-                                });
-                            }
-                        }}
-                        className="mx-2"
-                    />
-                    {towerKey}: {price}
-                </label>
-            </li>
+                        <input
+                            type="checkbox"
+                            checked={purchasingItem?.name === towerKey}
+                            onChange={() => {
+                                clear();
+                                if (purchasingItem?.name !== towerKey) {
+                                    setPurchasingItem({
+                                        name: towerKey,
+                                        targetPosition: null,
+                                    });
+                                }
+                            }}
+                            className="mx-2"
+                        />
+                        {towerKey}: {price}
+                    </label>
+                </li>
             })}
-            {Array.from(TERRAFORMS.entries()).map(([terraformKey, {label, price}]) => {
+            {Array.from(TERRAFORMS.entries()).map(([terraformKey, { label, price }]) => {
                 return <li key={terraformKey} className="mb-2 cursor-pointer">
                     <label role='button'>
                         <input
                             type="checkbox"
-                            checked={purchasingItem?.name == terraformKey}
+                            checked={purchasingItem?.name === terraformKey}
                             onChange={() => {
-                                if (purchasingItem?.name == terraformKey) {
-                                    deselectAll();
-                                } else {
-                                    deselectAll();
+                                clear();
+                                if (purchasingItem?.name !== terraformKey) {
                                     setPurchasingItem({
                                         name: terraformKey,
                                         targetPosition: null,
@@ -200,20 +170,7 @@ export const BuySellMenu = ({game, selectedTower, setSelectedTower}) => {
                     </label>
                 </li>
             })}
-
         </ul>
-        <div className="d-flex">
-            <div className="d-flex w-50 justify-content-center">
-                {undoManager.hasUndos() && <button onClick={undoManager.undo}>Undo</button>}
-            </div>
-            <div className="d-flex w-50 justify-content-center">
-                {undoManager.hasRedos() && <button onClick={undoManager.redo}>Redo</button>}
-            </div>
-        </div>
-        <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower} purchasingItem={purchasingItem}/>
-        <div className="d-flex justify-content-center">
-            {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower</button>}
-            {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}
-        </div>
-    </div>
+        {(purchasingItem || selectedTower) && <ItemInfo item={purchasingItem || selectedTower} />}
+    </>
 }

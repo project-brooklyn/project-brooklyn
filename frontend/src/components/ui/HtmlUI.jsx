@@ -22,15 +22,6 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
         game.startDefendPhase();
     }
 
-    function getBuildMenus() {
-        return <div className="h-100 overflow-auto border border-2 border-info">
-            <h5>Buy/Sell Menu</h5>
-            <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-            <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-            <UndoMenu game={game} />
-        </div >
-    }
-
     return <div className="w-25 flex-grow-1 border border-2 border-danger m-2 d-flex flex-column overflow-scroll">
         <div className="d-flex justify-content-between">
             <span>{`Level: ${level}`}</span>
@@ -39,7 +30,15 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
         </div>
 
         <div className="my-4">
-            {phase === BUILD && getBuildMenus()}
+            {phase === BUILD && <>
+                <div className="h-100 overflow-auto border border-2 border-info">
+                    <h5>Buy/Sell Menu</h5>
+                    <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                    <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                    <UndoMenu game={game} />
+                </div >
+            </>
+            }
             {phase === DEFEND && <>
                 <LevelInfo game={game} />
                 <TowerInfo tower={selectedTower} />

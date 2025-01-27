@@ -133,12 +133,10 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
                     <label role='button'>
                         <input
                             type="checkbox"
-                            checked={purchasingItem?.name == towerKey}
+                            checked={purchasingItem?.name === towerKey}
                             onChange={() => {
-                                if (purchasingItem?.name == towerKey) {
-                                    clear();
-                                } else {
-                                    clear();
+                                clear();
+                                if (purchasingItem?.name !== towerKey) {
                                     setPurchasingItem({
                                         name: towerKey,
                                         targetPosition: null,
@@ -156,12 +154,10 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
                     <label role='button'>
                         <input
                             type="checkbox"
-                            checked={purchasingItem?.name == terraformKey}
+                            checked={purchasingItem?.name === terraformKey}
                             onChange={() => {
-                                if (purchasingItem?.name == terraformKey) {
-                                    clear();
-                                } else {
-                                    clear();
+                                clear();
+                                if (purchasingItem?.name !== terraformKey) {
                                     setPurchasingItem({
                                         name: terraformKey,
                                         targetPosition: null,

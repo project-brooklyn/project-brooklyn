@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 import { BUILD } from "../Game";
@@ -43,7 +43,6 @@ export default function GameDisplay({ game, assets, selectedTower }) {
         // Without this, `GameDisplay` will not re-render during the DEFEND phase. (The game calculations do still occur though.)
     })
 
-
     return <>
         <axesHelper args={[width, depth, height]} />
         {game.phase === BUILD && <Text
@@ -78,6 +77,14 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             keyPanSpeed={25.0}
         />
         <ambientLight intensity={2} />
+        <Sky
+            sunPosition={[-10000, 30, -10000]}
+            inclination={1.4}
+            mieCoefficient={0.005}
+            mieDirectionalG={0.7}
+            rayleigh={4}
+            turbidity={10}
+        />
 
         <StructureView structures={game.towers} />
         <EnemyView enemies={game.enemies} />

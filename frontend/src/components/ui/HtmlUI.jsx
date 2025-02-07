@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { BUILD, DEFEND } from "../../Game";
-import { BuySellMenu } from "./BuySellMenu";
+import { BuyMenu } from "./BuyMenu";
 import { LevelInfo } from "./LevelInfo";
-import { SelectedTowerInfo } from "./SelectedTowerInfo";
+import { SellMenu } from "./SellMenu";
+import { UndoMenu } from "./UndoMenu";
+import { TowerInfo } from "./TowerInfo";
 
-export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
+export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
     const [level, setLevel] = useState(game.level);
     const [gold, setGold] = useState(game.gold);
     const [phase, setPhase] = useState(game.phase);
@@ -28,10 +30,18 @@ export const HtmlUI = ({game, selectedTower, setSelectedTower}) => {
         </div>
 
         <div className="my-4">
-            {phase === BUILD && <BuySellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />}
+            {phase === BUILD && <>
+                <div className="h-100 overflow-auto border border-2 border-info">
+                    <h5>Buy/Sell Menu</h5>
+                    <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                    <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                    <UndoMenu game={game} />
+                </div >
+            </>
+            }
             {phase === DEFEND && <>
                 <LevelInfo game={game} />
-                <SelectedTowerInfo selectedTower={selectedTower} setSelectedTower={setSelectedTower}/>
+                <TowerInfo tower={selectedTower} />
             </>}
         </div>
 

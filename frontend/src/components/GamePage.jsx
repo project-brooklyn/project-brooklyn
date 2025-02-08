@@ -12,7 +12,7 @@ const NAME = "GamePage";
 
 const GamePage = ({ gameMap, showWelcome = false }) => {
     const { user, logout } = useAuth();
-    const game = new Game(new gameMap());
+    const [game] = useState(() => new Game(new gameMap()));
 
     const [showModal, setShowModal] = useState(showWelcome);
 
@@ -54,18 +54,24 @@ const TopBar = ({ user, logout }) => {
 
 const GameContainer = ({ game }) => {
     const [selectedTower, setSelectedTower] = useState(null);
+    const {mouseInput} = game;
 
     useEffect(() => {
-        const mouseInput = game.mouseInput;
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
             if (!game.gameMap.getTower(x, y)) {
                 return;
             }
-
+            
             const tower = game.towers[x][y];
-            setSelectedTower(tower);
+            setSelectedTower(current => {
+                // if the tower is currentlyselected, deselect it
+                // otherwise, select the tower
+                return tower === current ? null : tower;
+            }); 
         })
-        //eslint-disable-next-line react-hooks/exhaustive-deps
+
+        return () => mouseInput.removeClickCallback(NAME);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">

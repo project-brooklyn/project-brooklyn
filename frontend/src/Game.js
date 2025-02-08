@@ -1,11 +1,15 @@
+import * as THREE from "three";
 import { dijkstra, getSteps } from "./utils/game_utils";
 import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
+import KeyboardInput from "./components/KeyboardInput";
 import MouseInput from "./components/MouseInput";
 import { levels } from "./levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
+import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
+import { TERRAFORMS } from "./entities/buildables";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -17,16 +21,17 @@ export default class Game {
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
+        this.undoManager = new UndoManager(this, gameMap);
 
         this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
-            gameMap.width-1,
-            gameMap.depth-1, 
-            gameMap.getElevation(gameMap.width-1, gameMap.depth-1)
+            gameMap.width - 1,
+            gameMap.depth - 1,
+            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
         );  // Assumes map is rectangular
         this.towers[0][0] = this.portal;
-        this.towers[gameMap.width-1][gameMap.depth-1] = this.castle;
+        this.towers[gameMap.width - 1][gameMap.depth - 1] = this.castle;
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -40,8 +45,24 @@ export default class Game {
         this.gold = 500;
         this.goldReward = 0;
 
+        this.keyboardInput = new KeyboardInput();
         this.mouseInput = new MouseInput();
         this.setPath(this.portal.position, this.castle.position);
+
+        this.cameraTarget = null;
+        this.resetCameraTarget();
+        this.configureCameraControls();
+    }
+
+    resetCameraTarget = () => {
+        this.cameraTarget = new THREE.Vector3(this.gameMap.width / 2 - .5, 0, this.gameMap.depth / 2 - .5);
+    }
+
+    configureCameraControls = () => {
+        const name = "CameraController";
+        this.keyboardInput.addKeyDownCallback('c', name, () => {
+            this.resetCameraTarget();
+        });
     }
 
     setPath = () => {
@@ -60,8 +81,8 @@ export default class Game {
     }
 
     setupEnemySpawn = (level) => {
-        let {enemy, count, delay} = level;
-        this.enemyInfo = {enemy, count, delay, remaining: count};
+        let { enemy, count, delay } = level;
+        this.enemyInfo = { enemy, count, delay, remaining: count };
         let currentDelay = 0;
         this.spawningEnemies = true;
         this.spawnFunction = () => {
@@ -87,13 +108,47 @@ export default class Game {
         this.animationFunctions.push(projectile.getMoveFunction());
     }
 
-    addTower = (tower) => {
-        const [x, y, _] = tower.position;
+    addTower = (tower, canUndo = true) => {
+        const [x, y, z] = tower.position;
         this.towers[x][y] = tower;
+        this.gameMap.addTower(x, y, tower);
+
+        if (canUndo) {
+            this.undoManager.push(new GameAction(x, y, z, ActionType.BUILD, tower.price, tower.name));
+        }
     }
 
-    removeTower = (x, y) => {
+    removeTower = (x, y, canUndo = true) => {
+        if (canUndo) {
+            const removed = this.towers[x][y];
+            this.undoManager.push(new GameAction(...removed.position, ActionType.SELL, -removed.price/2, removed.name));
+        }
+
         this.towers[x][y] = null;
+        this.gameMap.removeTower(x, y);
+    }
+
+    addTile(tile, canUndo = true) {
+        this.gameMap.addTile(tile, canUndo);
+        if (this.undoManager && canUndo) {
+            const { x, y, z, type } = tile;
+            this.undoManager.push(new GameAction(
+                x, y, z, ActionType.FILL, 
+                TERRAFORMS.get(ActionType.FILL).price,
+                null, type
+            ));
+        }
+    }
+
+    removeTile(x, y, z, canUndo = true) {
+        if (canUndo) {
+            this.undoManager.push(new GameAction(
+                x, y, z, ActionType.DIG, 
+                TERRAFORMS.get(ActionType.DIG).price,
+                null, this.gameMap.getTile(x, y, z).type
+            ));
+        }
+        this.gameMap.removeTile(x, y, z);
     }
 
     tick = () => {
@@ -113,7 +168,7 @@ export default class Game {
             }
         }
     }
-    
+
     startDefendPhase = () => {
         if (this.phase !== BUILD || this.over) return;
         this.phase = DEFEND;
@@ -121,16 +176,18 @@ export default class Game {
         this.spawningEnemies = true;
         this.enemies = [];
         this.projectiles = [];
-        
+
         this.commitTowers();
         this.applyBuffs();
-        
+
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
+
+        this.undoManager.clear();
     }
-    
+
     commitTowers = () => {
         for (let tower of this.towers.flat()) {
             if (tower && "status" in tower) {
@@ -172,7 +229,7 @@ export default class Game {
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
                     }
-    
+
                     towerAttacked = true;
                     if (!tower.canAttackMultiple) break;
                 }
@@ -182,7 +239,7 @@ export default class Game {
     }
 
     handleEnemiesAtCastle = () => {
-        for (const enemy of this.enemies)  {
+        for (const enemy of this.enemies) {
             if (
                 enemy.position[0] === this.castle.position[0] &&
                 enemy.position[1] === this.castle.position[1] &&
@@ -195,7 +252,7 @@ export default class Game {
             }
         }
     }
-    
+
     checkLevelOver = () => {
         if (
             this.phase === DEFEND &&

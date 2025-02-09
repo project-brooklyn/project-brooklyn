@@ -14,7 +14,7 @@ export default class SpikeTower extends Tower {
         this.damage = 75;
         this.price = SpikeTower.price;
         this.minRange = 0;
-        this.maxRange = 1;
+        this.maxRange = 0;
         this.height = 1;
         this.canAttackMultiple = true;
     }

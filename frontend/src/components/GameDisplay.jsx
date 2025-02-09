@@ -86,7 +86,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             turbidity={10}
         />
 
-        <StructureView structures={game.towers} />
+        <StructureView structures={game.getAllTowers()} />
         <EnemyView enemies={game.enemies} />
         <ProjectileView projectiles={game.projectiles} />
         {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x, y, true)])} />}

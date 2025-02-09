@@ -23,15 +23,14 @@ export default class Game {
         this.gameMapOverrides = new Map();
         this.undoManager = new UndoManager(this, gameMap);
 
-        this.towers = new Array(gameMap.width).fill(null).map(() => new Array(gameMap.depth).fill(null));
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
             gameMap.width - 1,
             gameMap.depth - 1,
             gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
         );  // Assumes map is rectangular
-        this.towers[0][0] = this.portal;
-        this.towers[gameMap.width - 1][gameMap.depth - 1] = this.castle;
+        gameMap.addTower(0, 0, this.portal);
+        gameMap.addTower(gameMap.width - 1, gameMap.depth - 1, this.castle);
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -53,6 +52,12 @@ export default class Game {
         this.resetCameraTarget();
         this.configureCameraControls();
     }
+
+    getAllTowers = () => {
+        return Array.from(this.gameMap.towers.values().filter(t => !!t));
+    }
+
+    getTower = (x, y) => this.gameMap.getTower(x, y)
 
     resetCameraTarget = () => {
         this.cameraTarget = new THREE.Vector3(this.gameMap.width / 2 - .5, 0, this.gameMap.depth / 2 - .5);
@@ -110,7 +115,6 @@ export default class Game {
 
     addTower = (tower, canUndo = true) => {
         const [x, y, z] = tower.position;
-        this.towers[x][y] = tower;
         this.gameMap.addTower(x, y, tower);
 
         if (canUndo) {
@@ -120,11 +124,9 @@ export default class Game {
 
     removeTower = (x, y, canUndo = true) => {
         if (canUndo) {
-            const removed = this.towers[x][y];
+            const removed = this.gameMap.getTower(x, y)
             this.undoManager.push(new GameAction(...removed.position, ActionType.SELL, -removed.price/2, removed.name));
         }
-
-        this.towers[x][y] = null;
         this.gameMap.removeTower(x, y);
     }
 
@@ -189,18 +191,17 @@ export default class Game {
     }
 
     commitTowers = () => {
-        for (let tower of this.towers.flat()) {
-            if (tower && "status" in tower) {
-                // TODO: Remove portal and castle from towers array
+        for (const tower of this.getAllTowers()) {
+            if (tower.status === TowerStatus.PENDING) {
                 tower.status = TowerStatus.BUILT;
             }
         }
     }
 
     towersAttack = () => {
-        for (let tower of this.towers.flat()) {
-            // handle null, portal, and castle
-            if (!tower || !tower.getProjectilePath || !tower.createProjectile) continue;
+        for (const tower of this.getAllTowers()) {
+            // handle portal, and castle
+            if (!tower.getProjectilePath || !tower.createProjectile) continue;
 
             // handle tower cooldown
             if (tower.currentCooldown) {
@@ -277,11 +278,11 @@ export default class Game {
     }
 
     applyBuffs = () => {
-        for (const tower of this.towers.flat().filter(tower => !!tower)) {
+        for (const tower of this.getAllTowers()) {
             tower.buffs = {};
         }
-        for (const buffTower of this.towers.flat().filter(t => t?.name === 'buffTower')) {
-            for (const otherTower of this.towers.flat().filter(t => t && t.name !== 'buffTower')) {
+        for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
+            for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
                 if (buffTower.canHit(otherTower.position, this.gameMap)) {
                     otherTower.buffs[BUFFED] = true;
                 }

@@ -1,7 +1,8 @@
 class MouseInput {
-    hoverCallbacks = new Map();
-
-    clickCallbacks = new Map();
+    constructor() {
+        this.hoverCallbacks = new Map();
+        this.clickCallbacks = new Map();
+    }
 
     addHoverCallback(key, callback) {
         this.hoverCallbacks.set(key, callback);

@@ -18,7 +18,6 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
     }, 100); // substiture for useFrame, which can't be used outside Canvas
 
     const handleClick = () => {
-        setSelectedTower(null);
         game.startDefendPhase();
     }
 

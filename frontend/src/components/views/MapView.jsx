@@ -28,6 +28,11 @@ export default function MapView({assets, gameMap, overrides, mouseInput})
                 e.stopPropagation();
                 mouseInput.triggerHover(tile.x, tile.y, tile.z);
             };
+        } else {
+            // Make preview for new tiles semi-transparent
+            material = material.clone();
+            material.opacity = 0.75;
+            material.transparent = true;
         }
 
         return (

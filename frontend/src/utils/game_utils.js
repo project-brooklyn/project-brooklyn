@@ -178,6 +178,15 @@ export const getAdjacentTilePath = (tower, end) => {
     return Array(SAW_TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
 }
 
+export const getUpwardPath = (tower, speed = 0.04, steps = 75) => {
+    const [x, y, z] = tower.position;
+    const path = [[x, y, z + tower.height]];
+    for (let i = 0; i < steps; i++) {
+        path.push([x, y, z + tower.height + (i * speed)]);
+    }
+    return path;
+}
+
 export function isTop(gameMap, x, y, z) {
     return gameMap.getElevation(x, y) === z;
 }

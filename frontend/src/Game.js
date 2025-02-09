@@ -181,6 +181,7 @@ export default class Game {
 
         this.commitTowers();
         this.applyBuffs();
+        this.runUpkeepFunctions();
 
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
@@ -224,8 +225,10 @@ export default class Game {
                             enemy.statuses[tower.appliedStatus] = true;
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
-                        const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
-                        enemy.hp = Math.max(enemy.hp - damage, 0);
+                        if (tower.damage) {
+                            const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
+                            enemy.hp = Math.max(enemy.hp - damage, 0);
+                        }
 
                         const projectile = tower.createProjectile(path);
                         this.addProjectile(projectile);
@@ -286,6 +289,15 @@ export default class Game {
                 if (buffTower.canHit(otherTower.position, this.gameMap)) {
                     otherTower.buffs[BUFFED] = true;
                 }
+            }
+        }
+    }
+
+    // tower functions that run once at the beginning of the defend phase
+    runUpkeepFunctions = () => {
+        for (const tower of this.getAllTowers()) {
+            if (tower.upkeep) {
+                tower.upkeep(this);
             }
         }
     }

@@ -12,7 +12,7 @@ export default class SlowTower extends Tower {
         this.damage = 0;
         this.price = SlowTower.price;
         this.minRange = 0;
-        this.maxRange = 1;
+        this.maxRange = 0;
         this.height = 1;
         this.canAttackMultiple = true;
         this.appliedStatus = SLOWED;

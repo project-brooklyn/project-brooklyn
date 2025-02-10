@@ -187,7 +187,7 @@ export function isBottom(_gameMap, _x, _y, z) {
 }
 
 export function isOccupied(game, x, y, z) {
-    const tower = game.towers[x][y];
+    const tower = game.getTower(x, y);
     return tower && (tower.z === z);
 }
 

@@ -39,7 +39,7 @@ const StructureRender = (structure) => {
 }
 
 export default function StructureView({ structures }) {
-    const structureComponents = structures.flat().filter(s => !!s && s.hp).map(StructureRender);
+    const structureComponents = structures.filter(s => !!s && s.hp).map(StructureRender);
     return <>
         {structureComponents}
     </>

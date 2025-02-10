@@ -58,11 +58,9 @@ const GameContainer = ({ game }) => {
 
     useEffect(() => {
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
-            if (!game.gameMap.getTower(x, y)) {
-                return;
-            }
+            const tower = game.getTower(x, y);
+            if (!tower) return;
             
-            const tower = game.towers[x][y];
             setSelectedTower(current => {
                 // if the tower is currentlyselected, deselect it
                 // otherwise, select the tower

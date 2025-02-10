@@ -140,6 +140,9 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
                 </li>
             })}
         </ul>
-        {(purchasingItem || selectedTower) && <ItemInfo item={purchasingItem || selectedTower} />}
+        {purchasingItem 
+            ? <ItemInfo item={purchasingItem} isPurchased={false}/>
+            : selectedTower && <ItemInfo item={selectedTower}/>
+        }
     </div>
 }

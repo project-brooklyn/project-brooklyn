@@ -4,7 +4,7 @@ import { BuyMenu } from "./BuyMenu";
 import { LevelInfo } from "./LevelInfo";
 import { SellMenu } from "./SellMenu";
 import { UndoMenu } from "./UndoMenu";
-import { TowerInfo } from "./TowerInfo";
+import { ItemInfo } from "./ItemInfo";
 
 export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
     const [level, setLevel] = useState(game.level);
@@ -40,7 +40,7 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
             }
             {phase === DEFEND && <>
                 <LevelInfo game={game} />
-                <TowerInfo tower={selectedTower} />
+                <ItemInfo item={selectedTower} />
             </>}
         </div>
 

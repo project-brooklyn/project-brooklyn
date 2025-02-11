@@ -178,13 +178,13 @@ export const getAdjacentTilePath = (tower, end) => {
     return Array(SAW_TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
 }
 
-export const getUpwardPath = (tower, speed = 0.04, steps = 75) => {
+export const getUpwardPath = (tower, speed = 0.04, steps = 50) => {
     const [x, y, z] = tower.position;
-    const path = [[x, y, z + tower.height]];
+    const path = [];
     let height = z + tower.height;
     for (let i = 0; i < steps; i++) {
         path.push([x, y, height]);
-        height += speed
+        height += speed;
     }
     return path;
 }

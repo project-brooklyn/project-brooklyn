@@ -5,6 +5,8 @@ export const tileConfig = {
     height: 0.25,
 };
 
+export const DEFAULT_SCALE = 0.01;
+
 export const modelFiles = { 
     arrow: './basic/arrow.glb',
     arrowTower: './basic/ballista_tower.glb',

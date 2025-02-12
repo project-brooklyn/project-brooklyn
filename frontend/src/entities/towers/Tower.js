@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import Entity from "../Entity";
 
 export const Status = {
@@ -7,9 +8,11 @@ export const Status = {
     PERMANENT: Symbol("permanent"), // Can't be built or sold (portal and castle)
 };
 
+const DEFAULT_TOWER_SCALE = 0.015;
+
 export default class Tower extends Entity {
-    constructor (x, y, z, scale, status) {
-        super(x, y, z, scale);
+    constructor (x, y, z, status, scale = DEFAULT_TOWER_SCALE) {
+        super(x, y, z, new THREE.Quaternion(), scale);
         this.hp = Infinity;
         this.status = status;
         this.height = 2.5; // default height for projectile launch

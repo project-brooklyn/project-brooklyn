@@ -3,7 +3,7 @@ import Projectile from "./Projectile";
 import { convertToRenderCoordinates } from '../../utils/render_utils';
 
 export default class Flame extends Projectile {
-    constructor (x, y, z, path, scale=0.01) {
+    constructor (x, y, z, path) {
         const quaternion = new THREE.Quaternion();
         if (path && path.length >= 2) {
             const start = new THREE.Vector3().fromArray(path.at(0));
@@ -17,7 +17,7 @@ export default class Flame extends Projectile {
             const renderV = convertToRenderCoordinates(trajectory).normalize();
             quaternion.setFromUnitVectors(renderY, renderV);
         }
-        super(x, y, z, scale, quaternion, path);
+        super(x, y, z, quaternion, path);
         this.name = "flame";
     }
 }

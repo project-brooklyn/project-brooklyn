@@ -6,7 +6,7 @@ export default class LaserTower extends Tower {
     static price = 200;
 
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status);
         this.name = 'laserTower';
         this.cooldown = 40;
         this.currentCooldown = 0;

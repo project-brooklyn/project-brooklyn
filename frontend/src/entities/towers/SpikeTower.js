@@ -3,11 +3,13 @@ import Spikes from "../projectiles/Spikes";
 import { isSameCell } from "../../utils/game_utils";
 
 const SPIKE_TICK_DURATION = 20;
+const SCALE = 0.01;
 
 export default class SpikeTower extends Tower {
     static price = 100;
+
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status, SCALE);
         this.name = 'spikeTower';
         this.cooldown = 50;
         this.currentCooldown = 0;

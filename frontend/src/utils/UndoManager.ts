@@ -9,6 +9,7 @@ export enum ActionType {
     FILL = TERRAFORM_FILL,
     DIG = TERRAFORM_DIG,
 }
+
 export class GameAction {
     x: number;
     y: number;

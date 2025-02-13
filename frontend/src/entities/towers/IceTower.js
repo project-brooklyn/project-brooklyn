@@ -3,11 +3,12 @@ import Snowball from "../projectiles/Snowball";
 import { FROZEN } from "../statuses";
 import Tower from "./Tower";
 
+
 export default class IceTower extends Tower {
     static price = 100;
 
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status);
         this.name = 'iceTower';
         this.cooldown = 150;
         this.currentCooldown = 0;

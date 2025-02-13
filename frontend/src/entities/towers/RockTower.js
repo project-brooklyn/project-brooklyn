@@ -6,7 +6,7 @@ export default class RockTower extends Tower {
     static price = 100;
 
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status);
         this.name = 'rockTower';
         this.cooldown = 50;
         this.currentCooldown = 0;

@@ -6,7 +6,7 @@ export default class Guy extends Enemy {
     static NAME = "guy";
 
     constructor (x, y, z, scale) {
-        super(x, y, z, scale ?? 0.01);
+        super(x, y, z, scale);
         this.name = Guy.NAME;
         this.maxHp = Guy.MAX_HP;
         this.hp = this.maxHp;

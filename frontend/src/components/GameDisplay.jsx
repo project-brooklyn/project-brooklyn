@@ -46,7 +46,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     return <>
         <axesHelper args={[width, depth, height]} />
         {game.phase === BUILD && <Text
-            onClick={() => game.gold += 100}
+            onClick={() => game.gold += 500}
             position={[width / 2 - 0.5, 0, -0.51]}
             rotation={[0, Math.PI, 0]}
             fontSize={0.2}

@@ -2,10 +2,13 @@ import Tower from "./Tower";
 import { isSameCell } from "../../utils/game_utils";
 import { SLOWED } from "../statuses";
 
+const SCALE = 0.01;
+
 export default class SlowTower extends Tower {
     static price = 100;
+
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status, SCALE);
         this.name = 'slowTower';
         this.cooldown = 0;
         this.currentCooldown = 0;

@@ -19,8 +19,7 @@ export default class Castle extends Entity {
 
     takeDamage = (damage) => {
         this.hp -= damage;
-        this.hp = round(this.hp);
-        this.hp = Math.max(0, this.hp);
+        this.hp = Math.max(0, round(this.hp));
     }
 
     canHit = () => false;

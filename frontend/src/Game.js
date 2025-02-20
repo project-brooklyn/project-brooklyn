@@ -10,6 +10,7 @@ import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
 import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
 import { TERRAFORMS } from "./entities/buildables";
+import GUI from 'lil-gui';
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -51,6 +52,8 @@ export default class Game {
         this.cameraTarget = null;
         this.resetCameraTarget();
         this.configureCameraControls();
+
+        this.devGui = new GUI();
     }
 
     getAllTowers = () => {
@@ -125,7 +128,7 @@ export default class Game {
     removeTower = (x, y, canUndo = true) => {
         if (canUndo) {
             const removed = this.gameMap.getTower(x, y)
-            this.undoManager.push(new GameAction(...removed.position, ActionType.SELL, -removed.price/2, removed.name));
+            this.undoManager.push(new GameAction(...removed.position, ActionType.SELL, -removed.price / 2, removed.name));
         }
         this.gameMap.removeTower(x, y);
     }
@@ -135,7 +138,7 @@ export default class Game {
         if (this.undoManager && canUndo) {
             const { x, y, z, type } = tile;
             this.undoManager.push(new GameAction(
-                x, y, z, ActionType.FILL, 
+                x, y, z, ActionType.FILL,
                 TERRAFORMS.get(ActionType.FILL).price,
                 null, type
             ));
@@ -145,7 +148,7 @@ export default class Game {
     removeTile(x, y, z, canUndo = true) {
         if (canUndo) {
             this.undoManager.push(new GameAction(
-                x, y, z, ActionType.DIG, 
+                x, y, z, ActionType.DIG,
                 TERRAFORMS.get(ActionType.DIG).price,
                 null, this.gameMap.getTile(x, y, z).type
             ));

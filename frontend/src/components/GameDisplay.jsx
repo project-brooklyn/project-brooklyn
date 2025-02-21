@@ -25,6 +25,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     const [ticks, setTicks] = useState(0);
 
     const orbitControls = useRef();
+    const skybox = useRef();
 
     useEffect(() => {
         setReady(true);
@@ -35,6 +36,20 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             orbitControls.current.listenToKeyEvents(window);
         }
     }, [orbitControls, ready])
+
+    useEffect(() => {
+        const skyboxFolder = game.devGui.addFolder("Skybox");
+        const uniforms = skybox.current.material.uniforms;
+        skyboxFolder.add(uniforms.mieCoefficient, "value", 0, 1, 0.0001).name("mieCoefficient");
+        skyboxFolder.add(uniforms.mieDirectionalG, "value", 0, 1, 0.001).name("mieDirectionalG");
+        skyboxFolder.add(uniforms.rayleigh, "value", 0, 20, 0.01).name("rayleigh");
+        skyboxFolder.add(uniforms.turbidity, "value", 0, 100, 0.1).name("turbidity");
+        skyboxFolder.add(uniforms.sunPosition.value, "y", 0, 500, 0.1).name("sunPosition.y");
+        skyboxFolder.close();
+        return () => {
+            skyboxFolder.destroy();
+        }
+    }, [game.devGui])
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
@@ -78,6 +93,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
         />
         <ambientLight intensity={2} />
         <Sky
+            ref={skybox}
             sunPosition={[-10000, 30, -10000]}
             inclination={1.4}
             mieCoefficient={0.005}

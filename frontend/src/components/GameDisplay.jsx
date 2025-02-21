@@ -101,7 +101,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             }}
             keyPanSpeed={25.0}
         />
-        <ambientLight intensity={1} />
+        <ambientLight intensity={2} />
         <directionalLight
             position={[-0.75 * width, height, -0.75 * width]}
             intensity={2.0}

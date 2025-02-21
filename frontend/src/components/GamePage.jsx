@@ -72,6 +72,9 @@ const GameContainer = ({ game }) => {
         gameFolder.add(game, "level", 1, 12, 1);
         gameFolder.add(game.castle, "hp", 1, game.castle.maxHp, 1).name("base hp");
         gameFolder.close()
+        return () => {
+            gameFolder.destroy();
+        }
     }, [])
 
     useEffect(() => {

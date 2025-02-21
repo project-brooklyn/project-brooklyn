@@ -45,6 +45,9 @@ export default function GameDisplay({ game, assets, selectedTower }) {
         skyboxFolder.add(uniforms.rayleigh, "value", 0, 20, 0.01).name("rayleigh");
         skyboxFolder.add(uniforms.turbidity, "value", 0, 100, 0.1).name("turbidity");
         skyboxFolder.close();
+        return () => {
+            skyboxFolder.destroy();
+        }
     }, [game.devGui])
 
     useFrame((_state, _delta, _xrFrame) => {

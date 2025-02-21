@@ -53,7 +53,7 @@ export default class Game {
         this.resetCameraTarget();
         this.configureCameraControls();
 
-        this.devGui = new GUI();
+        this.devGui = new GUI({ title: "Debug Menu" });
     }
 
     getAllTowers = () => {

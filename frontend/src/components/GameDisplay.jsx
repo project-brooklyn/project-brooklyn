@@ -44,6 +44,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
         skyboxFolder.add(uniforms.mieDirectionalG, "value", 0, 1, 0.001).name("mieDirectionalG");
         skyboxFolder.add(uniforms.rayleigh, "value", 0, 20, 0.01).name("rayleigh");
         skyboxFolder.add(uniforms.turbidity, "value", 0, 100, 0.1).name("turbidity");
+        skyboxFolder.add(uniforms.sunPosition.value, "y", 0, 500, 0.1).name("sunPosition.y");
         skyboxFolder.close();
         return () => {
             skyboxFolder.destroy();

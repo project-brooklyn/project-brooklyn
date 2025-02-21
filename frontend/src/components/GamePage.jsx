@@ -66,7 +66,6 @@ const GameContainer = ({ game }) => {
     const { mouseInput } = game;
 
     useEffect(() => {
-        console.log(game.devGui)
         if (!game.devGui) return;
         const gameFolder = game.devGui.addFolder("Game");
         gameFolder.add(game, "level", 1, 12, 1);
@@ -75,7 +74,7 @@ const GameContainer = ({ game }) => {
         return () => {
             gameFolder.destroy();
         }
-    }, [])
+    }, [game])
 
     useEffect(() => {
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
@@ -97,7 +96,7 @@ const GameContainer = ({ game }) => {
         <div className="d-flex w-100 h-100">
             <div className="w-75 border border-2 border-primary m-2">
                 <Stats showPanel={0} />
-                <Canvas>
+                <Canvas shadows >
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
             </div>

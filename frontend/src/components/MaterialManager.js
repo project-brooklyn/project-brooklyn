@@ -7,15 +7,14 @@ class MaterialManager {
 
     constructor() {
         // Load tile materials
-        for (const type in TileType)
-        {
+        for (const type in TileType) {
             const tileType = TileType[type]
             this.materials.set(tileType.name, this.makeTileMaterial(tileType))
         }
     }
 
     makeTileMaterial(tileType) {
-        return new THREE.MeshBasicMaterial({
+        return new THREE.MeshLambertMaterial({
             color: tileType.material.color,
             map: textures[tileType.name] || null,
         });

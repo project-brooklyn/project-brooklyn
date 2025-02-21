@@ -8,7 +8,7 @@ import { StatusView } from "./StatusView";
 const StructureRender = (structure) => {
     const { scale, name, hp, maxHp, offset, rotation, buffs, height } = structure;
     const coordinates = convertToRenderCoordinates(structure, offset);
-    
+
     const modelFile = modelFiles[name] || modelFiles.placeholder;
     const isObjModel = modelFile.slice(-3) === 'obj';
     const modelLoader = useLoader(isObjModel ? OBJLoader : GLTFLoader, modelFile)
@@ -16,13 +16,14 @@ const StructureRender = (structure) => {
     // prevent real towers from becoming transparent when ghost view is present
     if (!isObjModel) {
         modelLoader.scene.traverse((child) => {
-        if (child.isMesh) {
-            child.material = child.material.clone();
-            child.material.transparent = true;
-            child.material.opacity = 1;
-        }
-    });
-}
+            if (child.isMesh) {
+                child.material = child.material.clone();
+                child.material.transparent = true;
+                child.material.opacity = 1;
+                child.castShadow = true;
+            }
+        });
+    }
     if (isObjModel) centerObjModel(modelLoader);
     const key = name + coordinates.x + coordinates.y + coordinates.z;
     return (

@@ -26,10 +26,20 @@ export default function GameDisplay({ game, assets, selectedTower }) {
 
     const orbitControls = useRef();
     const skybox = useRef();
+    const shadowCamera = useRef();
 
     useEffect(() => {
         setReady(true);
-    }, [])
+
+        if (shadowCamera.current) {
+            shadowCamera.current.left = -width;
+            shadowCamera.current.right = width;
+            shadowCamera.current.top = 2 * height;
+            shadowCamera.current.bottom = 1;
+            shadowCamera.current.near = 10;
+            shadowCamera.current.far = 25;
+        }
+    }, [width, height])
 
     useEffect(() => {
         if (ready && orbitControls.current) {
@@ -91,7 +101,14 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             }}
             keyPanSpeed={25.0}
         />
-        <ambientLight intensity={2} />
+        <ambientLight intensity={1} />
+        <directionalLight
+            position={[-0.75 * width, height, -0.75 * width]}
+            intensity={2.0}
+            castShadow
+        >
+            <orthographicCamera ref={shadowCamera} attach='shadow-camera' />
+        </directionalLight>
         <Sky
             ref={skybox}
             sunPosition={[-10000, 30, -10000]}

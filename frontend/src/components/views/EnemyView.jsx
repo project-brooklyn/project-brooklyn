@@ -13,9 +13,15 @@ const EnemyRender = (enemy, i) => {
     if (!hp) return null;
     const coordinates = convertToRenderCoordinates(enemy, offset);
 
+    gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+        }
+    });
+
     const position = [coordinates.x, coordinates.y, coordinates.z];
-    return (<group position={position} key={name+i}>
-        <HpView hpFraction={hp/maxHp} position={positionAboveEnemy} />
+    return (<group position={position} key={name + i}>
+        <HpView hpFraction={hp / maxHp} position={positionAboveEnemy} />
         <StatusView statuses={statuses} position={positionAboveEnemy} height={enemyHeight} />
         <primitive
             object={gltf.scene.clone(true)}
@@ -25,7 +31,7 @@ const EnemyRender = (enemy, i) => {
     </group>);
 }
 
-export default function EnemyView({enemies}) {
+export default function EnemyView({ enemies }) {
     const enemyComponents = enemies.map((enemy, i) => EnemyRender(enemy, i));
     return <>
         {enemyComponents}

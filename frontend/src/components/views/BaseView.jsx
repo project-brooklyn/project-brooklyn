@@ -2,8 +2,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { useLoader } from '@react-three/fiber'
 import HpView from './HpView.jsx'
 
-export default function BaseView({base, hp})
-{
+export default function BaseView({ base, hp }) {
     const model = useLoader(GLTFLoader, '/castle_3d_model.glb');
     if (!model) {
         return <>

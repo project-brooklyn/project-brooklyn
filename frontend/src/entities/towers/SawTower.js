@@ -2,10 +2,13 @@ import { getAdjacentTilePath } from "../../utils/game_utils";
 import SawBlade from "../projectiles/SawBlade";
 import Tower from "./Tower";
 
+const SCALE = 0.01;
+
 export default class SawTower extends Tower {
     static price = 150;
+
     constructor (x, y, z, status) {
-        super(x, y, z, 0.012, status);
+        super(x, y, z, status, SCALE);
         this.name = 'sawTower';
         this.cooldown = 20;
         this.currentCooldown = 0;

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { DEFAULT_SCALE } from '../utils/render_utils';
 
 class Entity {
-    constructor(x, y, z, scale=1.0, quaternion=new THREE.Quaternion()) {
+    constructor(x, y, z, quaternion=new THREE.Quaternion(), scale=DEFAULT_SCALE) {
         this.x = x;
         this.y = y;
         this.z = z;

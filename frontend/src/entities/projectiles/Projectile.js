@@ -1,8 +1,8 @@
 import Entity from "../Entity"; 
 
 export default class Projectile extends Entity {
-    constructor (x, y, z, scale, quaternion, path) {
-        super(x, y, z, scale, quaternion);
+    constructor (x, y, z, quaternion, path, scale) {
+        super(x, y, z, quaternion, scale);
         this.path = path;
 
         this.hp = Infinity;

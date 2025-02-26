@@ -25,16 +25,41 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     const [ticks, setTicks] = useState(0);
 
     const orbitControls = useRef();
+    const skybox = useRef();
+    const shadowCamera = useRef();
 
     useEffect(() => {
         setReady(true);
-    }, [])
+
+        if (shadowCamera.current) {
+            shadowCamera.current.left = -width;
+            shadowCamera.current.right = width;
+            shadowCamera.current.top = 2 * height;
+            shadowCamera.current.bottom = 1;
+            shadowCamera.current.near = 10;
+            shadowCamera.current.far = 25;
+        }
+    }, [width, height])
 
     useEffect(() => {
         if (ready && orbitControls.current) {
             orbitControls.current.listenToKeyEvents(window);
         }
     }, [orbitControls, ready])
+
+    useEffect(() => {
+        const skyboxFolder = game.devGui.addFolder("Skybox");
+        const uniforms = skybox.current.material.uniforms;
+        skyboxFolder.add(uniforms.mieCoefficient, "value", 0, 1, 0.0001).name("mieCoefficient");
+        skyboxFolder.add(uniforms.mieDirectionalG, "value", 0, 1, 0.001).name("mieDirectionalG");
+        skyboxFolder.add(uniforms.rayleigh, "value", 0, 20, 0.01).name("rayleigh");
+        skyboxFolder.add(uniforms.turbidity, "value", 0, 100, 0.1).name("turbidity");
+        skyboxFolder.add(uniforms.sunPosition.value, "y", 0, 500, 0.1).name("sunPosition.y");
+        skyboxFolder.close();
+        return () => {
+            skyboxFolder.destroy();
+        }
+    }, [game.devGui])
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
@@ -46,7 +71,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     return <>
         <axesHelper args={[width, depth, height]} />
         {game.phase === BUILD && <Text
-            onClick={() => game.gold += 100}
+            onClick={() => game.gold += 500}
             position={[width / 2 - 0.5, 0, -0.51]}
             rotation={[0, Math.PI, 0]}
             fontSize={0.2}
@@ -77,7 +102,15 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             keyPanSpeed={25.0}
         />
         <ambientLight intensity={2} />
+        <directionalLight
+            position={[-0.75 * width, height, -0.75 * width]}
+            intensity={2.0}
+            castShadow
+        >
+            <orthographicCamera ref={shadowCamera} attach='shadow-camera' />
+        </directionalLight>
         <Sky
+            ref={skybox}
             sunPosition={[-10000, 30, -10000]}
             inclination={1.4}
             mieCoefficient={0.005}
@@ -86,7 +119,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
             turbidity={10}
         />
 
-        <StructureView structures={game.towers} />
+        <StructureView structures={game.getAllTowers()} />
         <EnemyView enemies={game.enemies} />
         <ProjectileView projectiles={game.projectiles} />
         {game.phase === BUILD && <PathView path={game.path.map(([x, y]) => [x, y, gameMap.getElevation(x, y, true)])} />}

@@ -2,12 +2,13 @@ import { getAdjacentTilePath } from "../../utils/game_utils";
 import Tower from "./Tower";
 
 export const BUFFED = "BUFFED";
-const DEFAULT_SCALE = 0.012;
+const SCALE = 0.02;
 
 export default class BuffTower extends Tower {
     static price = 100;
+    
     constructor (x, y, z, status) {
-        super(x, y, z, DEFAULT_SCALE, status);
+        super(x, y, z, status, SCALE);
         this.name = 'buffTower';
         this.price = BuffTower.price;
         this.minRange = 0;

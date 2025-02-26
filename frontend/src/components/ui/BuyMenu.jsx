@@ -36,99 +36,68 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         return true;
     }
 
+    const showGhostPurchase = (x, y, z) => {
+        if (!isCallbackValid()) return;
+        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return; 
+        purchasingItem.targetPosition ||= new Vector3();
+        purchasingItem.targetPosition.set(x, y, z);
+
+        if (purchasingItem.name === TERRAFORM_FILL) {
+            game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
+        } else if (purchasingItem.name === TERRAFORM_DIG) {
+            if (isBottom(gameMap, x, y, z)) {
+                // Not allowed to excavate lowest tile level.
+                purchasingItem.targetPosition = null;
+                game.gameMapOverrides.clear();
+                return;
+            }
+
+            game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
+        } else {  // purchasingItem is a tower
+            const towerType = TOWERS.get(purchasingItem.name);
+            setSelectedTower(new towerType.create(x, y, z, TowerStatus.PLANNING));
+        }
+    }
+
+    const buyPurchasingItem = () => {
+        if (!isCallbackValid()) return;
+        const isTower = purchasingItem.name.endsWith("Tower");
+        const purchaseType = isTower ? TOWERS.get(purchasingItem.name) : TERRAFORMS.get(purchasingItem.name);
+        if (game.gold < purchaseType.price) return;
+        
+        const { x, y, z } = purchasingItem.targetPosition;
+        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return; 
+
+        if (isTower) {
+            const tower = new purchaseType.create(x, y, z, TowerStatus.PENDING);
+            game.addTower(tower);
+        } else {
+            if (purchasingItem.name === TERRAFORM_FILL) {
+                game.addTile(new Tile(x, y, z + 1, TileType.Stone));
+            } else {
+                console.assert(purchasingItem.name === TERRAFORM_DIG, `unexpected purchasing item name: ${purchasingItem.name}`);
+                game.removeTile(x, y, z);
+            }
+        }
+
+        chargeCost(purchaseType.price);
+        purchasingItem.targetPosition = null;
+        game.setPath();
+        game.gameMapOverrides.clear();
+    }
+
     useEffect(() => {
         // Handle purchasing item
-        if (!purchasingItem) {
-            return;
-        }
+        if (!purchasingItem) return;
+        mouseInput.addHoverCallback(NAME, showGhostPurchase);
+        mouseInput.addClickCallback(NAME, buyPurchasingItem);
 
-        if (purchasingItem.name.endsWith("Tower")) {
-            // Tower handling
-            const towerType = TOWERS.get(purchasingItem.name);
-
-            mouseInput.addHoverCallback(NAME, (x, y, z) => {
-                if (!isCallbackValid()) return;
-                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
-                    return;
-                }
-
-                if (!purchasingItem.targetPosition) {
-                    purchasingItem.targetPosition = new Vector3();
-                }
-                purchasingItem.targetPosition.set(x, y, z);
-                setSelectedTower(new towerType.create(x, y, z, TowerStatus.PLANNING));
-            });
-
-            mouseInput.addClickCallback(NAME, () => {
-                if (!isCallbackValid()) return;
-                if (game.gold < towerType.price) return;
-
-                const { x, y, z } = purchasingItem.targetPosition;
-                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
-                    return;
-                }
-                chargeCost(towerType.price);
-
-                const tower = new towerType.create(x, y, z, TowerStatus.PENDING);
-                game.addTower(tower);
-                game.setPath();
-            });
-        } else if (purchasingItem.name.startsWith("terraform")) {
-            const terraform = TERRAFORMS.get(purchasingItem.name);
-
-            mouseInput.addHoverCallback(NAME, (x, y, z) => {
-                if (!isCallbackValid()) return;
-                if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
-                    return;
-                }
-
-                if (!purchasingItem.targetPosition) {
-                    purchasingItem.targetPosition = new Vector3();
-                }
-
-                if (purchasingItem.name === TERRAFORM_FILL) {
-                    purchasingItem.targetPosition.set(x, y, z);
-                    game.gameMapOverrides.set("SHOW", new Tile(x, y, z + 1, TileType.Stone));
-                } else if (purchasingItem.name === TERRAFORM_DIG) {
-                    if (isBottom(gameMap, x, y, z)) {
-                        // Not allowed to excavate lowest tile level.
-                        purchasingItem.targetPosition = null;
-                        game.gameMapOverrides.clear();
-                        return;
-                    }
-
-                    purchasingItem.targetPosition.set(x, y, z);
-                    game.gameMapOverrides.set("HIDE", tileKey(x, y, z));
-                }
-            });
-
-            mouseInput.addClickCallback(NAME, () => {
-                if (!isCallbackValid()) return;
-                if (!purchasingItem.targetPosition) return;
-                let { x, y, z } = purchasingItem.targetPosition;
-
-                if (game.gold < terraform.price) return;
-
-                purchasingItem.targetPosition = null;
-                chargeCost(terraform.price);
-
-                game.gameMapOverrides.clear();
-
-                if (purchasingItem.name === TERRAFORM_FILL) {
-                    z += 1;
-                    game.addTile(new Tile(x, y, z, TileType.Stone));
-                } else if (purchasingItem.name === TERRAFORM_DIG) {
-                    game.removeTile(x, y, z);
-                }
-                game.setPath();
-            });
-        }
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
 
-    return <>
+    return <div onMouseEnter={clear}> 
         <ul className="list-unstyled">
-            {Array.from(TOWERS.entries()).map(([towerKey, { _create, price }]) => {
+            {Array.from(TOWERS.entries()).map(([towerKey, { price }]) => {
                 return <li key={towerKey} className="mb-2">
                     <label role='button'>
                         <input
@@ -171,6 +140,9 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
                 </li>
             })}
         </ul>
-        {(purchasingItem || selectedTower) && <ItemInfo item={purchasingItem || selectedTower} />}
-    </>
+        {purchasingItem 
+            ? <ItemInfo item={purchasingItem} isPurchased={false}/>
+            : selectedTower && <ItemInfo item={selectedTower}/>
+        }
+    </div>
 }

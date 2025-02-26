@@ -7,39 +7,27 @@ import RockTower from "./towers/RockTower";
 import SawTower from "./towers/SawTower";
 import SlowTower from "./towers/SlowTower";
 import SpikeTower from "./towers/SpikeTower";
+import MoneyTower from "./towers/MoneyTower";
+import RepairTower from "./towers/RepairTower";
 
 export enum TowerType {
     ArrowTower = "arrowTower",
-    RockTower = "rockTower",
-    LaserTower = "laserTower",
-    SawTower = "sawTower",
-    SpikeTower = "spikeTower",
     BuffTower = "buffTower",
     FireTower = "fireTower",
-    SlowTower = "slowTower",
     IceTower = "iceTower",
+    LaserTower = "laserTower",
+    MoneyTower = "moneyTower",
+    RepairTower = "repairTower",
+    RockTower = "rockTower",
+    SawTower = "sawTower",
+    SlowTower = "slowTower",
+    SpikeTower = "spikeTower",
 }
 
 export const TOWERS = new Map([
     ["arrowTower", {
         create: ArrowTower,
         price: ArrowTower.price,
-    }],
-    ["rockTower", {
-        create: RockTower,
-        price: RockTower.price,
-    }],
-    ["laserTower", {
-        create: LaserTower,
-        price: LaserTower.price,
-    }],
-    ["sawTower", {
-        create: SawTower,
-        price: SawTower.price,
-    }],
-    ["spikeTower", {
-        create: SpikeTower,
-        price: SpikeTower.price,
     }],
     ["buffTower", {
         create: BuffTower,
@@ -49,13 +37,37 @@ export const TOWERS = new Map([
         create: FireTower,
         price: FireTower.price,
     }],
+    ["iceTower", {
+        create: IceTower,
+        price: IceTower.price,
+    }],
+    ["laserTower", {
+        create: LaserTower,
+        price: LaserTower.price,
+    }],
+    ["moneyTower", {
+        create: MoneyTower,
+        price: MoneyTower.price,
+    }],
+    ["repairTower", {
+        create: RepairTower,
+        price: RepairTower.price,
+    }],
+    ["rockTower", {
+        create: RockTower,
+        price: RockTower.price,
+    }],
+    ["sawTower", {
+        create: SawTower,
+        price: SawTower.price,
+    }],
     ["slowTower", {
         create: SlowTower,
         price: SlowTower.price,
     }],
-    ["iceTower", {
-        create: IceTower,
-        price: IceTower.price,
+    ["spikeTower", {
+        create: SpikeTower,
+        price: SpikeTower.price,
     }],
 ]);
 

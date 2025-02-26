@@ -5,12 +5,15 @@ export const tileConfig = {
     height: 0.25,
 };
 
+export const DEFAULT_SCALE = 0.01;
+
 export const modelFiles = { 
     arrow: './basic/arrow.glb',
     arrowTower: './basic/ballista_tower.glb',
     buffTower: './basic/buff_tower.glb',
     castle: './basic/house.glb',
     cow: './basic/spherical_cow.glb',
+    dollar: './basic/dollar.glb',
     fireTower: './basic/flame_tower.glb',
     flag: './basic/flag.glb',
     flame: './basic/flame.glb',
@@ -18,8 +21,10 @@ export const modelFiles = {
     iceTower: './basic/ice_tower.glb',
     lamb: './basic/lamb.glb',
     laserTower: './basic/laser_tower.glb',
+    moneyTower: './basic/money_tower.glb',
     placeholder: './placeholder.glb',
     portal: './basic/portal.glb',
+    repairTower: './basic/repair_tower.glb',
     rock: './basic/cannonball.glb',
     rockTower: './basic/cannon_tower.glb',
     sawBlade: './basic/saw_blade.glb',
@@ -28,6 +33,7 @@ export const modelFiles = {
     snowball: './basic/snowball.glb',
     spikes: './basic/arrow.glb', // reuse arrows as spikes
     spikeTower: './basic/spike_tower.glb',
+    wrench: './basic/wrench.glb',
 };
 
 export const statusIcons = {

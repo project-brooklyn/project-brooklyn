@@ -4,8 +4,9 @@ import Tower from "./Tower";
 
 export default class ArrowTower extends Tower {
     static price = 50;
+    
     constructor (x, y, z, status) {
-        super(x, y, z, 0.01, status);
+        super(x, y, z, status);
         this.name = 'arrowTower';
         this.cooldown = 25;
         this.currentCooldown = 0;

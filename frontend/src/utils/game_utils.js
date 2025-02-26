@@ -169,13 +169,24 @@ export const getParabolicPath = (tower, end, gameMap, timeInterval=0.02) => {
 }
 
 export const getAdjacentTilePath = (tower, end) => {
-    const SAW_TICK_DURATION = 20;
+    const TICK_DURATION = 20;
     const [endX, endY, endZ] = [round(end[0], 0), round(end[1], 0), end[2]];
     if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return [];
     if (tower.z + (tower.height/2) < endZ || tower.z > endZ + (tower.height/2)) return [];
     const avgX = (tower.x + endX)/2;
     const avgY = (tower.y + endY)/2;
-    return Array(SAW_TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
+    return Array(TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height/2)]);
+}
+
+export const getUpwardPath = (tower, speed = 0.04, steps = 50) => {
+    const [x, y, z] = tower.position;
+    const path = [];
+    let height = z + tower.height;
+    for (let i = 0; i < steps; i++) {
+        path.push([x, y, height]);
+        height += speed;
+    }
+    return path;
 }
 
 export function isTop(gameMap, x, y, z) {
@@ -183,11 +194,11 @@ export function isTop(gameMap, x, y, z) {
 }
 
 export function isBottom(_gameMap, _x, _y, z) {
-    return z == 0;
+    return z === 0;
 }
 
 export function isOccupied(game, x, y, z) {
-    const tower = game.towers[x][y];
+    const tower = game.getTower(x, y);
     return tower && (tower.z === z);
 }
 

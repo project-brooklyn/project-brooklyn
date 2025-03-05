@@ -10,11 +10,20 @@ import { HtmlUI } from "./ui/HtmlUI";
 
 const NAME = "GamePage";
 
-const GamePage = ({ gameMap, showWelcome = false }) => {
+const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
     const [game] = useState(() => new Game(new gameMap()));
 
-    const [showModal, setShowModal] = useState(showWelcome);
+    const [showModal, setShowModal] = useState(!devMode);
+    const [showDevGui, _setShowDevGui] = useState(devMode);
+
+    useEffect(() => {
+        if (showDevGui) {
+            game.devGui.show();
+        } else {
+            game.devGui.hide();
+        }
+    }, [game.devGui, showDevGui])
 
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
         <WelcomeModal
@@ -54,29 +63,40 @@ const TopBar = ({ user, logout }) => {
 
 const GameContainer = ({ game }) => {
     const [selectedTower, setSelectedTower] = useState(null);
-    const {mouseInput} = game;
+    const { mouseInput } = game;
+
+    useEffect(() => {
+        if (!game.devGui) return;
+        const gameFolder = game.devGui.addFolder("Game");
+        gameFolder.add(game, "level", 1, 12, 1);
+        gameFolder.add(game.castle, "hp", 1, game.castle.maxHp, 1).name("base hp");
+        gameFolder.close()
+        return () => {
+            gameFolder.destroy();
+        }
+    }, [game])
 
     useEffect(() => {
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
             const tower = game.getTower(x, y);
             if (!tower) return;
-            
+
             setSelectedTower(current => {
                 // if the tower is currentlyselected, deselect it
                 // otherwise, select the tower
                 return tower === current ? null : tower;
-            }); 
+            });
         })
 
         return () => mouseInput.removeClickCallback(NAME);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">
         <div className="d-flex w-100 h-100">
             <div className="w-75 border border-2 border-primary m-2">
                 <Stats showPanel={0} />
-                <Canvas>
+                <Canvas shadows >
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
             </div>

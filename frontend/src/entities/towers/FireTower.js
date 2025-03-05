@@ -7,7 +7,7 @@ export default class FireTower extends Tower {
     static price = 100;
 
     constructor (x, y, z, status) {
-        super(x, y, z, 0.012, status);
+        super(x, y, z, status);
         this.name = 'fireTower';
         this.cooldown = 150;
         this.currentCooldown = 0;

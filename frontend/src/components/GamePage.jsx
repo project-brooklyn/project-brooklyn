@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game from "../Game";
+import Game, { BUILD, SCORE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -10,12 +10,36 @@ import { HtmlUI } from "./ui/HtmlUI";
 
 const NAME = "GamePage";
 
+export const ScorePhaseModal = ({ isOpen, game }) => {
+    if (!isOpen) return null;
+    const handleClick = () => {
+        game.setPhase(BUILD);
+    }
+
+    return <div className="position-absolute top-0 start-0 w-100 h-100 bg-white d-flex justify-content-center align-items-center z-3">
+        <h3>Level Complete!</h3>
+        <p>Level: {game.level}</p>
+        <p>Gold: {game.gold}</p>
+        <p>Castle HP: {game.castle.hp}</p>
+        <button onClick={handleClick}>Next Level</button>
+    </div>
+}
 const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
     const [game] = useState(() => new Game(new gameMap()));
 
     const [showModal, setShowModal] = useState(!devMode);
+    const [showScoreModal, setShowScoreModal] = useState(false);
     const [showDevGui, _setShowDevGui] = useState(devMode);
+
+    useEffect(() => {
+        game.addPhaseListener(SCORE, () => setShowScoreModal(true))
+        game.addPhaseListener(BUILD, () => setShowScoreModal(false))
+        return () => {
+            game.removePhaseListener(SCORE);
+            game.removePhaseListener(BUILD);
+        }
+    }, [game])
 
     useEffect(() => {
         if (showDevGui) {
@@ -30,6 +54,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             show={showModal}
             onHide={() => setShowModal(false)}
         />
+        <ScorePhaseModal isOpen={showScoreModal} game={game} />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)
@@ -92,7 +117,7 @@ const GameContainer = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">
+    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning z-1">
         <div className="d-flex w-100 h-100">
             <div className="w-75 border border-2 border-primary m-2">
                 <Stats showPanel={0} />

@@ -17,9 +17,7 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
         setPhase(game.phase);
     }, 100); // substiture for useFrame, which can't be used outside Canvas
 
-    const handleClick = () => {
-        game.setPhase(DEFEND);
-    }
+    const handleClick = () => game.setPhase(DEFEND);
 
     return <div className="w-25 flex-grow-1 border border-2 border-danger m-2 d-flex flex-column overflow-scroll">
         <div className="d-flex justify-content-between">
@@ -36,8 +34,7 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
                     <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
                     <UndoMenu game={game} />
                 </div >
-            </>
-            }
+            </>}
             {phase === DEFEND && <>
                 <LevelInfo game={game} />
                 <ItemInfo item={selectedTower} />

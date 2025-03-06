@@ -7,23 +7,10 @@ import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useEffect, useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
+import { ScorePhaseModal } from "./ui/ScorePhaseModal";
 
 const NAME = "GamePage";
 
-export const ScorePhaseModal = ({ isOpen, game }) => {
-    if (!isOpen) return null;
-    const handleClick = () => {
-        game.setPhase(BUILD);
-    }
-
-    return <div className="position-absolute top-0 start-0 w-100 h-100 bg-white d-flex justify-content-center align-items-center z-3">
-        <h3>Level Complete!</h3>
-        <p>Level: {game.level}</p>
-        <p>Gold: {game.gold}</p>
-        <p>Castle HP: {game.castle.hp}</p>
-        <button onClick={handleClick}>Next Level</button>
-    </div>
-}
 const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
     const [game] = useState(() => new Game(new gameMap()));
@@ -72,14 +59,15 @@ const TopBar = ({ user, logout }) => {
             </div>
             <div>
                 {
-                    user ?
-                        <p className="text-primary" onClick={logout}>Log Out</p>
-                        :
-                        <p>
-                            <a href="/signup">Sign Up</a>
-                            {" | "}
-                            <a href="/login">Log In</a>
-                        </p>
+                    user
+                    ? <p className="text-primary" onClick={logout}>
+                        Log Out
+                    </p>
+                    : <p>
+                        <a href="/signup">Sign Up</a>
+                        {" | "}
+                        <a href="/login">Log In</a>
+                    </p>
                 }
             </div>
         </div>
@@ -134,7 +122,6 @@ const GameContainer = ({ game }) => {
         </div>
         <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
     </div>
-
 }
 
 export default GamePage;

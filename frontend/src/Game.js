@@ -320,6 +320,15 @@ export default class Game {
             }
         }
     }
+
+    toJSON = () => {
+        return {
+            gameMap: this.gameMap.toJSON(),
+            level: this.level,
+            gold: this.gold,
+            castleHP: this.castle.hp,
+        }
+    }
 }
 
 

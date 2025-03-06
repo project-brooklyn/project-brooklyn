@@ -28,17 +28,8 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         if (game.gold < price) clear();
     }
 
-    const isCallbackValid = () => {
-        if (game.over || game.phase !== BUILD) {
-            clear();
-            return false;
-        }
-        return true;
-    }
-
     const showGhostPurchase = (x, y, z) => {
-        if (!isCallbackValid()) return;
-        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return; 
+        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return;
         purchasingItem.targetPosition ||= new Vector3();
         purchasingItem.targetPosition.set(x, y, z);
 
@@ -60,13 +51,12 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     }
 
     const buyPurchasingItem = () => {
-        if (!isCallbackValid()) return;
         const isTower = purchasingItem.name.endsWith("Tower");
         const purchaseType = isTower ? TOWERS.get(purchasingItem.name) : TERRAFORMS.get(purchasingItem.name);
         if (game.gold < purchaseType.price) return;
-        
+
         const { x, y, z } = purchasingItem.targetPosition;
-        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return; 
+        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return;
 
         if (isTower) {
             const tower = new purchaseType.create(x, y, z, TowerStatus.PENDING);
@@ -87,6 +77,11 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     }
 
     useEffect(() => {
+        return clear;
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
         // Handle purchasing item
         if (!purchasingItem) return;
         mouseInput.addHoverCallback(NAME, showGhostPurchase);
@@ -95,7 +90,7 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
 
-    return <div onMouseEnter={clear}> 
+    return <div onMouseEnter={clear}>
         <ul className="list-unstyled">
             {Array.from(TOWERS.entries()).map(([towerKey, { price }]) => {
                 return <li key={towerKey} className="mb-2">
@@ -140,9 +135,9 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
                 </li>
             })}
         </ul>
-        {purchasingItem 
-            ? <ItemInfo item={purchasingItem} isPurchased={false}/>
-            : selectedTower && <ItemInfo item={selectedTower}/>
+        {purchasingItem
+            ? <ItemInfo item={purchasingItem} isPurchased={false} />
+            : selectedTower && <ItemInfo item={selectedTower} />
         }
     </div>
 }

@@ -9,7 +9,7 @@ export const ScorePhaseModal = ({ isOpen, game }) => {
     const getJSON = () => {
         const json = JSON.stringify(game.toJSON());
         navigator.clipboard.writeText(btoa(json));
-        console.log('Copied game data to clipboard:\n', json); // remove after implementing load game
+        console.log('Copied game data to clipboard:\n', json); // TODO: remove after implementing load game
         setCopied(true);
     }
 

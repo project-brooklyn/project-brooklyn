@@ -54,6 +54,32 @@ export default class Game {
         this.configureCameraControls();
 
         this.devGui = new GUI({ title: "Debug Menu" });
+        this.phaseListeners = {
+            [BUILD]: [],
+            [DEFEND]: [
+                this.commitTowers,
+                this.applyBuffs,
+                this.runUpkeepFunctions,
+                this.handleLevelChange,
+                this.undoManager.clear,
+            ],
+            [SCORE]: [],
+        }
+    }
+
+    addPhaseListener = (phase, fn) => {
+        this.phaseListeners[phase].push(fn);
+    }
+
+    removePhaseListener = (phase, fn) => {
+        this.phaseListeners[phase] = this.phaseListeners[phase].filter(f => f !== fn);
+    }
+
+    setPhase = (phase) => {
+        this.phase = phase;
+        for (const fn of this.phaseListeners[phase]) {
+            fn();
+        }
     }
 
     getAllTowers = () => {
@@ -89,6 +115,10 @@ export default class Game {
     }
 
     setupEnemySpawn = (level) => {
+        this.spawningEnemies = true;
+        this.enemies = [];
+        this.projectiles = [];
+
         let { enemy, count, delay } = level;
         this.enemyInfo = { enemy, count, delay, remaining: count };
         let currentDelay = 0;
@@ -174,24 +204,11 @@ export default class Game {
         }
     }
 
-    startDefendPhase = () => {
-        if (this.phase !== BUILD || this.over) return;
-        this.phase = DEFEND;
-
-        this.spawningEnemies = true;
-        this.enemies = [];
-        this.projectiles = [];
-
-        this.commitTowers();
-        this.applyBuffs();
-        this.runUpkeepFunctions();
-
+    handleLevelChange = () => {
         const level = levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
-
-        this.undoManager.clear();
     }
 
     commitTowers = () => {
@@ -278,8 +295,7 @@ export default class Game {
             }
 
             // TODO: implement score phase
-            this.phase = SCORE;
-            setTimeout(() => this.phase = BUILD, 2000);
+            this.setPhase(SCORE);
         }
     }
 
@@ -302,6 +318,15 @@ export default class Game {
             if (tower.upkeep) {
                 tower.upkeep(this);
             }
+        }
+    }
+
+    toJSON = () => {
+        return {
+            gameMap: this.gameMap.toJSON(),
+            level: this.level,
+            gold: this.gold,
+            castleHP: this.castle.hp,
         }
     }
 }

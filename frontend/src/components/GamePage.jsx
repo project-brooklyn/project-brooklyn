@@ -58,8 +58,7 @@ const TopBar = ({ user, logout }) => {
                 {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
-                {
-                    user
+                {user
                     ? <p className="text-primary" onClick={logout}>
                         Log Out
                     </p>

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { BUILD } from "../../Game";
 
-export const ScorePhaseModal = ({ isOpen, game }) => {
+export const ScorePhaseModal = ({ game }) => {
     const [copied, setCopied] = useState(false);
-    if (!isOpen) return null;
     const handleClick = () => game.setPhase(BUILD);
 
     const getJSON = () => {

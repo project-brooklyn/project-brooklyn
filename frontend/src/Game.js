@@ -23,6 +23,8 @@ export default class Game {
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
         this.undoManager = new UndoManager(this, gameMap);
+        this.towerLimit = 5;
+        this.blueprints = new Set(['arrowTower']);
 
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
@@ -286,7 +288,6 @@ export default class Game {
             this.enemies = [];
             this.enemyInfo = {};
             this.projectiles = [];
-            this.gold += this.goldReward;
             this.level++;
 
             if (this.level == levels.length - 1) {
@@ -328,6 +329,10 @@ export default class Game {
             gold: this.gold,
             castleHP: this.castle.hp,
         }
+    }
+
+    getTowerCount = () => {
+        return this.getAllTowers().filter(t => !['castle', 'portal'].includes(t.name)).length;
     }
 }
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Tile, { TileType } from "../../map/Tile";
 import { Vector3 } from "three";
-import { BUILD } from "../../Game";
 import { TOWERS, TERRAFORMS, TERRAFORM_DIG, TERRAFORM_FILL } from "../../entities/buildables";
 import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
@@ -14,6 +13,7 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     const { gameMap, mouseInput } = game;
 
     const [purchasingItem, setPurchasingItem] = useState(null);
+    const [errorMessage, setErrorMessage] = useState();
 
     const clear = () => {
         mouseInput.removeHoverCallback(NAME);
@@ -21,6 +21,7 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         game.gameMapOverrides.clear();
         setSelectedTower(null);
         setPurchasingItem(null);
+        setErrorMessage('');
     }
 
     const chargeCost = (price) => {
@@ -53,12 +54,23 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     const buyPurchasingItem = () => {
         const isTower = purchasingItem.name.endsWith("Tower");
         const purchaseType = isTower ? TOWERS.get(purchasingItem.name) : TERRAFORMS.get(purchasingItem.name);
-        if (game.gold < purchaseType.price) return;
+        if (game.gold < purchaseType.price) {
+            setErrorMessage("Not enough gold!");
+            return;
+        }
 
         const { x, y, z } = purchasingItem.targetPosition;
-        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) return;
+        if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
+            setErrorMessage("Invalid location!");
+            return;
+        }
 
         if (isTower) {
+            const currTowers = game.getTowerCount();
+            if (currTowers >= game.towerLimit) {
+                setErrorMessage("Tower limit reached!");
+                return;
+            }
             const tower = new purchaseType.create(x, y, z, TowerStatus.PENDING);
             game.addTower(tower);
         } else {
@@ -91,8 +103,9 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     }, [purchasingItem])
 
     return <div onMouseEnter={clear}>
+        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
         <ul className="list-unstyled">
-            {Array.from(TOWERS.entries()).map(([towerKey, { price }]) => {
+            {Array.from(TOWERS.entries()).filter(([key, _]) => game.blueprints.has(key)).map(([towerKey, { price }]) => {
                 return <li key={towerKey} className="mb-2">
                     <label role='button'>
                         <input

@@ -1,12 +1,13 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game from "../Game";
+import Game, { BUILD, SCORE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useEffect, useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
+import { ScorePhaseModal } from "./ui/ScorePhaseModal";
 
 const NAME = "GamePage";
 
@@ -15,7 +16,17 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [game] = useState(() => new Game(new gameMap()));
 
     const [showModal, setShowModal] = useState(!devMode);
+    const [showScoreModal, setShowScoreModal] = useState(false);
     const [showDevGui, _setShowDevGui] = useState(devMode);
+
+    useEffect(() => {
+        game.addPhaseListener(SCORE, () => setShowScoreModal(true))
+        game.addPhaseListener(BUILD, () => setShowScoreModal(false))
+        return () => {
+            game.removePhaseListener(SCORE);
+            game.removePhaseListener(BUILD);
+        }
+    }, [game])
 
     useEffect(() => {
         if (showDevGui) {
@@ -30,6 +41,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             show={showModal}
             onHide={() => setShowModal(false)}
         />
+        {showScoreModal && <ScorePhaseModal game={game} />}
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)
@@ -46,15 +58,15 @@ const TopBar = ({ user, logout }) => {
                 {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
             </div>
             <div>
-                {
-                    user ?
-                        <p className="text-primary" onClick={logout}>Log Out</p>
-                        :
-                        <p>
-                            <a href="/signup">Sign Up</a>
-                            {" | "}
-                            <a href="/login">Log In</a>
-                        </p>
+                {user
+                    ? <p className="text-primary" onClick={logout}>
+                        Log Out
+                    </p>
+                    : <p>
+                        <a href="/signup">Sign Up</a>
+                        {" | "}
+                        <a href="/login">Log In</a>
+                    </p>
                 }
             </div>
         </div>
@@ -92,7 +104,7 @@ const GameContainer = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning">
+    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning z-1">
         <div className="d-flex w-100 h-100">
             <div className="w-75 border border-2 border-primary m-2">
                 <Stats showPanel={0} />
@@ -109,7 +121,6 @@ const GameContainer = ({ game }) => {
         </div>
         <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
     </div>
-
 }
 
 export default GamePage;

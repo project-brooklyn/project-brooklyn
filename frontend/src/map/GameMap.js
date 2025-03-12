@@ -91,6 +91,29 @@ export class GameMap {
     removeTower(x, y) {
         this.towers.delete(cellKey(x, y));
     }
+
+    toJSON() {
+        const towers = new Array(this.maxY).fill(null).map(() => new Array(this.maxX).fill(null));
+        const tiles = new Array(this.maxZ).fill(null).map(() => new Array(this.maxY).fill(null).map(() => new Array(this.maxX).fill(null)));
+
+        for (let [key, tile] of this.tileData) {
+            const [x, y, z] = key.split(',').map(Number);
+            tiles[z][y][x] = tile.type.name;
+        }
+
+        for (let [key, tower] of this.towers) {
+            const [x, y] = key.split(',').map(Number);
+            towers[y][x] = tower.name;
+        }
+
+        return {
+            maxX: this.maxX,
+            maxY: this.maxY,
+            maxZ: this.maxZ,
+            towers,
+            tiles,
+        }
+    }
 }
 
 export default GameMap;

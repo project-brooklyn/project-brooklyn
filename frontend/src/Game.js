@@ -23,6 +23,8 @@ export default class Game {
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
         this.undoManager = new UndoManager(this, gameMap);
+
+        // limitations currently disabled in BuyMenu
         this.towerLimit = 5;
         this.blueprints = new Set(['arrowTower']);
 

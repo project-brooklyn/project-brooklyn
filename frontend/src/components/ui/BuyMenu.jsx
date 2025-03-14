@@ -66,11 +66,12 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         }
 
         if (isTower) {
-            const currTowers = game.getTowerCount();
-            if (currTowers >= game.towerLimit) {
-                setErrorMessage("Tower limit reached!");
-                return;
-            }
+            // // Check tower limit
+            // const currTowers = game.getTowerCount();
+            // if (currTowers >= game.towerLimit) {
+            //     setErrorMessage("Tower limit reached!");
+            //     return;
+            // }
             const tower = new purchaseType.create(x, y, z, TowerStatus.PENDING);
             game.addTower(tower);
         } else {
@@ -105,27 +106,30 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
     return <div onMouseEnter={clear}>
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
         <ul className="list-unstyled">
-            {Array.from(TOWERS.entries()).filter(([key, _]) => game.blueprints.has(key)).map(([towerKey, { price }]) => {
-                return <li key={towerKey} className="mb-2">
-                    <label role='button'>
-                        <input
-                            type="checkbox"
-                            checked={purchasingItem?.name === towerKey}
-                            onChange={() => {
-                                clear();
-                                if (purchasingItem?.name !== towerKey) {
-                                    setPurchasingItem({
-                                        name: towerKey,
-                                        targetPosition: null,
-                                    });
-                                }
-                            }}
-                            className="mx-2"
-                        />
-                        {towerKey}: {price}
-                    </label>
-                </li>
-            })}
+            {Array.from(TOWERS.entries())
+                // // Check game blueprints
+                // .filter(([key, _]) => game.blueprints.has(key))
+                .map(([towerKey, { price }]) => {
+                    return <li key={towerKey} className="mb-2">
+                        <label role='button'>
+                            <input
+                                type="checkbox"
+                                checked={purchasingItem?.name === towerKey}
+                                onChange={() => {
+                                    clear();
+                                    if (purchasingItem?.name !== towerKey) {
+                                        setPurchasingItem({
+                                            name: towerKey,
+                                            targetPosition: null,
+                                        });
+                                    }
+                                }}
+                                className="mx-2"
+                            />
+                            {towerKey}: {price}
+                        </label>
+                    </li>
+                })}
             {Array.from(TERRAFORMS.entries()).map(([terraformKey, { label, price }]) => {
                 return <li key={terraformKey} className="mb-2 cursor-pointer">
                     <label role='button'>

@@ -4,8 +4,8 @@ import Tower from "./Tower";
 
 export default class ArrowTower extends Tower {
     static price = 50;
-    
-    constructor (x, y, z, status) {
+
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'arrowTower';
         this.cooldown = 25;
@@ -14,6 +14,7 @@ export default class ArrowTower extends Tower {
         this.price = ArrowTower.price;
         this.minRange = 1.5;
         this.maxRange = 4;
+        this.description = "Shoots arrows in a straight line.";
     }
 
     getProjectilePath = (target, gameMap) => {
@@ -26,7 +27,7 @@ export default class ArrowTower extends Tower {
         return path;
     }
 
-    canHit = (target, gameMap) => { 
+    canHit = (target, gameMap) => {
         return !!this.getProjectilePath(target, gameMap).length;
     }
 

@@ -35,14 +35,14 @@ const TerraformInfo = ({ name }) => {
         <p>Price: {terraform.price}</p>
         {
             terraform === TERRAFORM_FILL
-            ? <p>Increase the height of a terrain tile, forcing enemies to climb over or path around.</p>
-            : <p>Remove a terrain tile (until bedrock), forcing enemies to climb down or path around.</p>
+                ? <p>Increase the height of a terrain tile, forcing enemies to climb over or path around.</p>
+                : <p>Remove a terrain tile (until bedrock), forcing enemies to climb down or path around.</p>
         }
     </div>
 }
 
 const TowerInfo = ({ tower }) => {
-    const { name, price, damage, cooldown, minRange, maxRange, buffs } = tower
+    const { name, price, damage, cooldown, minRange, maxRange, buffs, description } = tower
     return <div>
         <h5>Selected Tower</h5>
         <ul>
@@ -53,6 +53,7 @@ const TowerInfo = ({ tower }) => {
             {minRange
                 ? <li>Range: {minRange} - {maxRange}</li>
                 : <li>Range: {maxRange}</li>}
+            <li>Description: {description}</li>
         </ul>
     </div>
 }
@@ -64,7 +65,7 @@ const PermanentTowerInfo = ({ tower }) => {
         <ul>
             <li>Type: {name}</li>
             {hp < Infinity ? <li>HP: {hp}</li> : null}
-            <li>{description}</li>
+            <li>Description: {description}</li>
         </ul>
     </div>
 }

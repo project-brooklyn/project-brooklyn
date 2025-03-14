@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 
 import { BUILD } from "../Game";
 
@@ -16,6 +16,7 @@ import { RangeIndicatorView } from "./views/RangeIndicatorView";
 export default function GameDisplay({ game, assets, selectedTower }) {
     const { gameMap, cameraTarget } = game;
     const { width, depth, height } = gameMap;
+    const { gl, scene } = useThree();
 
     // `ready` is used to ensure that `OrbitControls` consistently registers
     // for key events. It intermittently stops working on refresh otherwise.
@@ -48,7 +49,19 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     }, [orbitControls, ready])
 
     useEffect(() => {
-        const skyboxFolder = game.devGui.addFolder("Skybox");
+        const graphicsFolder = game.devGui.addFolder("Graphics");
+        graphicsFolder.add(gl.shadowMap, "enabled")
+            .name("shadows")
+            .onChange(_value => {
+                scene.traverse(function (child) {
+                    if (child.material) {
+                        child.material.needsUpdate = true
+                    }
+                })
+            });
+        graphicsFolder.close();
+
+        const skyboxFolder = graphicsFolder.addFolder("Skybox");
         const uniforms = skybox.current.material.uniforms;
         skyboxFolder.add(uniforms.mieCoefficient, "value", 0, 1, 0.0001).name("mieCoefficient");
         skyboxFolder.add(uniforms.mieDirectionalG, "value", 0, 1, 0.001).name("mieDirectionalG");
@@ -56,10 +69,12 @@ export default function GameDisplay({ game, assets, selectedTower }) {
         skyboxFolder.add(uniforms.turbidity, "value", 0, 100, 0.1).name("turbidity");
         skyboxFolder.add(uniforms.sunPosition.value, "y", 0, 500, 0.1).name("sunPosition.y");
         skyboxFolder.close();
+
         return () => {
             skyboxFolder.destroy();
+            graphicsFolder.destroy();
         }
-    }, [game.devGui])
+    }, [game.devGui, gl.shadowMap, scene])
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();

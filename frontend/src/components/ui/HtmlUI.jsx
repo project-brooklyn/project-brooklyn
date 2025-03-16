@@ -25,6 +25,10 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
             <span>{`Gold: ${gold}`}</span>
             <span>{`Phase: ${phase.toUpperCase()}`}</span>
         </div>
+        {game.enableTowerLimits && <div className="d-flex justify-content-around">
+            <span>{`Towers: ${game.getTowerCount()}`}</span>
+            <span>{`Tower Limit: ${game.towerLimit}`}</span>
+        </div>}
 
         <div className="my-4">
             {phase === BUILD && <>

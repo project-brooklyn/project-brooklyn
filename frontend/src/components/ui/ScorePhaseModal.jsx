@@ -10,7 +10,7 @@ export const ScorePhaseModal = ({ game, show }) => {
 
     const CASTLE_HEAL = 200;
     const REWARD_LIMIT = 1; // number of rewards to choose
-    const BLUEPRINT_REWARDS = 2; // number of blueprints in rewards
+    const BLUEPRINT_REWARDS = game.enableBlueprints ? 2 : 0; // number of blueprints in rewards
     const towerKeys = Array.from(TOWERS.keys());
     const BASE_REWARDS = [
         {
@@ -24,14 +24,18 @@ export const ScorePhaseModal = ({ game, show }) => {
                 game.castle.hp = Math.min(game.castle.maxHp, game.castle.hp);
             }
         },
-        // {
-        //     label: "+2 Tower Limit",
-        //     fn: () => game.towerLimit += 2
-        // },
     ];
+    if (game.enableTowerLimits) {
+        BASE_REWARDS.push({
+            label: "+2 Tower Limit",
+            fn: () => game.towerLimit += 2
+        });
+    }
+
     const [rewards, setRewards] = useState(BASE_REWARDS);
 
     useEffect(() => {
+        setRewardsChosen([]);
         const newRewards = [...BASE_REWARDS];
         for (let i = 0; i < BLUEPRINT_REWARDS; i++) {
             if (game.blueprints.size < towerKeys.length) {
@@ -39,10 +43,10 @@ export const ScorePhaseModal = ({ game, show }) => {
                 while (game.blueprints.has(towerKeys[blueprintIndex] || newRewards.at(-1).label === towerKeys[blueprintIndex])) {
                     blueprintIndex = Math.floor(Math.random() * towerKeys.length);
                 }
-                // newRewards.push({
-                //     label: `Blueprint: ${towerKeys[blueprintIndex]}`,
-                //     fn: () => game.blueprints.add(towerKeys[blueprintIndex])
-                // });
+                newRewards.push({
+                    label: `Blueprint: ${towerKeys[blueprintIndex]}`,
+                    fn: () => game.blueprints.add(towerKeys[blueprintIndex])
+                });
             }
         }
         setRewards(newRewards);

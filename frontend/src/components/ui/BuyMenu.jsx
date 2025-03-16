@@ -66,12 +66,13 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         }
 
         if (isTower) {
-            // // Check tower limit
-            // const currTowers = game.getTowerCount();
-            // if (currTowers >= game.towerLimit) {
-            //     setErrorMessage("Tower limit reached!");
-            //     return;
-            // }
+            if (game.enableTowerLimits) {
+                const currTowers = game.getTowerCount();
+                if (currTowers >= game.towerLimit) {
+                    setErrorMessage("Tower limit reached!");
+                    return;
+                }
+            }
             const tower = new purchaseType.create(x, y, z, TowerStatus.PENDING);
             game.addTower(tower);
         } else {
@@ -107,8 +108,7 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
         <ul className="list-unstyled">
             {Array.from(TOWERS.entries())
-                // // Check game blueprints
-                // .filter(([key, _]) => game.blueprints.has(key))
+                .filter(game.enableBlueprints ? ([key, _]) => game.blueprints.has(key) : () => true)
                 .map(([towerKey, { price }]) => {
                     return <li key={towerKey} className="mb-2">
                         <label role='button'>

@@ -24,9 +24,10 @@ export default class Game {
         this.gameMapOverrides = new Map();
         this.undoManager = new UndoManager(this, gameMap);
 
-        // limitations currently disabled in BuyMenu
         this.towerLimit = 5;
+        this.enableTowerLimits = true;
         this.blueprints = new Set(['arrowTower']);
+        this.enableBlueprints = true;
 
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
@@ -334,7 +335,7 @@ export default class Game {
     }
 
     getTowerCount = () => {
-        return this.getAllTowers().filter(t => !['castle', 'portal'].includes(t.name)).length;
+        return this.getAllTowers().length - 2; // subtract two for portal and castle
     }
 }
 

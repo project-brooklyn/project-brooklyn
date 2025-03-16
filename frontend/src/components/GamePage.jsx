@@ -41,7 +41,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             show={showModal}
             onHide={() => setShowModal(false)}
         />
-        {showScoreModal && <ScorePhaseModal game={game} />}
+        <ScorePhaseModal game={game} show={showScoreModal} />
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)

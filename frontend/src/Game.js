@@ -11,6 +11,7 @@ import { statusFunctions } from "./entities/statuses";
 import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
 import { TERRAFORMS } from "./entities/buildables";
 import GUI from 'lil-gui';
+import GameMap from "./map/GameMap";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -325,6 +326,10 @@ export default class Game {
         }
     }
 
+    getTowerCount = () => {
+        return this.getAllTowers().length - 2; // subtract two for portal and castle
+    }
+
     toJSON = () => {
         return {
             gameMap: this.gameMap.toJSON(),
@@ -334,8 +339,17 @@ export default class Game {
         }
     }
 
-    getTowerCount = () => {
-        return this.getAllTowers().length - 2; // subtract two for portal and castle
+    static from(hashedString) {
+        const json = JSON.parse(atob(hashedString));
+        const { gameMap, level, gold, castleHP } = json;
+
+        const newGame = new Game(GameMap.from(gameMap));
+        newGame.level = level;
+        newGame.gold = gold;
+        newGame.castle.hp = castleHP;
+        newGame.commitTowers();
+
+        return newGame;
     }
 }
 

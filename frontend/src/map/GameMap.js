@@ -1,3 +1,7 @@
+import { TOWERS } from "../entities/buildables";
+import { Status } from "../entities/towers/Tower";
+import Tile, { TileType } from "./Tile";
+
 export function tileKey(x, y, z) {
     return [x, y, z].join(',');
 }
@@ -18,6 +22,7 @@ export class GameMap {
         this.tileData = new Map();
         this.elevationData = new Map();
     }
+
 
     get width() {
         return this.maxX;
@@ -52,7 +57,7 @@ export class GameMap {
         return this.getTile(x, y, z) != undefined;
     }
 
-    getElevation(x, y, includeTower=false) {
+    getElevation(x, y, includeTower = false) {
         const cell = cellKey(x, y);
         const mapHeight = this.elevationData.get(cell) || 0;
         const tower = this.towers.get(cell);
@@ -113,6 +118,48 @@ export class GameMap {
             towers,
             tiles,
         }
+    }
+
+    static from(json) {
+        const { maxX, maxY, maxZ, towers, tiles } = json;
+
+        const gameMap = new GameMap();
+        gameMap.maxX = maxX;
+        gameMap.maxY = maxY;
+        gameMap.maxZ = maxZ;
+
+        const tileTypes = {
+            grass: TileType.Grass,
+            dirt: TileType.Dirt,
+            stone: TileType.Stone,
+            bedrock: TileType.Bedrock,
+        }
+
+        for (let x = 0; x < maxX; x++) {
+            for (let y = 0; y < maxY; y++) {
+                for (let z = 0; z < maxZ; z++) {
+                    if (tiles[z][y][x]) {
+                        const tile = new Tile(x, y, z, tileTypes[tiles[z][y][x]]);
+                        gameMap.addTile(tile);
+                    }
+                }
+            }
+        }
+
+        for (let y = 0; y < maxY; y++) {
+            for (let x = 0; x < maxX; x++) {
+                const towerName = towers[y][x];
+                if (towerName && TOWERS.has(towerName)) { // skip portal and castle
+                    const TowerConstructor = TOWERS.get(towerName).create;
+                    const z = gameMap.getElevation(x, y);
+
+                    gameMap.addTower(x, y, new TowerConstructor(x, y, z, Status.BUILT));
+                }
+            }
+
+        }
+        console.log(gameMap)
+        return gameMap;
     }
 }
 

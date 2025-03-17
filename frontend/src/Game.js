@@ -25,9 +25,9 @@ export default class Game {
         this.undoManager = new UndoManager(this, gameMap);
 
         this.towerLimit = 5;
-        this.enableTowerLimits = true;
+        this.enableTowerLimits = false;
         this.blueprints = new Set(['arrowTower']);
-        this.enableBlueprints = true;
+        this.enableBlueprints = false;
 
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(

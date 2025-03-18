@@ -121,45 +121,49 @@ export class GameMap {
     }
 
     static from(json) {
-        const { maxX, maxY, maxZ, towers, tiles } = json;
+        try {
+            const { maxX, maxY, maxZ, towers, tiles } = json;
 
-        const gameMap = new GameMap();
-        gameMap.maxX = maxX;
-        gameMap.maxY = maxY;
-        gameMap.maxZ = maxZ;
+            const gameMap = new GameMap();
+            gameMap.maxX = maxX;
+            gameMap.maxY = maxY;
+            gameMap.maxZ = maxZ;
 
-        const tileTypes = {
-            grass: TileType.Grass,
-            dirt: TileType.Dirt,
-            stone: TileType.Stone,
-            bedrock: TileType.Bedrock,
-        }
+            const tileTypes = {
+                grass: TileType.Grass,
+                dirt: TileType.Dirt,
+                stone: TileType.Stone,
+                bedrock: TileType.Bedrock,
+            }
 
-        for (let x = 0; x < maxX; x++) {
-            for (let y = 0; y < maxY; y++) {
-                for (let z = 0; z < maxZ; z++) {
-                    if (tiles[z][y][x]) {
-                        const tile = new Tile(x, y, z, tileTypes[tiles[z][y][x]]);
-                        gameMap.addTile(tile);
+            for (let x = 0; x < maxX; x++) {
+                for (let y = 0; y < maxY; y++) {
+                    for (let z = 0; z < maxZ; z++) {
+                        if (tiles[z][y][x]) {
+                            const tile = new Tile(x, y, z, tileTypes[tiles[z][y][x]]);
+                            gameMap.addTile(tile);
+                        }
                     }
                 }
             }
-        }
 
-        for (let y = 0; y < maxY; y++) {
-            for (let x = 0; x < maxX; x++) {
-                const towerName = towers[y][x];
-                if (towerName && TOWERS.has(towerName)) { // skip portal and castle
-                    const TowerConstructor = TOWERS.get(towerName).create;
-                    const z = gameMap.getElevation(x, y);
+            for (let y = 0; y < maxY; y++) {
+                for (let x = 0; x < maxX; x++) {
+                    const towerName = towers[y][x];
+                    if (towerName && TOWERS.has(towerName)) { // skip portal and castle
+                        const TowerConstructor = TOWERS.get(towerName).create;
+                        const z = gameMap.getElevation(x, y);
 
-                    gameMap.addTower(x, y, new TowerConstructor(x, y, z, Status.BUILT));
+                        gameMap.addTower(x, y, new TowerConstructor(x, y, z, Status.BUILT));
+                    }
                 }
-            }
 
+            }
+            return gameMap;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
-        console.log(gameMap)
-        return gameMap;
     }
 }
 

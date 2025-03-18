@@ -340,16 +340,26 @@ export default class Game {
     }
 
     static from(hashedString) {
-        const json = JSON.parse(atob(hashedString));
-        const { gameMap, level, gold, castleHP } = json;
+        try {
+            const decodedString = atob(hashedString);
+            const json = JSON.parse(decodedString);
+            const { gameMap, level, gold, castleHP } = json;
 
-        const newGame = new Game(GameMap.from(gameMap));
-        newGame.level = level;
-        newGame.gold = gold;
-        newGame.castle.hp = castleHP;
-        newGame.commitTowers();
+            if (!gameMap || !level || gold === null || !castleHP) {
+                throw new Error('Invalid game data');
+            }
 
-        return newGame;
+            const newGame = new Game(GameMap.from(gameMap));
+            newGame.level = level;
+            newGame.gold = gold;
+            newGame.castle.hp = castleHP;
+            newGame.commitTowers();
+
+            return newGame;
+        } catch (error) {
+            console.error(error);
+            return { error };
+        }
     }
 }
 

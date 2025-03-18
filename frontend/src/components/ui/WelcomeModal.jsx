@@ -1,20 +1,27 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Game from '../../Game';
+import { useState } from 'react';
 
 function WelcomeModal({ show, hideModal, setGame }) {
+  const [errorMessage, setErrorMessage] = useState('');
+
   const loadGame = async (e) => {
     e.preventDefault();
     try {
       const clipboardData = await navigator.clipboard.readText();
-      console.log('Clipboard data:', clipboardData);
 
       const game = Game.from(clipboardData);
-      setGame(game);
-      hideModal();
+      if (game.error) {
+        setErrorMessage(game.error.message);
+      } else {
+        setGame(game);
+        hideModal();
+      }
 
     } catch (err) {
       console.error('Failed to load game:', err);
+      setErrorMessage('Failed to load game from clipboard.' + err.message);
     }
   }
 
@@ -36,6 +43,7 @@ function WelcomeModal({ show, hideModal, setGame }) {
           Alter their trajectory.
           Bring forth their defeat.
         </p>
+        {errorMessage && <p className="text-danger">{errorMessage}</p>}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={loadGame}>Load Game from Clipboard</Button>

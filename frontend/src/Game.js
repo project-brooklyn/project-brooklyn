@@ -358,7 +358,7 @@ export default class Game {
             return newGame;
         } catch (error) {
             console.error(error);
-            return { error };
+            return null;
         }
     }
 }

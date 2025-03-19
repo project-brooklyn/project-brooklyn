@@ -27,7 +27,7 @@ function WelcomeModal({ show, hideModal, setGame }) {
 
   return (
     <Modal
-      {...{ show }}
+      show
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered

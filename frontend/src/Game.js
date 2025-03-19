@@ -353,7 +353,6 @@ export default class Game {
             newGame.level = level;
             newGame.gold = gold;
             newGame.castle.hp = castleHP;
-            newGame.commitTowers();
 
             return newGame;
         } catch (error) {

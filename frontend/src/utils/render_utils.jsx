@@ -7,7 +7,7 @@ export const tileConfig = {
 
 export const DEFAULT_SCALE = 0.01;
 
-export const modelFiles = { 
+export const modelFiles = {
     arrow: './basic/arrow.glb',
     arrowTower: './basic/ballista_tower.glb',
     buffTower: './basic/buff_tower.glb',
@@ -36,15 +36,8 @@ export const modelFiles = {
     wrench: './basic/wrench.glb',
 };
 
-export const statusIcons = {
-    BUFFED: './icons/buff.png',
-    SLOWED: './icons/snail.png',
-    BURNED: './icons/fire.png',
-    FROZEN: './icons/ice.png',
-};
-
 // Converts map coordinates to render coordinates.
-export function convertToRenderCoordinates(mapVector, offset = {x: 0, y: 0, z: 0}) {
+export function convertToRenderCoordinates(mapVector, offset = { x: 0, y: 0, z: 0 }) {
     return new THREE.Vector3(
         mapVector.x * tileConfig.width - offset.x,
         mapVector.z * tileConfig.height - offset.z,

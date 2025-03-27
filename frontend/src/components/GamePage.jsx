@@ -1,13 +1,15 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game, { BUILD, SCORE } from "../Game";
+import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useEffect, useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
-import { ScorePhaseModal } from "./ui/ScorePhaseModal";
+import ScorePhaseModal from "./ui/ScorePhaseModal";
+import LoseModal from "./ui/LoseModal";
+import WinModal from "./ui/WinModal";
 
 const NAME = "GamePage";
 
@@ -17,14 +19,19 @@ const GamePage = ({ gameMap, devMode = true }) => {
 
     const [showModal, setShowModal] = useState(!devMode);
     const [showScoreModal, setShowScoreModal] = useState(false);
+    const [showEndModal, setShowEndModal] = useState("");
     const [showDevGui, _setShowDevGui] = useState(devMode);
 
     useEffect(() => {
         game.addPhaseListener(SCORE, () => setShowScoreModal(true))
         game.addPhaseListener(BUILD, () => setShowScoreModal(false))
+        game.addPhaseListener(WIN, () => setShowEndModal(WIN))
+        game.addPhaseListener(LOSE, () => setShowEndModal(LOSE))
         return () => {
             game.removePhaseListener(SCORE);
             game.removePhaseListener(BUILD);
+            game.removePhaseListener(WIN);
+            game.removePhaseListener(LOSE);
         }
     }, [game])
 
@@ -43,6 +50,18 @@ const GamePage = ({ gameMap, devMode = true }) => {
             setGame={setGame}
         />
         <ScorePhaseModal game={game} show={showScoreModal} />
+        {(showEndModal === WIN) &&
+            <WinModal
+                game={game}
+                onHide={() => { setShowEndModal("") }}
+            />
+        }
+        {(showEndModal === LOSE) &&
+            <LoseModal
+                game={game}
+                onHide={() => { setShowEndModal("") }}
+            />
+        }
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)

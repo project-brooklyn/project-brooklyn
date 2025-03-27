@@ -3,7 +3,7 @@ import { BUILD } from "../../Game";
 import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
 
-export const ScorePhaseModal = ({ game, show }) => {
+function ScorePhaseModal({ game, show }) {
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
     const handleClick = () => game.setPhase(BUILD);
@@ -97,3 +97,5 @@ export const ScorePhaseModal = ({ game, show }) => {
         </Modal.Body>
     </Modal>
 }
+
+export default ScorePhaseModal;

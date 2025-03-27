@@ -13,7 +13,7 @@ import { TERRAFORMS } from "./entities/buildables";
 import GUI from 'lil-gui';
 import GameMap from "./map/GameMap";
 
-export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
+export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
     constructor(gameMap) {
@@ -70,7 +70,12 @@ export default class Game {
                 this.undoManager.clear,
             ],
             [SCORE]: [],
+            [WIN]: [],
+            [LOSE]: [],
         }
+
+        this.damage_dealt = 0
+        this.damage_taken = 0
     }
 
     addPhaseListener = (phase, fn) => {
@@ -253,6 +258,7 @@ export default class Game {
                         // TODO: this is instant damage, convert to when projectile hits?
                         if (tower.damage) {
                             const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                            this.damage_dealt += Math.min(enemy.hp, damage)
                             enemy.hp = Math.max(enemy.hp - damage, 0);
                         }
 
@@ -276,6 +282,7 @@ export default class Game {
                 enemy.position[2] === this.castle.position[2] &&
                 enemy.hp // enemy is alive at castle
             ) {
+                this.damage_taken += Math.min(this.castle.hp, enemy.hp)
                 this.castle.takeDamage(enemy.hp);
                 if (this.castle.hp <= 0) this.over = true;
                 enemy.hp = 0;
@@ -299,7 +306,16 @@ export default class Game {
                 return
             }
 
-            // TODO: implement score phase
+            if (!this.castle.hp) {
+                this.setPhase(LOSE)
+                return
+            }
+
+            if (this.level >= levels.length) {
+                this.setPhase(WIN)
+                return
+            }
+
             this.setPhase(SCORE);
         }
     }

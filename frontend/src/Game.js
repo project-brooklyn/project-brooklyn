@@ -19,7 +19,6 @@ export default class Game {
     constructor(gameMap) {
         this.level = 1;
         this.phase = BUILD;
-        this.over = false;
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
@@ -84,6 +83,10 @@ export default class Game {
 
     removePhaseListener = (phase, fn) => {
         this.phaseListeners[phase] = this.phaseListeners[phase].filter(f => f !== fn);
+    }
+
+    removeAllPhaseListeners = (phase) => {
+        this.phaseListeners[phase] = [];
     }
 
     setPhase = (phase) => {
@@ -210,7 +213,10 @@ export default class Game {
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
             for (let status of enemy.statuses) {
-                statusFunctions[status](enemy);
+                const damage = statusFunctions[status](enemy);
+                if (damage) {
+                    this.damage_dealt += damage;
+                }
             }
         }
     }
@@ -257,9 +263,11 @@ export default class Game {
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
                         if (tower.damage) {
-                            const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                            this.damage_dealt += Math.min(enemy.hp, damage)
-                            enemy.hp = Math.max(enemy.hp - damage, 0);
+                            let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                            damage = Math.min(enemy.hp, damage)
+
+                            this.damage_dealt += damage
+                            enemy.hp = enemy.hp - damage
                         }
 
                         const projectile = tower.createProjectile(path);
@@ -284,7 +292,6 @@ export default class Game {
             ) {
                 this.damage_taken += Math.min(this.castle.hp, enemy.hp)
                 this.castle.takeDamage(enemy.hp);
-                if (this.castle.hp <= 0) this.over = true;
                 enemy.hp = 0;
             }
         }
@@ -300,11 +307,6 @@ export default class Game {
             this.enemyInfo = {};
             this.projectiles = [];
             this.level++;
-
-            if (this.level == levels.length - 1) {
-                this.over = true;
-                return
-            }
 
             if (!this.castle.hp) {
                 this.setPhase(LOSE)

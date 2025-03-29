@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Game from '../../Game';
 import { useState } from 'react';
 
-function WelcomeModal({ show, hideModal, setGame }) {
+function WelcomeModal({ hideModal, setGame }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const loadGame = async (e) => {
@@ -27,7 +27,7 @@ function WelcomeModal({ show, hideModal, setGame }) {
 
   return (
     <Modal
-      show={show}
+      show={true}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered

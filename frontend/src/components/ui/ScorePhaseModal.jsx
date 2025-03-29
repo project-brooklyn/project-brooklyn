@@ -3,7 +3,7 @@ import { BUILD } from "../../Game";
 import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
 
-function ScorePhaseModal({ game, show }) {
+function ScorePhaseModal({ game }) {
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
     const handleClick = () => game.setPhase(BUILD);
@@ -64,7 +64,7 @@ function ScorePhaseModal({ game, show }) {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        show={show}
+        show={true}
     >
         <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">

@@ -17,21 +17,20 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
 
-    const [showModal, setShowModal] = useState(!devMode);
-    const [showScoreModal, setShowScoreModal] = useState(false);
-    const [showEndModal, setShowEndModal] = useState("");
+    const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
+    const [showGameModal, setShowGameModal] = useState("");
     const [showDevGui, _setShowDevGui] = useState(devMode);
 
     useEffect(() => {
-        game.addPhaseListener(SCORE, () => setShowScoreModal(true))
-        game.addPhaseListener(BUILD, () => setShowScoreModal(false))
-        game.addPhaseListener(WIN, () => setShowEndModal(WIN))
-        game.addPhaseListener(LOSE, () => setShowEndModal(LOSE))
+        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
+        game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
+        game.addPhaseListener(WIN, () => setShowGameModal(WIN))
+        game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
         return () => {
-            game.removePhaseListener(SCORE);
-            game.removePhaseListener(BUILD);
-            game.removePhaseListener(WIN);
-            game.removePhaseListener(LOSE);
+            game.removeAllPhaseListeners(SCORE);
+            game.removeAllPhaseListeners(BUILD);
+            game.removeAllPhaseListeners(WIN);
+            game.removeAllPhaseListeners(LOSE);
         }
     }, [game])
 
@@ -44,22 +43,23 @@ const GamePage = ({ gameMap, devMode = true }) => {
     }, [game.devGui, showDevGui])
 
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
-        <WelcomeModal
-            show={showModal}
-            hideModal={() => setShowModal(false)}
-            setGame={setGame}
-        />
-        <ScorePhaseModal game={game} show={showScoreModal} />
-        {(showEndModal === WIN) &&
-            <WinModal
-                game={game}
-                onHide={() => { setShowEndModal("") }}
+        {showWelcomeModal &&
+            <WelcomeModal
+                hideModal={() => setShowWelcomeModal(false)}
+                setGame={setGame}
             />
         }
-        {(showEndModal === LOSE) &&
+        {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
+        {(showGameModal === WIN) &&
+            <WinModal
+                game={game}
+                onHide={() => { setShowGameModal("") }}
+            />
+        }
+        {(showGameModal === LOSE) &&
             <LoseModal
                 game={game}
-                onHide={() => { setShowEndModal("") }}
+                onHide={() => { setShowGameModal("") }}
             />
         }
         <TopBar user={user} logout={logout} />

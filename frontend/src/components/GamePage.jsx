@@ -1,13 +1,15 @@
 import { Canvas } from "@react-three/fiber";
 import { Stats } from '@react-three/drei';
 import { useAuth } from "../AuthContext";
-import Game, { BUILD, SCORE } from "../Game";
+import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useEffect, useState } from "react";
 import { HtmlUI } from "./ui/HtmlUI";
-import { ScorePhaseModal } from "./ui/ScorePhaseModal";
+import ScorePhaseModal from "./ui/ScorePhaseModal";
+import LoseModal from "./ui/LoseModal";
+import WinModal from "./ui/WinModal";
 
 const NAME = "GamePage";
 
@@ -15,16 +17,20 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
 
-    const [showModal, setShowModal] = useState(!devMode);
-    const [showScoreModal, setShowScoreModal] = useState(false);
+    const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
+    const [showGameModal, setShowGameModal] = useState("");
     const [showDevGui, _setShowDevGui] = useState(devMode);
 
     useEffect(() => {
-        game.addPhaseListener(SCORE, () => setShowScoreModal(true))
-        game.addPhaseListener(BUILD, () => setShowScoreModal(false))
+        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
+        game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
+        game.addPhaseListener(WIN, () => setShowGameModal(WIN))
+        game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
         return () => {
-            game.removePhaseListener(SCORE);
-            game.removePhaseListener(BUILD);
+            game.removeAllPhaseListeners(SCORE);
+            game.removeAllPhaseListeners(BUILD);
+            game.removeAllPhaseListeners(WIN);
+            game.removeAllPhaseListeners(LOSE);
         }
     }, [game])
 
@@ -37,12 +43,25 @@ const GamePage = ({ gameMap, devMode = true }) => {
     }, [game.devGui, showDevGui])
 
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
-        <WelcomeModal
-            show={showModal}
-            hideModal={() => setShowModal(false)}
-            setGame={setGame}
-        />
-        <ScorePhaseModal game={game} show={showScoreModal} />
+        {showWelcomeModal &&
+            <WelcomeModal
+                hideModal={() => setShowWelcomeModal(false)}
+                setGame={setGame}
+            />
+        }
+        {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
+        {(showGameModal === WIN) &&
+            <WinModal
+                game={game}
+                onHide={() => { setShowGameModal("") }}
+            />
+        }
+        {(showGameModal === LOSE) &&
+            <LoseModal
+                game={game}
+                onHide={() => { setShowGameModal("") }}
+            />
+        }
         <TopBar user={user} logout={logout} />
         <GameContainer game={game} />
     </div>)

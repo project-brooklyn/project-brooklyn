@@ -1,6 +1,8 @@
-import { getStraightPath } from "../../utils/game_utils";
+import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Laser from "../projectiles/Laser";
 import Tower from "./Tower";
+
+const LASER_SPEED = 0.5;
 
 export default class LaserTower extends Tower {
     static price = 200;
@@ -8,20 +10,26 @@ export default class LaserTower extends Tower {
     constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'laserTower';
-        this.cooldown = 40;
+        this.cooldown = 20;
         this.currentCooldown = 0;
-        this.damage = 40;
-        this.price = LaserTower.price
+        this.damage = 10;
+        this.price = LaserTower.price;
         this.minRange = 2.5;
         this.maxRange = 10;
+        this.height = 4.5;
+        this.description = "Fires a rapid laser beam.";
     }
 
-    getProjectilePath = (target, heightMap) => {
+    getTravelTime = (target) => {
+        return getLinearTravelTime(this.position, target, LASER_SPEED);
+    }
+
+    getProjectilePath = (target, heightMap, travelTime) => {
         const path = getStraightPath(
             this,
             target,
             heightMap,
-            0.4
+            travelTime,
         );
         return path;
     }

@@ -250,33 +250,37 @@ export default class Game {
             // check all enemies, attack first (farthest along path)
             let towerAttacked = false;
             for (let enemy of this.enemies) {
+                // enemy is dead
                 if (!enemy.hp) continue;
-                const path = tower.getProjectilePath(enemy.position, this.gameMap);
 
-                if (path.length) {
-                    if (!towerAttacked) { // prevent stacked projectiles hitting same tile
-                        if (tower.appliedStatus) {
-                            if (enemy.statuses.has(tower.appliedStatus)) {
-                                continue;
-                            }
-                            enemy.statuses.add(tower.appliedStatus);
+                // enemy will have reached end
+                const travelTime = tower.getTravelTime(enemy.position, this.gameMap);
+                const futurePosition = enemy.getFutureLocation(travelTime);
+                if (!futurePosition.length) continue;
+
+                // tower can't hit where enemy will be
+                const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
+                if (!path.length) continue;
+
+                if (!towerAttacked) { // prevent stacked projectiles hitting same tile
+                    if (tower.appliedStatus) {
+                        if (enemy.statuses.has(tower.appliedStatus)) {
+                            continue;
                         }
-                        // TODO: this is instant damage, convert to when projectile hits?
-                        if (tower.damage) {
-                            let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                            damage = Math.min(enemy.hp, damage)
-
-                            this.damage_dealt += damage
-                            enemy.hp = enemy.hp - damage
-                        }
-
-                        const projectile = tower.createProjectile(path);
-                        this.addProjectile(projectile);
+                        enemy.statuses.add(tower.appliedStatus);
+                    }
+                    // TODO: this is instant damage, convert to when projectile hits?
+                    if (tower.damage) {
+                        const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                        enemy.hp = Math.max(enemy.hp - damage, 0);
                     }
 
-                    towerAttacked = true;
-                    if (!tower.canAttackMultiple) break;
+                    const projectile = tower.createProjectile(path);
+                    this.addProjectile(projectile);
                 }
+
+                towerAttacked = true;
+                if (!tower.canAttackMultiple) break;
             }
             if (towerAttacked) tower.currentCooldown = tower.cooldown;
         }

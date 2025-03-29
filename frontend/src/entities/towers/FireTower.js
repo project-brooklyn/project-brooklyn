@@ -1,7 +1,9 @@
-import { getStraightPath } from "../../utils/game_utils";
+import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Tower from "./Tower";
 import Flame from "../projectiles/Flame";
 import { BURNED } from "../statuses";
+
+const FLAME_SPEED = 0.05;
 
 export default class FireTower extends Tower {
     static price = 100;
@@ -19,12 +21,16 @@ export default class FireTower extends Tower {
         this.appliedStatus = BURNED;
     }
 
-    getProjectilePath = (target, gameMap) => {
+    getTravelTime = (target) => {
+        return getLinearTravelTime(this.position, target, FLAME_SPEED);
+    }
+
+    getProjectilePath = (target, gameMap, travelTime) => {
         const path = getStraightPath(
             this,
             target,
             gameMap,
-            0.05,
+            travelTime,
         );
         return path;
     }

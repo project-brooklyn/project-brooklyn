@@ -1,4 +1,4 @@
-import { getParabolicPath } from "../../utils/game_utils";
+import { getParabolicPath, getParabolicTravelTime } from "../../utils/game_utils";
 import Rock from "../projectiles/Rock";
 import Tower from "./Tower";
 
@@ -18,18 +18,22 @@ export default class RockTower extends Tower {
         this.canAttackMultiple = false; // splash damage not implemented, this is for saw/spike towers
     }
 
-    getProjectilePath = (target, gameMap) => {
+    getTravelTime = (target) => {
+        return getParabolicTravelTime(this.getTopOfTowerPosition(), target);
+    }
+
+    getProjectilePath = (target, gameMap, travelTime) => {
         const path = getParabolicPath(
             this,
             target,
             gameMap,
-            0.02, // timeInterval must be low to prevent rock passing through target
+            travelTime,
         );
         return path;
-    };
+    }
 
     createProjectile = (path) => {
         this.rotateTowardsTarget(path.at(-1));
         return new Rock(...this.position, path);
-    };
+    }
 }

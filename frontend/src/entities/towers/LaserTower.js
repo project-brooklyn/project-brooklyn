@@ -21,7 +21,7 @@ export default class LaserTower extends Tower {
     }
 
     getTravelTime = (target) => {
-        return getLinearTravelTime(this.position, target, LASER_SPEED);
+        return getLinearTravelTime(this.getTopOfTowerPosition(), target, LASER_SPEED);
     }
 
     getProjectilePath = (target, heightMap, travelTime) => {

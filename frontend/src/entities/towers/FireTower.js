@@ -22,7 +22,7 @@ export default class FireTower extends Tower {
     }
 
     getTravelTime = (target) => {
-        return getLinearTravelTime(this.position, target, FLAME_SPEED);
+        return getLinearTravelTime(this.getTopOfTowerPosition(), target, FLAME_SPEED);
     }
 
     getProjectilePath = (target, gameMap, travelTime) => {

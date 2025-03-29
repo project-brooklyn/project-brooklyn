@@ -21,7 +21,7 @@ export default class ArrowTower extends Tower {
     }
 
     getTravelTime = (target) => {
-        return getLinearTravelTime(this.position, target, ARROW_SPEED);
+        return getLinearTravelTime(this.getTopOfTowerPosition(), target, ARROW_SPEED);
     }
 
     getProjectilePath = (target, gameMap, travelTime) => {

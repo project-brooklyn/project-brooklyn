@@ -139,19 +139,27 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
     return path;
 }
 
-export const getParabolicPath = (tower, end, gameMap, timeInterval = 0.02) => {
-    const { x, y, z, minRange, maxRange } = tower;
-    const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
+const GRAVITATIONAL_ACCELERATION = -10; // gravitational acceleration
+const ANGLE_TO_HORIZONTAL = 75 * (Math.PI / 180); // 75 degrees to radians
+
+export const getParabolicTravelTime = (start, end) => {
+    const FRAMES_PER_TIME_INTERVAL = 40;
+    const heightDifference = end[2] - start[2];
+    const horizontalDistance = pythagorean(start.slice(0, 2), end.slice(0, 2));
+
+    const times = quadratic(GRAVITATIONAL_ACCELERATION / 2, 0, horizontalDistance * Math.tan(ANGLE_TO_HORIZONTAL) - heightDifference);
+    if (!times.length) return [];
+    const time = Math.max(...times); // take later time if two solutions
+    return Math.floor(FRAMES_PER_TIME_INTERVAL * time);
+}
+
+export const getParabolicPath = (tower, end, gameMap, travelTime) => {
+    const { x, y, minRange, maxRange } = tower;
+    const start = tower.getTopOfTowerPosition();
 
     const dist2d = pythagorean([x, y], [end[0], end[1]]);
     if (dist2d < minRange) return [];
     if (dist2d > maxRange) return [];
-
-    // start and end are [x,y,z] coordinates
-    // returns a series (separated by timeInterval) of points that follow a parabolic path
-    // if no parabolic path (starting at the default angle) through height map is possible, returns an empty array
-    const g = -10; // gravitational acceleration
-    const angleToHorizontal = 75 * (Math.PI / 180); // 75 degrees to radians
 
     const heightDifference = end[2] - start[2];
     const horizontalDistance = pythagorean(start.slice(0, 2), end.slice(0, 2));
@@ -161,20 +169,22 @@ export const getParabolicPath = (tower, end, gameMap, timeInterval = 0.02) => {
 
         heightDifference = 0.5*g*t^2 + 0*t + horizontalDistance*tan(angle)
     */
-    const times = quadratic(g / 2, 0, horizontalDistance * Math.tan(angleToHorizontal) - heightDifference);
+    const times = quadratic(GRAVITATIONAL_ACCELERATION / 2, 0, horizontalDistance * Math.tan(ANGLE_TO_HORIZONTAL) - heightDifference);
     if (!times.length) return [];
     const time = Math.max(...times); // take later time if two solutions
 
-    const initialVelocity = horizontalDistance / (time * Math.cos(angleToHorizontal));
+    const timeInterval = time / travelTime;
+
+    const initialVelocity = horizontalDistance / (time * Math.cos(ANGLE_TO_HORIZONTAL));
     const angleAroundZ = Math.atan2(end[1] - start[1], end[0] - start[0]);
 
     const path = [start];
     while (isAboveGround(...path.at(-1), gameMap)) {
         const [x, y, z] = path.at(-1);
         const t = (path.length - 1) * timeInterval;
-        const dx = initialVelocity * Math.cos(angleToHorizontal) * Math.cos(angleAroundZ) * timeInterval;
-        const dy = initialVelocity * Math.cos(angleToHorizontal) * Math.sin(angleAroundZ) * timeInterval;
-        const dz = (initialVelocity * Math.sin(angleToHorizontal) * timeInterval) + (g * t * timeInterval);
+        const dx = initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.cos(angleAroundZ) * timeInterval;
+        const dy = initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.sin(angleAroundZ) * timeInterval;
+        const dz = (initialVelocity * Math.sin(ANGLE_TO_HORIZONTAL) * timeInterval) + (GRAVITATIONAL_ACCELERATION * t * timeInterval);
         path.push([x + dx, y + dy, z + dz]);
     }
 

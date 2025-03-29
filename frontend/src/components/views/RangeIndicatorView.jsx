@@ -13,7 +13,10 @@ export const RangeIndicatorView = ({ tower, gameMap }) => {
     for (let x = -SQUARE_SIZE; x < gameMap.width - SQUARE_SIZE; x += SQUARE_SIZE) {
         for (let y = -SQUARE_SIZE; y < gameMap.depth - SQUARE_SIZE; y += SQUARE_SIZE) {
             const z = gameMap.getElevation(round(x, 0), round(y, 0), false);
-            if (!tower.getProjectilePath([x, y, z], gameMap, EXAMPLE_TRAVEL_TIME).length) continue;
+            if (
+                !(tower.damage || tower.appliedStatus) || // tower has no attack
+                !tower.getProjectilePath([x, y, z], gameMap, EXAMPLE_TRAVEL_TIME).length
+            ) continue;
 
             const coordinates = convertToRenderCoordinates({ x, y, z }, { x: 0, y: 0, z: aboveTileOffset + heightOffset });
             tiles.push(coordinates);

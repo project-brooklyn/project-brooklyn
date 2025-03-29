@@ -248,7 +248,6 @@ export default class Game {
             }
 
             // check all enemies, attack first (farthest along path)
-            let towerAttacked = false;
             for (let enemy of this.enemies) {
                 // enemy is dead
                 if (!enemy.hp) continue;
@@ -262,27 +261,25 @@ export default class Game {
                 const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
                 if (!path.length) continue;
 
-                if (!towerAttacked) { // prevent stacked projectiles hitting same tile
-                    if (tower.appliedStatus) {
-                        if (enemy.statuses.has(tower.appliedStatus)) {
-                            continue;
-                        }
-                        enemy.statuses.add(tower.appliedStatus);
+                if (tower.appliedStatus) { // handle status towers
+                    if (enemy.statuses.has(tower.appliedStatus)) {
+                        continue;
                     }
-                    // TODO: this is instant damage, convert to when projectile hits?
-                    if (tower.damage) {
-                        const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                        enemy.hp = Math.max(enemy.hp - damage, 0);
-                    }
-
-                    const projectile = tower.createProjectile(path);
-                    this.addProjectile(projectile);
+                    enemy.statuses.add(tower.appliedStatus);
                 }
 
-                towerAttacked = true;
+                // TODO: this is instant damage, convert to when projectile hits?
+                if (tower.damage) {
+                    const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                    enemy.hp = Math.max(enemy.hp - damage, 0);
+                }
+
+                const projectile = tower.createProjectile(path);
+                this.addProjectile(projectile);
+
+                tower.currentCooldown = tower.cooldown;
                 if (!tower.canAttackMultiple) break;
             }
-            if (towerAttacked) tower.currentCooldown = tower.cooldown;
         }
     }
 
@@ -332,7 +329,7 @@ export default class Game {
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
-                if (buffTower.getProjectilePath(otherTower.position, this.gameMap)) {
+                if ((buffTower.getProjectilePath(otherTower.position, this.gameMap)).length) {
                     otherTower.buffs.add(BUFFED);
                 }
             }

@@ -14,9 +14,10 @@ export default class BuffTower extends Tower {
         this.minRange = 0;
         this.maxRange = 1;
         this.height = 5;
+        this.appliedStatus = BUFFED;
     }
 
-    getProjectilePath = (target, gameMap) => {
-        return getAdjacentTilePath(this, target, gameMap);
+    getProjectilePath = (target, _gameMap) => {
+        return getAdjacentTilePath(this, target);
     }
 }

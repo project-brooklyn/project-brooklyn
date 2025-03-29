@@ -21,8 +21,10 @@ export default class SlowTower extends Tower {
         this.appliedStatus = SLOWED;
     }
 
+    getTravelTime = () => 1;
+
     getProjectilePath = (target, _gameMap) => {
-        if (!isSameCell) return [];
+        if (!isSameCell(this, target)) return [];
         return [this.position, target.position];
     }
 

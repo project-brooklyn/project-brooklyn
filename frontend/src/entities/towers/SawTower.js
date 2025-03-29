@@ -20,6 +20,8 @@ export default class SawTower extends Tower {
         this.canAttackMultiple = true;
     }
 
+    getTravelTime = () => 1;
+
     getProjectilePath = (target, gameMap) => {
         return getAdjacentTilePath(this, target, gameMap);
     }

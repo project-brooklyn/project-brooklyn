@@ -21,8 +21,10 @@ export default class SpikeTower extends Tower {
         this.canAttackMultiple = true;
     }
 
-    getProjectilePath = (target, _gameMap) => {
-        if (!isSameCell(target)) return [];
+    getTravelTime = () => 1;
+
+    getProjectilePath = (target, _gameMap, _travelTime) => {
+        if (!isSameCell(this, target)) return [];
         return Array(SPIKE_TICK_DURATION).fill(this.position);
     }
 

@@ -8,7 +8,7 @@ const SCALE = 0.01;
 export default class SpikeTower extends Tower {
     static price = 100;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status, SCALE);
         this.name = 'spikeTower';
         this.cooldown = 50;
@@ -21,12 +21,8 @@ export default class SpikeTower extends Tower {
         this.canAttackMultiple = true;
     }
 
-    canHit = (target, _gameMap) => {
-        return isSameCell(this, target);
-    }
-
-    getProjectilePath = (target, gameMap) => {
-        if (!this.canHit(target, gameMap)) return [];
+    getProjectilePath = (target, _gameMap) => {
+        if (!isSameCell(target)) return [];
         return Array(SPIKE_TICK_DURATION).fill(this.position);
     }
 

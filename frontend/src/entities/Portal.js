@@ -13,7 +13,5 @@ export default class Portal extends Entity {
         this.description = "This is the portal from which enemies will spawn."
         this.buffs = new Set();
     }
-
-    canHit = () => false;
 }
 

@@ -5,7 +5,7 @@ import Tower from "./Tower";
 export default class LaserTower extends Tower {
     static price = 200;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'laserTower';
         this.cooldown = 40;
@@ -19,15 +19,11 @@ export default class LaserTower extends Tower {
     getProjectilePath = (target, heightMap) => {
         const path = getStraightPath(
             this,
-            target, 
+            target,
             heightMap,
             0.4
         );
         return path;
-    }
-    
-    canHit = (target, gameMap) => { 
-        return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {

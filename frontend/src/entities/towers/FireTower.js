@@ -6,7 +6,7 @@ import { BURNED } from "../statuses";
 export default class FireTower extends Tower {
     static price = 100;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'fireTower';
         this.cooldown = 150;
@@ -27,10 +27,6 @@ export default class FireTower extends Tower {
             0.05,
         );
         return path;
-    }
-
-    canHit = (target, gameMap) => {
-        return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {

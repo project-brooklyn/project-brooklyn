@@ -5,7 +5,7 @@ import Tower from "./Tower";
 export default class RockTower extends Tower {
     static price = 100;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'rockTower';
         this.cooldown = 50;
@@ -26,10 +26,6 @@ export default class RockTower extends Tower {
         );
         return path;
     };
-
-    canHit = (target, gameMap) => { 
-        return !!this.getProjectilePath(target, gameMap).length;
-    }
 
     createProjectile = (path) => {
         this.rotateTowardsTarget(path.at(-1));

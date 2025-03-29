@@ -19,8 +19,6 @@ export default class RepairTower extends Tower {
         return getUpwardPath(this);
     }
 
-    canHit = () => false;
-
     createProjectile = (path) => {
         return new Wrench(...this.position, path);
     }
@@ -28,5 +26,5 @@ export default class RepairTower extends Tower {
     upkeep = (game) => {
         game.castle.hp = Math.min(game.castle.hp + 100, game.castle.maxHp);
     }
-    
+
 }

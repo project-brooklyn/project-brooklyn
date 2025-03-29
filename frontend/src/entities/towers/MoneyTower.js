@@ -14,12 +14,10 @@ export default class MoneyTower extends Tower {
         this.currentCooldown = 0;
         this.price = MoneyTower.price;
     }
-  
+
     getProjectilePath = () => {
         return getUpwardPath(this);
     }
-
-    canHit = () => false;
 
     createProjectile = (path) => {
         return new Dollar(...this.position, path);

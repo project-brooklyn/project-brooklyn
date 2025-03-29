@@ -19,9 +19,4 @@ export default class BuffTower extends Tower {
     getProjectilePath = (target, gameMap) => {
         return getAdjacentTilePath(this, target, gameMap);
     }
-
-    canHit = (target, gameMap) => {
-        return !!this.getProjectilePath(target, gameMap).length;
-    }
-
 }

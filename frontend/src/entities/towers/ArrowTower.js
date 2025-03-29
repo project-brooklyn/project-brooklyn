@@ -27,10 +27,6 @@ export default class ArrowTower extends Tower {
         return path;
     }
 
-    canHit = (target, gameMap) => {
-        return !!this.getProjectilePath(target, gameMap).length;
-    }
-
     createProjectile = (path) => {
         this.rotateTowardsTarget(path.at(-1));
         return new Arrow(...this.position, path);

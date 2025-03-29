@@ -7,7 +7,7 @@ import Tower from "./Tower";
 export default class IceTower extends Tower {
     static price = 100;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'iceTower';
         this.cooldown = 150;
@@ -29,11 +29,6 @@ export default class IceTower extends Tower {
         );
         return path;
     }
-
-    canHit = (target, gameMap) => {
-        return !!this.getProjectilePath(target, gameMap).length;
-    }
-
     createProjectile = (path) => {
         this.rotateTowardsTarget(path.at(-1));
         return new Snowball(...this.position, path);

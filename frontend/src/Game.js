@@ -328,7 +328,7 @@ export default class Game {
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
-                if (buffTower.canHit(otherTower.position, this.gameMap)) {
+                if (buffTower.getProjectilePath(otherTower.position, this.gameMap)) {
                     otherTower.buffs.add(BUFFED);
                 }
             }

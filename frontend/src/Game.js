@@ -11,6 +11,7 @@ import { statusFunctions } from "./entities/statuses";
 import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
 import { TERRAFORMS } from "./entities/buildables";
 import GUI from 'lil-gui';
+import GameMap from "./map/GameMap";
 
 export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
 
@@ -203,8 +204,8 @@ export default class Game {
 
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
-            for (let [status, hasStatus] of Object.entries(enemy.statuses)) {
-                if (hasStatus) statusFunctions[status](enemy);
+            for (let status of enemy.statuses) {
+                statusFunctions[status](enemy);
             }
         }
     }
@@ -244,14 +245,14 @@ export default class Game {
                 if (path.length) {
                     if (!towerAttacked) { // prevent stacked projectiles hitting same tile
                         if (tower.appliedStatus) {
-                            if (enemy.statuses[tower.appliedStatus]) {
+                            if (enemy.statuses.has(tower.appliedStatus)) {
                                 continue;
                             }
-                            enemy.statuses[tower.appliedStatus] = true;
+                            enemy.statuses.add(tower.appliedStatus);
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
                         if (tower.damage) {
-                            const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
+                            const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
                             enemy.hp = Math.max(enemy.hp - damage, 0);
                         }
 
@@ -305,12 +306,12 @@ export default class Game {
 
     applyBuffs = () => {
         for (const tower of this.getAllTowers()) {
-            tower.buffs = {};
+            tower.buffs.clear();
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
                 if (buffTower.canHit(otherTower.position, this.gameMap)) {
-                    otherTower.buffs[BUFFED] = true;
+                    otherTower.buffs.add(BUFFED);
                 }
             }
         }
@@ -325,6 +326,10 @@ export default class Game {
         }
     }
 
+    getTowerCount = () => {
+        return this.getAllTowers().length - 2; // subtract two for portal and castle
+    }
+
     toJSON = () => {
         return {
             gameMap: this.gameMap.toJSON(),
@@ -334,8 +339,26 @@ export default class Game {
         }
     }
 
-    getTowerCount = () => {
-        return this.getAllTowers().length - 2; // subtract two for portal and castle
+    static from(hashedString) {
+        try {
+            const decodedString = atob(hashedString);
+            const json = JSON.parse(decodedString);
+            const { gameMap, level, gold, castleHP } = json;
+
+            if (!gameMap || !level || gold === null || !castleHP) {
+                throw new Error('Invalid game data');
+            }
+
+            const newGame = new Game(GameMap.from(gameMap));
+            newGame.level = level;
+            newGame.gold = gold;
+            newGame.castle.hp = castleHP;
+
+            return newGame;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
     }
 }
 

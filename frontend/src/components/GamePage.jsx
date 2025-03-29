@@ -13,7 +13,7 @@ const NAME = "GamePage";
 
 const GamePage = ({ gameMap, devMode = true }) => {
     const { user, logout } = useAuth();
-    const [game] = useState(() => new Game(new gameMap()));
+    const [game, setGame] = useState(() => new Game(new gameMap()));
 
     const [showModal, setShowModal] = useState(!devMode);
     const [showScoreModal, setShowScoreModal] = useState(false);
@@ -39,7 +39,8 @@ const GamePage = ({ gameMap, devMode = true }) => {
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
         <WelcomeModal
             show={showModal}
-            onHide={() => setShowModal(false)}
+            hideModal={() => setShowModal(false)}
+            setGame={setGame}
         />
         <ScorePhaseModal game={game} show={showScoreModal} />
         <TopBar user={user} logout={logout} />

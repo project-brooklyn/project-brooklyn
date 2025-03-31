@@ -13,13 +13,12 @@ import { TERRAFORMS } from "./entities/buildables";
 import GUI from 'lil-gui';
 import GameMap from "./map/GameMap";
 
-export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
+export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
     constructor(gameMap) {
         this.level = 1;
         this.phase = BUILD;
-        this.over = false;
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
@@ -70,7 +69,12 @@ export default class Game {
                 this.undoManager.clear,
             ],
             [SCORE]: [],
+            [WIN]: [],
+            [LOSE]: [],
         }
+
+        this.damage_dealt = 0
+        this.damage_taken = 0
     }
 
     addPhaseListener = (phase, fn) => {
@@ -79,6 +83,10 @@ export default class Game {
 
     removePhaseListener = (phase, fn) => {
         this.phaseListeners[phase] = this.phaseListeners[phase].filter(f => f !== fn);
+    }
+
+    removeAllPhaseListeners = (phase) => {
+        this.phaseListeners[phase] = [];
     }
 
     setPhase = (phase) => {
@@ -205,7 +213,10 @@ export default class Game {
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
             for (let status of enemy.statuses) {
-                statusFunctions[status](enemy);
+                const damage = statusFunctions[status](enemy);
+                if (damage) {
+                    this.damage_dealt += damage;
+                }
             }
         }
     }
@@ -252,8 +263,11 @@ export default class Game {
                         }
                         // TODO: this is instant damage, convert to when projectile hits?
                         if (tower.damage) {
-                            const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                            enemy.hp = Math.max(enemy.hp - damage, 0);
+                            let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                            damage = Math.min(enemy.hp, damage)
+
+                            this.damage_dealt += damage
+                            enemy.hp = enemy.hp - damage
                         }
 
                         const projectile = tower.createProjectile(path);
@@ -276,8 +290,8 @@ export default class Game {
                 enemy.position[2] === this.castle.position[2] &&
                 enemy.hp // enemy is alive at castle
             ) {
+                this.damage_taken += Math.min(this.castle.hp, enemy.hp)
                 this.castle.takeDamage(enemy.hp);
-                if (this.castle.hp <= 0) this.over = true;
                 enemy.hp = 0;
             }
         }
@@ -294,12 +308,16 @@ export default class Game {
             this.projectiles = [];
             this.level++;
 
-            if (this.level == levels.length - 1) {
-                this.over = true;
+            if (!this.castle.hp) {
+                this.setPhase(LOSE)
                 return
             }
 
-            // TODO: implement score phase
+            if (this.level >= levels.length) {
+                this.setPhase(WIN)
+                return
+            }
+
             this.setPhase(SCORE);
         }
     }

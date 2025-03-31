@@ -9,10 +9,13 @@ const FREEZE_DURATION = 100;
 
 export const statusFunctions = {
     burned: (enemy) => {
-        enemy.hp = Math.max(0, enemy.hp - FIRE_DAMAGE);
+        const damage = Math.min(enemy.hp, FIRE_DAMAGE);
+        enemy.hp -= damage;
+        return damage;
     },
     slowed: (enemy) => { // slowed enemies move every other tick
         enemy.cantMove = !enemy.cantMove;
+        return 0;
     },
     frozen: (enemy) => {
         if (!enemy.frozenTime) {
@@ -23,5 +26,6 @@ export const statusFunctions = {
                 enemy.statuses.delete(FROZEN)
             }
         }
+        return 0;
     },
 }

@@ -17,7 +17,7 @@ export default class BuffTower extends Tower {
         this.appliedStatus = BUFFED;
     }
 
-    getProjectilePath = (target, _gameMap) => {
+    getProjectilePath = (target, _gameMap, _travelTime) => {
         return getAdjacentTilePath(this, target);
     }
 }

@@ -22,7 +22,7 @@ export default class RepairTower extends Tower {
         return WRENCH_STEPS;
     }
 
-    getProjectilePath = () => {
+    getProjectilePath = (_target, _gameMap, _travelTime) => {
         return getUpwardPath(this, WRENCH_SPEED, WRENCH_STEPS);
     }
 

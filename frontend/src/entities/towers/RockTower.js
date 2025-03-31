@@ -14,7 +14,7 @@ export default class RockTower extends Tower {
         this.price = RockTower.price;
         this.minRange = 2.5;
         this.maxRange = 6;
-        this.height = 3;
+        this.height = 4;
         this.canAttackMultiple = false; // splash damage not implemented, this is for saw/spike towers
     }
 

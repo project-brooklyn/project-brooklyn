@@ -267,8 +267,11 @@ export default class Game {
 
                 // TODO: this is instant damage, convert to when projectile hits?
                 if (tower.damage) {
-                    const damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                    enemy.hp = Math.max(enemy.hp - damage, 0);
+                    let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                    damage = Math.min(enemy.hp, damage)
+
+                    this.damage_dealt += damage
+                    enemy.hp = Math.max(enemy.hp - damage, 0)
                 }
 
                 const projectile = tower.createProjectile(path);

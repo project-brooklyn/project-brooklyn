@@ -23,7 +23,7 @@ export default class SlowTower extends Tower {
 
     getTravelTime = () => 1;
 
-    getProjectilePath = (target, _gameMap) => {
+    getProjectilePath = (target, _gameMap, _travelTime) => {
         if (!isSameCell(this, target)) return null;
         return [this.position, target.position];
     }

@@ -2,7 +2,7 @@ import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Laser from "../projectiles/Laser";
 import Tower from "./Tower";
 
-const LASER_SPEED = 0.5;
+const LASER_SPEED = 1.0;
 
 export default class LaserTower extends Tower {
     static price = 200;

@@ -23,7 +23,7 @@ export default class MoneyTower extends Tower {
         return DOLLAR_SIGN_STEPS;
     }
 
-    getProjectilePath = () => {
+    getProjectilePath = (_target, _gameMap, _travelTime) => {
         return getUpwardPath(this, DOLLAR_SIGN_SPEED, DOLLAR_SIGN_STEPS);
     }
 

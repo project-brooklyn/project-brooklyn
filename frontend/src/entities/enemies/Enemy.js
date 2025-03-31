@@ -8,7 +8,7 @@ export default class Enemy extends Entity {
     }
 
     getMoveFunction = (path) => {
-        this.path = path;
+        this.path = [...path];
         this.pathIndex = 1;
 
         return () => {

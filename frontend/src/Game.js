@@ -253,10 +253,10 @@ export default class Game {
 
                 const travelTime = tower.getTravelTime(enemy.position, this.gameMap);
                 const futurePosition = enemy.getFutureLocation(travelTime);
-                if (!futurePosition.length) continue; // skip if enemy will reach castle
+                if (!futurePosition) continue; // skip if enemy will reach castle
 
                 const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
-                if (!path.length) continue; // skip if tower can't hit enemy
+                if (!path) continue; // skip if tower can't hit enemy
 
                 if (tower.appliedStatus) { // handle status towers
                     if (enemy.statuses.has(tower.appliedStatus)) {
@@ -326,7 +326,7 @@ export default class Game {
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
-                if ((buffTower.getProjectilePath(otherTower.position, this.gameMap)).length) {
+                if ((buffTower.getProjectilePath(otherTower.position, this.gameMap))) {
                     otherTower.buffs.add(BUFFED);
                 }
             }

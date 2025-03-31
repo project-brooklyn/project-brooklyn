@@ -37,11 +37,11 @@ export class GameMap {
     }
 
     forEachTile(callbackFn) {
-        let results = []
+        let results = [];
         for (let [_key, tile] of this.tileData) {
             results.push(callbackFn(tile));
         }
-        return results
+        return results;
     }
 
     getTile(x, y, z) {

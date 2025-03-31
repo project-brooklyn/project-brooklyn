@@ -113,8 +113,8 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
     const dist2d = pythagorean([x, y], [end[0], end[1]]);
     const dist3d = pythagorean(start, end);
     // ignoring z for range calculation greatly improves range indicator ux
-    if (dist2d < minRange) return [];
-    if (dist2d > maxRange) return [];
+    if (dist2d < minRange) return null;
+    if (dist2d > maxRange) return null;
 
     // start and end are [x,y,z] coordinates
     // returns a series of travelTime evenly spaced points, that follow a straight path
@@ -130,13 +130,13 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
 
         const nextPosition = [x + dx, y + dy, z + dz];
         if (pythagorean(start, nextPosition) > PARENT_TOWER_RADIUS && !isAboveObstacles(...nextPosition, gameMap, true)) {
-            return [];
+            return null;
         }
         path.push(nextPosition);
     }
 
     // check if path hits ground within tolerance of target
-    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return [];
+    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return null;
     return path;
 }
 
@@ -149,7 +149,7 @@ export const getParabolicTravelTime = (start, end) => {
     const horizontalDistance = pythagorean(start.slice(0, 2), end.slice(0, 2));
 
     const times = quadratic(GRAVITATIONAL_ACCELERATION / 2, 0, horizontalDistance * Math.tan(ANGLE_TO_HORIZONTAL) - heightDifference);
-    if (!times.length) return [];
+    if (!times.length) return null;
     const time = Math.max(...times); // take later time if two solutions
     return Math.floor(FRAMES_PER_TIME_INTERVAL * time);
 }
@@ -159,8 +159,8 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     const start = tower.getTopOfTowerPosition();
 
     const dist2d = pythagorean([x, y], [end[0], end[1]]);
-    if (dist2d < minRange) return [];
-    if (dist2d > maxRange) return [];
+    if (dist2d < minRange) return null;
+    if (dist2d > maxRange) return null;
 
     const heightDifference = end[2] - start[2];
     const horizontalDistance = pythagorean(start.slice(0, 2), end.slice(0, 2));
@@ -171,7 +171,7 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
         heightDifference = 0.5*g*t^2 + 0*t + horizontalDistance*tan(angle)
     */
     const times = quadratic(GRAVITATIONAL_ACCELERATION / 2, 0, horizontalDistance * Math.tan(ANGLE_TO_HORIZONTAL) - heightDifference);
-    if (!times.length) return [];
+    if (!times.length) return null;
     const time = Math.max(...times); // take later time if two solutions
 
     const timeInterval = time / travelTime;
@@ -190,15 +190,15 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     }
 
     // check if path hits ground within tolerance of target
-    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return [];
+    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return null;
     return path;
 }
 
 export const getAdjacentTilePath = (tower, end) => {
     const TICK_DURATION = 20;
     const [endX, endY, endZ] = [round(end[0], 0), round(end[1], 0), end[2]];
-    if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return [];
-    if (tower.z + (tower.height / 2) < endZ || tower.z > endZ + (tower.height / 2)) return [];
+    if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return null;
+    if (tower.z + (tower.height / 2) < endZ || tower.z > endZ + (tower.height / 2)) return null;
     const avgX = (tower.x + endX) / 2;
     const avgY = (tower.y + endY) / 2;
     return Array(TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height / 2)]);

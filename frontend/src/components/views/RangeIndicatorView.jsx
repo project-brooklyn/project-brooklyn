@@ -15,7 +15,7 @@ export const RangeIndicatorView = ({ tower, gameMap }) => {
             const z = gameMap.getElevation(round(x, 0), round(y, 0), false);
             if (
                 !(tower.damage || tower.appliedStatus) || // tower has no attack
-                !tower.getProjectilePath([x, y, z], gameMap, EXAMPLE_TRAVEL_TIME).length
+                !tower.getProjectilePath([x, y, z], gameMap, EXAMPLE_TRAVEL_TIME) // tower can't hit tile
             ) continue;
 
             const coordinates = convertToRenderCoordinates({ x, y, z }, { x: 0, y: 0, z: aboveTileOffset + heightOffset });

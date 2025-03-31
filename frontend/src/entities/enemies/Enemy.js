@@ -35,10 +35,9 @@ export default class Enemy extends Entity {
     }
 
     getFutureLocation = (travelTime) => {
-
         const index = this.pathIndex + travelTime;
         if (index >= this.path.length) {
-            return [];
+            return null;
         }
         return this.path[index];
     }

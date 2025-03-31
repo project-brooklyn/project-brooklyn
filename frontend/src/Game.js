@@ -249,17 +249,14 @@ export default class Game {
 
             // check all enemies, attack first (farthest along path)
             for (let enemy of this.enemies) {
-                // enemy is dead
-                if (!enemy.hp) continue;
+                if (!enemy.hp) continue; // skip enemy is dead
 
-                // enemy will have reached end
                 const travelTime = tower.getTravelTime(enemy.position, this.gameMap);
                 const futurePosition = enemy.getFutureLocation(travelTime);
-                if (!futurePosition.length) continue;
+                if (!futurePosition.length) continue; // skip if enemy will reach castle
 
-                // tower can't hit where enemy will be
                 const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
-                if (!path.length) continue;
+                if (!path.length) continue; // skip if tower can't hit enemy
 
                 if (tower.appliedStatus) { // handle status towers
                     if (enemy.statuses.has(tower.appliedStatus)) {

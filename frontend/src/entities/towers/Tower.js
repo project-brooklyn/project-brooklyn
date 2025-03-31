@@ -16,6 +16,7 @@ export default class Tower extends Entity {
         this.hp = Infinity;
         this.status = status;
         this.buffs = new Set();
+        this.height = 0;
     }
 
     rotateTowardsTarget(target) {

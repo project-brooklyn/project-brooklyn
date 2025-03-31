@@ -92,7 +92,7 @@ export const getSteps = (path, gameMap, speed) => {
     return steps;
 }
 
-const isAboveGround = (x, y, z, gameMap, includeTowers) => {
+const isAboveObstacles = (x, y, z, gameMap, includeTowers) => {
     const [xIdx, yIdx] = [round(x, 0), round(y, 0)];
     if (xIdx < 0 || xIdx >= gameMap.width || yIdx < 0 || yIdx >= gameMap.depth) return false;
     return z >= gameMap.getElevation(xIdx, yIdx, includeTowers);
@@ -103,6 +103,9 @@ export const getLinearTravelTime = (start, end, speed) => {
     return Math.floor(dist / speed);
 }
 
+const PARENT_TOWER_RADIUS = 1;
+const PATH_END_TOLERANCE = 0.5;
+
 export const getStraightPath = (tower, end, gameMap, travelTime) => {
     const { x, y, z, minRange, maxRange } = tower;
     const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
@@ -112,7 +115,6 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
     // ignoring z for range calculation greatly improves range indicator ux
     if (dist2d < minRange) return [];
     if (dist2d > maxRange) return [];
-    // if (z + tower.height < end[2]) return []; // prevent shooting upwards (through ground)
 
     // start and end are [x,y,z] coordinates
     // returns a series of travelTime evenly spaced points, that follow a straight path
@@ -127,15 +129,14 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
         const [dx, dy, dz] = scaledVector;
 
         const nextPosition = [x + dx, y + dy, z + dz];
-        if (pythagorean(start, nextPosition) > 5 && !isAboveGround(...nextPosition, gameMap, true)) {
+        if (pythagorean(start, nextPosition) > PARENT_TOWER_RADIUS && !isAboveObstacles(...nextPosition, gameMap, true)) {
             return [];
         }
         path.push(nextPosition);
     }
 
     // check if path hits ground within tolerance of target
-    const tolerance = 0.5;
-    if (pythagorean(path.at(-1), end) > tolerance) return [];
+    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return [];
     return path;
 }
 
@@ -179,7 +180,7 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     const angleAroundZ = Math.atan2(end[1] - start[1], end[0] - start[0]);
 
     const path = [start];
-    while (isAboveGround(...path.at(-1), gameMap)) {
+    while (isAboveObstacles(...path.at(-1), gameMap)) {
         const [x, y, z] = path.at(-1);
         const t = (path.length - 1) * timeInterval;
         const dx = initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.cos(angleAroundZ) * timeInterval;
@@ -189,8 +190,7 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     }
 
     // check if path hits ground within tolerance of target
-    const tolerance = 0.5;
-    if (pythagorean(path.at(-1), end) > tolerance) return [];
+    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return [];
     return path;
 }
 

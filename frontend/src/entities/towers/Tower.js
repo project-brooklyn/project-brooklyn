@@ -15,12 +15,16 @@ export default class Tower extends Entity {
         super(x, y, z, new THREE.Quaternion(), scale);
         this.hp = Infinity;
         this.status = status;
-        this.height = 2.5; // default height for projectile launch
         this.buffs = new Set();
+        this.height = 0;
     }
 
     rotateTowardsTarget(target) {
         const [dx, dy] = [target[0] - this.x, target[1] - this.y];
         this.rotation[1] = Math.atan2(-dy, dx); // around render coordinates z axis
+    }
+
+    getTopOfTowerPosition() {
+        return [this.x, this.y, this.z + this.height];
     }
 }

@@ -71,7 +71,7 @@ const ProjectileRender = (projectile) => {
 
 export default function ProjectileView({ projectiles }) {
     const projectileComponents = projectiles.map(ProjectileRender);
-    return <>
+    return (<>
         {projectileComponents}
-    </>
+    </>)
 }

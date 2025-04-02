@@ -3,6 +3,8 @@ import Wrench from "../projectiles/Wrench";
 import { getUpwardPath } from "../../utils/game_utils";
 
 const SCALE = 0.02;
+const WRENCH_SPEED = 0.04;
+const WRENCH_STEPS = 50;
 
 export default class RepairTower extends Tower {
     static price = 100;
@@ -13,13 +15,16 @@ export default class RepairTower extends Tower {
         this.cooldown = 100;
         this.currentCooldown = 0;
         this.price = RepairTower.price;
+        this.height = 3;
     }
 
-    getProjectilePath = () => {
-        return getUpwardPath(this);
+    getTravelTime = () => {
+        return WRENCH_STEPS;
     }
 
-    canHit = () => false;
+    getProjectilePath = (_target, _gameMap, _travelTime) => {
+        return getUpwardPath(this, WRENCH_SPEED, WRENCH_STEPS);
+    }
 
     createProjectile = (path) => {
         return new Wrench(...this.position, path);
@@ -28,5 +33,5 @@ export default class RepairTower extends Tower {
     upkeep = (game) => {
         game.castle.hp = Math.min(game.castle.hp + 100, game.castle.maxHp);
     }
-    
+
 }

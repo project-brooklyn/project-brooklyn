@@ -7,7 +7,7 @@ const SCALE = 0.01;
 export default class SlowTower extends Tower {
     static price = 100;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status, SCALE);
         this.name = 'slowTower';
         this.cooldown = 0;
@@ -21,14 +21,10 @@ export default class SlowTower extends Tower {
         this.appliedStatus = SLOWED;
     }
 
-    // the following is a little jank, should create a uniform Tower interface
-    // and update Game.towersAttack() for more projectile flexibility
-    canHit = (target, _gameMap) => {
-        return isSameCell(this, target);
-    }
+    getTravelTime = () => 1;
 
-    getProjectilePath = (target, gameMap) => {
-        if (!this.canHit(target, gameMap)) return [];
+    getProjectilePath = (target, _gameMap, _travelTime) => {
+        if (!isSameCell(this, target)) return null;
         return [this.position, target.position];
     }
 

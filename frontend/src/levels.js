@@ -69,10 +69,4 @@ export const levels = [
         delay: 10,
         gold: 100,
     },
-    {
-        enemy: Guy,
-        count: 100,
-        delay: 7.5,
-        gold: 100,
-    },
 ];

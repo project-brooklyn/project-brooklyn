@@ -10,14 +10,13 @@ export default class SawTower extends Tower {
     constructor(x, y, z, status) {
         super(x, y, z, status, SCALE);
         this.name = 'sawTower';
-        this.cooldown = 20;
+        this.cooldown = 50;
         this.currentCooldown = 0;
         this.damage = 30;
         this.price = SawTower.price;
         this.minRange = 0;
         this.maxRange = 1;
         this.height = 3;
-        this.canAttackMultiple = true;
     }
 
     getTravelTime = () => 1;
@@ -26,8 +25,8 @@ export default class SawTower extends Tower {
         return getAdjacentTilePath(this, target, gameMap);
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, enemies) => {
         this.currentCooldown = this.cooldown;
-        return new SawBlade(...this.position, path);
+        return new SawBlade(...this.position, path, target, this.damage, enemies);
     }
 }

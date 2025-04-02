@@ -5,10 +5,8 @@ export default class Lamb extends Enemy {
     static MAX_HP = 20;
     static NAME = "lamb";
 
-    constructor (x, y, z, scale) {
-        super(x, y, z, scale);
+    constructor(x, y, z, game, scale) {
+        super(x, y, z, game, Lamb.MAX_HP, scale);
         this.name = Lamb.NAME;
-        this.maxHp = Lamb.MAX_HP;
-        this.hp = this.maxHp;
     }
 }

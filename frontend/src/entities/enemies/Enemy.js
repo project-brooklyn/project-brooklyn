@@ -2,9 +2,12 @@ import Entity from "../Entity";
 import { FROZEN } from "../statuses";
 
 export default class Enemy extends Entity {
-    constructor(x, y, z, scale) {
+    constructor(x, y, z, game, maxHp, scale) {
         super(x, y, z, scale);
         this.statuses = new Set();
+        this.maxHp = maxHp;
+        this.hp = maxHp;
+        this.game = game; // for updating game.damage_dealt and castle.hp
     }
 
     getMoveFunction = (path) => {
@@ -40,5 +43,11 @@ export default class Enemy extends Entity {
             return null;
         }
         return this.path[index];
+    }
+
+    takeDamage = (damage) => {
+        const actualDamage = Math.min(this.hp, damage);
+        this.hp = Math.max(this.hp - damage, 0);
+        this.game.damage_dealt += actualDamage;
     }
 }

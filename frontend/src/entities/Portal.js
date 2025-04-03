@@ -11,7 +11,23 @@ export default class Portal extends Entity {
         this.height = 0;
         this.status = Status.PERMANENT;
         this.description = "This is the portal from which enemies will spawn."
-        this.buffs = new Set();
+    }
+
+    // Provide buff interface expected for towers
+    applyBuff(_buff) { }
+
+    removeBuff(_buff) { }
+
+    hasBuff(_buff) { }
+
+    getBuffs() {
+        return null;
+    }
+
+    clearBuffs() { }
+
+    canBuff(_buff) {
+        return false;
     }
 }
 

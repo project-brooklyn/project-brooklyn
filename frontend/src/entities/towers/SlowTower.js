@@ -43,4 +43,8 @@ export default class SlowTower extends Tower {
         dummyProjectile.hp = 0;
         return dummyProjectile;
     }
+
+    canBuff(_buff) {
+        return false;
+    }
 }

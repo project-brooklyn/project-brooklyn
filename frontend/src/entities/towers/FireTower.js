@@ -41,4 +41,8 @@ export default class FireTower extends Tower {
         this.rotateTowardsTarget(path.at(-1));
         return new Flame(...this.position, path, target, enemies);
     }
+
+    canBuff(_buff) {
+        return false;
+    }
 }

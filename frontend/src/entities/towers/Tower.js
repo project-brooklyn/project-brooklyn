@@ -15,7 +15,7 @@ export default class Tower extends Entity {
         super(x, y, z, new THREE.Quaternion(), scale);
         this.hp = Infinity;
         this.status = status;
-        this.buffs = new Set();
+        this._buffs = new Set();
         this.height = 0;
     }
 
@@ -26,5 +26,29 @@ export default class Tower extends Entity {
 
     getTopOfTowerPosition() {
         return [this.x, this.y, this.z + this.height];
+    }
+
+    applyBuff(buff) {
+        this._buffs.add(buff);
+    }
+
+    removeBuff(buff) {
+        this._buffs.delete(buff);
+    }
+
+    hasBuff(buff) {
+        return this._buffs.has(buff);
+    }
+
+    getBuffs() {
+        return this._buffs;
+    }
+
+    clearBuffs() {
+        this._buffs.clear();
+    }
+
+    canBuff(_buff) {
+        return true;
     }
 }

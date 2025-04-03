@@ -40,4 +40,8 @@ export default class IceTower extends Tower {
         this.rotateTowardsTarget(path.at(-1));
         return new Snowball(...this.position, path, target, enemies);
     }
+
+    canBuff(_buff) {
+        return false;
+    }
 }

@@ -7,7 +7,7 @@ import { StatusView } from "./StatusView";
 const positionAboveEnemy = [0, 0.5, 0];
 const enemyHeight = 2; // TODO: fix this if enemies have different heights
 
-const EnemyRender = (enemy, i) => {
+const EnemyRender = (assets, enemy, i) => {
     const { scale, name, hp, maxHp, offset, rotation, statuses } = enemy;
     const gltf = useLoader(GLTFLoader, modelFiles[name] || modelFiles.placeholder);
     if (!hp) return null;
@@ -22,7 +22,7 @@ const EnemyRender = (enemy, i) => {
     const position = [coordinates.x, coordinates.y, coordinates.z];
     return (<group position={position} key={name + i}>
         <HpView hpFraction={hp / maxHp} position={positionAboveEnemy} />
-        <StatusView statuses={statuses} position={positionAboveEnemy} height={enemyHeight} />
+        <StatusView assets={assets} statuses={statuses} position={positionAboveEnemy} height={enemyHeight} />
         <primitive
             object={gltf.scene.clone(true)}
             scale={scale}
@@ -31,8 +31,8 @@ const EnemyRender = (enemy, i) => {
     </group>);
 }
 
-export default function EnemyView({ enemies }) {
-    const enemyComponents = enemies.map((enemy, i) => EnemyRender(enemy, i));
+export default function EnemyView({ assets, enemies }) {
+    const enemyComponents = enemies.map((enemy, i) => EnemyRender(assets, enemy, i));
     return <>
         {enemyComponents}
     </>

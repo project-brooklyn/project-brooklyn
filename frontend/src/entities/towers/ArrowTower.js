@@ -1,11 +1,13 @@
-import { getStraightPath } from "../../utils/game_utils";
+import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Arrow from "../projectiles/Arrow";
 import Tower from "./Tower";
 
+const ARROW_SPEED = 0.15;
+
 export default class ArrowTower extends Tower {
     static price = 50;
-    
-    constructor (x, y, z, status) {
+
+    constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'arrowTower';
         this.cooldown = 25;
@@ -14,20 +16,22 @@ export default class ArrowTower extends Tower {
         this.price = ArrowTower.price;
         this.minRange = 1.5;
         this.maxRange = 4;
+        this.height = 3.5;
+        this.description = "Shoots arrows in a straight line.";
     }
 
-    getProjectilePath = (target, gameMap) => {
+    getTravelTime = (target) => {
+        return getLinearTravelTime(this.getTopOfTowerPosition(), target, ARROW_SPEED);
+    }
+
+    getProjectilePath = (target, gameMap, travelTime) => {
         const path = getStraightPath(
             this,
             target,
             gameMap,
-            0.2
+            travelTime,
         );
         return path;
-    }
-
-    canHit = (target, gameMap) => { 
-        return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {

@@ -1,24 +1,29 @@
 import * as THREE from 'three'
-import { statusIcons } from '../../utils/render_utils'
+import textures from '../textures'
 
 const STATUS_SPACING = 0.1;
 
-export const StatusView = ({ statuses = {}, position, height }) => {
-    const statusCount = Object.values(statuses).filter(Boolean).length;
-    return <>
-        {Object.entries(statuses).map(([status, hasStatus], i) => {
-            if (!hasStatus) return null;
-            const offset = (i * STATUS_SPACING) - (statusCount * STATUS_SPACING) / 2;
-            return <sprite
+export const StatusView = ({ assets, statuses, position, height }) => {
+    const offset = (statuses.size * STATUS_SPACING) / 2;
+
+    let index = 0
+    let dx = -offset
+
+    const statusSprites = []
+    statuses.forEach((status) => {
+        statusSprites.push(
+            <sprite
                 scale={[0.1, 0.1, 0.1]}
-                position={[position[0] + offset, (position[1] + height)/4, position[2]]}
-                key={i}
-            >
-                <spriteMaterial 
-                    attach="material" 
-                    map={new THREE.TextureLoader().load(statusIcons[status])}
-                />
-            </sprite>
-        })}
+                position={[position[0] + dx, (position[1] + height) / 4, position[2]]}
+                material={assets.materialManager.get(status)}
+                key={index}
+            />
+        )
+        index += 1
+        dx += STATUS_SPACING
+    })
+
+    return <>
+        {statusSprites}
     </>
 }

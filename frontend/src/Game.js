@@ -11,18 +11,23 @@ import { statusFunctions } from "./entities/statuses";
 import UndoManager, { ActionType, GameAction } from "./utils/UndoManager";
 import { TERRAFORMS } from "./entities/buildables";
 import GUI from 'lil-gui';
+import GameMap from "./map/GameMap";
 
-export const [BUILD, DEFEND, SCORE] = ['build', 'defend', 'score'];
+export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
     constructor(gameMap) {
         this.level = 1;
         this.phase = BUILD;
-        this.over = false;
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
         this.undoManager = new UndoManager(this, gameMap);
+
+        this.towerLimit = 5;
+        this.enableTowerLimits = false;
+        this.blueprints = new Set(['arrowTower']);
+        this.enableBlueprints = false;
 
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
@@ -64,7 +69,12 @@ export default class Game {
                 this.undoManager.clear,
             ],
             [SCORE]: [],
+            [WIN]: [],
+            [LOSE]: [],
         }
+
+        this.damage_dealt = 0
+        this.damage_taken = 0
     }
 
     addPhaseListener = (phase, fn) => {
@@ -73,6 +83,10 @@ export default class Game {
 
     removePhaseListener = (phase, fn) => {
         this.phaseListeners[phase] = this.phaseListeners[phase].filter(f => f !== fn);
+    }
+
+    removeAllPhaseListeners = (phase) => {
+        this.phaseListeners[phase] = [];
     }
 
     setPhase = (phase) => {
@@ -198,8 +212,11 @@ export default class Game {
 
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
-            for (let [status, hasStatus] of Object.entries(enemy.statuses)) {
-                if (hasStatus) statusFunctions[status](enemy);
+            for (let status of enemy.statuses) {
+                const damage = statusFunctions[status](enemy);
+                if (damage) {
+                    this.damage_dealt += damage;
+                }
             }
         }
     }
@@ -231,34 +248,38 @@ export default class Game {
             }
 
             // check all enemies, attack first (farthest along path)
-            let towerAttacked = false;
             for (let enemy of this.enemies) {
-                if (!enemy.hp) continue;
-                const path = tower.getProjectilePath(enemy.position, this.gameMap);
+                if (!enemy.hp) continue; // skip enemy is dead
 
-                if (path.length) {
-                    if (!towerAttacked) { // prevent stacked projectiles hitting same tile
-                        if (tower.appliedStatus) {
-                            if (enemy.statuses[tower.appliedStatus]) {
-                                continue;
-                            }
-                            enemy.statuses[tower.appliedStatus] = true;
-                        }
-                        // TODO: this is instant damage, convert to when projectile hits?
-                        if (tower.damage) {
-                            const damage = tower.buffs[BUFFED] ? tower.damage * 2 : tower.damage;
-                            enemy.hp = Math.max(enemy.hp - damage, 0);
-                        }
+                const travelTime = tower.getTravelTime(enemy.position, this.gameMap);
+                const futurePosition = enemy.getFutureLocation(travelTime);
+                if (!futurePosition) continue; // skip if enemy will reach castle
 
-                        const projectile = tower.createProjectile(path);
-                        this.addProjectile(projectile);
+                const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
+                if (!path) continue; // skip if tower can't hit enemy
+
+                if (tower.appliedStatus) { // handle status towers
+                    if (enemy.statuses.has(tower.appliedStatus)) {
+                        continue;
                     }
-
-                    towerAttacked = true;
-                    if (!tower.canAttackMultiple) break;
+                    enemy.statuses.add(tower.appliedStatus);
                 }
+
+                // TODO: this is instant damage, convert to when projectile hits?
+                if (tower.damage) {
+                    let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
+                    damage = Math.min(enemy.hp, damage)
+
+                    this.damage_dealt += damage
+                    enemy.hp = Math.max(enemy.hp - damage, 0)
+                }
+
+                const projectile = tower.createProjectile(path);
+                this.addProjectile(projectile);
+
+                tower.currentCooldown = tower.cooldown;
+                if (!tower.canAttackMultiple) break;
             }
-            if (towerAttacked) tower.currentCooldown = tower.cooldown;
         }
     }
 
@@ -270,8 +291,8 @@ export default class Game {
                 enemy.position[2] === this.castle.position[2] &&
                 enemy.hp // enemy is alive at castle
             ) {
+                this.damage_taken += Math.min(this.castle.hp, enemy.hp)
                 this.castle.takeDamage(enemy.hp);
-                if (this.castle.hp <= 0) this.over = true;
                 enemy.hp = 0;
             }
         }
@@ -286,27 +307,30 @@ export default class Game {
             this.enemies = [];
             this.enemyInfo = {};
             this.projectiles = [];
-            this.gold += this.goldReward;
             this.level++;
 
-            if (this.level == levels.length - 1) {
-                this.over = true;
+            if (!this.castle.hp) {
+                this.setPhase(LOSE)
                 return
             }
 
-            // TODO: implement score phase
+            if (this.level >= levels.length) {
+                this.setPhase(WIN)
+                return
+            }
+
             this.setPhase(SCORE);
         }
     }
 
     applyBuffs = () => {
         for (const tower of this.getAllTowers()) {
-            tower.buffs = {};
+            tower.buffs.clear();
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
             for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
-                if (buffTower.canHit(otherTower.position, this.gameMap)) {
-                    otherTower.buffs[BUFFED] = true;
+                if ((buffTower.getProjectilePath(otherTower.position, this.gameMap))) {
+                    otherTower.buffs.add(BUFFED);
                 }
             }
         }
@@ -321,12 +345,38 @@ export default class Game {
         }
     }
 
+    getTowerCount = () => {
+        return this.getAllTowers().length - 2; // subtract two for portal and castle
+    }
+
     toJSON = () => {
         return {
             gameMap: this.gameMap.toJSON(),
             level: this.level,
             gold: this.gold,
             castleHP: this.castle.hp,
+        }
+    }
+
+    static from(hashedString) {
+        try {
+            const decodedString = atob(hashedString);
+            const json = JSON.parse(decodedString);
+            const { gameMap, level, gold, castleHP } = json;
+
+            if (!gameMap || !level || gold === null || !castleHP) {
+                throw new Error('Invalid game data');
+            }
+
+            const newGame = new Game(GameMap.from(gameMap));
+            newGame.level = level;
+            newGame.gold = gold;
+            newGame.castle.hp = castleHP;
+
+            return newGame;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
     }
 }

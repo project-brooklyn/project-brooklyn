@@ -1,37 +1,44 @@
 import Entity from "../Entity";
+import { FROZEN } from "../statuses";
 
 export default class Enemy extends Entity {
-    constructor (x, y, z, scale) {
+    constructor(x, y, z, scale) {
         super(x, y, z, scale);
-        this.statuses = {};
+        this.statuses = new Set();
     }
-    
-    getMoveFunction = (steps) => {
-        this.stepIndex = 1;
-        
+
+    getMoveFunction = (path) => {
+        this.path = [...path];
+        this.pathIndex = 1;
+
         return () => {
-            if (this.cantMove || this.statuses.FROZEN) return;
-            const curr = steps[this.stepIndex-1];
-            const next = steps[this.stepIndex];
+            if (this.cantMove || this.statuses.has(FROZEN)) return;
+            const last = path[this.pathIndex - 1];
+            const curr = path[this.pathIndex];
 
             this.rotation = [
                 0, // based on model position, not render coordinates
-                next[0] > curr[0] ? Math.PI/2 :
-                next[0] < curr[0] ? 3*Math.PI/2 :
-                next[1] < curr[1] ? Math.PI :
-                next[1] > curr[1] ? 0 :
-                this.rotation[1], // keep current rotation 
+                curr[0] > last[0] ? Math.PI / 2 :
+                    curr[0] < last[0] ? 3 * Math.PI / 2 :
+                        curr[1] < last[1] ? Math.PI :
+                            curr[1] > last[1] ? 0 :
+                                this.rotation[1], // keep current rotation
                 0,
             ];
 
-            this.setPosition(...next);
+            this.setPosition(...curr);
 
-            if (this.stepIndex<steps.length-1) {
-                this.stepIndex++;
-            } else {
-                // enemy reaching base
-                // is handled in GameCanvas
+            if (this.pathIndex < path.length - 1) {
+                this.pathIndex++;
             }
         }
+    }
+
+    getFutureLocation = (travelTime) => {
+        const index = this.pathIndex + travelTime;
+        if (index >= this.path.length) {
+            return null;
+        }
+        return this.path[index];
     }
 }

@@ -7,7 +7,7 @@ const SCALE = 0.01;
 export default class SawTower extends Tower {
     static price = 150;
 
-    constructor (x, y, z, status) {
+    constructor(x, y, z, status) {
         super(x, y, z, status, SCALE);
         this.name = 'sawTower';
         this.cooldown = 20;
@@ -20,12 +20,10 @@ export default class SawTower extends Tower {
         this.canAttackMultiple = true;
     }
 
+    getTravelTime = () => 1;
+
     getProjectilePath = (target, gameMap) => {
         return getAdjacentTilePath(this, target, gameMap);
-    }
-
-    canHit = (target, gameMap) => {
-        return !!this.getProjectilePath(target, gameMap).length;
     }
 
     createProjectile = (path) => {

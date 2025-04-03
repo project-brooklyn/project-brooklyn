@@ -5,7 +5,7 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 import { StatusView } from "./StatusView";
 
-const StructureRender = (structure) => {
+const StructureRender = (assets, structure) => {
     const { scale, name, hp, maxHp, offset, rotation, buffs, height } = structure;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
@@ -29,7 +29,7 @@ const StructureRender = (structure) => {
     return (
         <group position={[coordinates.x, coordinates.y, coordinates.z]} key={key}>
             {hp && hp !== Infinity && <HpView hpFraction={hp / maxHp} position={[0, 0.5, 0]} width={1.0} />}
-            <StatusView position={[0, 0.5, 0]} statuses={buffs} height={height} />
+            <StatusView assets={assets} position={[0, 0.5, 0]} statuses={buffs} height={height} />
             <primitive
                 object={isObjModel ? modelLoader : modelLoader.scene.clone(true)}
                 scale={scale}
@@ -39,8 +39,9 @@ const StructureRender = (structure) => {
     );
 }
 
-export default function StructureView({ structures }) {
-    const structureComponents = structures.filter(s => !!s && s.hp).map(StructureRender);
+export default function StructureView({ assets, structures }) {
+    const structureComponents = structures.filter(s => s.hp)
+        .map((structure) => { return StructureRender(assets, structure) });
     return <>
         {structureComponents}
     </>

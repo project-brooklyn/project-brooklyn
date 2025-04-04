@@ -51,11 +51,10 @@ const projectileKey = (projectile) => {
 }
 
 const ProjectileRender = (projectile) => {
-    const { name, offset, quaternion, scale, hp, target } = projectile;
+    const { name, offset, quaternion, scale, hp } = projectile;
     const gltf = useLoader(GLTFLoader, modelFiles[name] || modelFiles.placeholder);
 
     if (hp <= 0) return null; // allows lasers to disappear
-    if (target && !target.hp) return null; // despawn projectiles with dead targets
     if (name in SPECIAL_PROJECTILES) return SPECIAL_PROJECTILES[name](projectile, gltf);
 
     const coordinates = convertToRenderCoordinates(projectile, offset);

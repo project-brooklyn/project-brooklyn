@@ -28,7 +28,6 @@ export default class SpikeTower extends Tower {
     }
 
     createProjectile = (path, target, enemies) => {
-        this.currentCooldown = this.cooldown;
         return new Spikes(...this.position, path, target, this.damage, enemies);
     }
 }

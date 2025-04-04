@@ -194,14 +194,13 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     return path;
 }
 
-export const getAdjacentTilePath = (tower, end) => {
-    const TICK_DURATION = 20;
+export const getAdjacentTilePath = (tower, end, duration = 20) => {
     const [endX, endY, endZ] = [round(end[0], 0), round(end[1], 0), end[2]];
     if (manhattan([tower.x, tower.y], [endX, endY]) !== 1) return null;
     if (tower.z + (tower.height / 2) < endZ || tower.z > endZ + (tower.height / 2)) return null;
     const avgX = (tower.x + endX) / 2;
     const avgY = (tower.y + endY) / 2;
-    return Array(TICK_DURATION).fill([avgX, avgY, tower.z + (tower.height / 2)]);
+    return Array(duration).fill([avgX, avgY, tower.z + (tower.height / 2)]);
 }
 
 export const getUpwardPath = (tower, speed = 0.04, steps = 50) => {

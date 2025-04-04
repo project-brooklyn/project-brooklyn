@@ -3,6 +3,7 @@ import SawBlade from "../projectiles/SawBlade";
 import Tower from "./Tower";
 
 const SCALE = 0.01;
+const SAW_BLADE_TICK_DURATION = 20;
 
 export default class SawTower extends Tower {
     static price = 150;
@@ -21,12 +22,11 @@ export default class SawTower extends Tower {
 
     getTravelTime = () => 1;
 
-    getProjectilePath = (target, gameMap) => {
-        return getAdjacentTilePath(this, target, gameMap);
+    getProjectilePath = (target, _gameMap, _travelTime) => {
+        return getAdjacentTilePath(this, target, SAW_BLADE_TICK_DURATION);
     }
 
     createProjectile = (path, target, enemies) => {
-        this.currentCooldown = this.cooldown;
         return new SawBlade(...this.position, path, target, this.damage, enemies);
     }
 }

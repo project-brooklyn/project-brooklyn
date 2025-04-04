@@ -258,7 +258,7 @@ export default class Game {
 
                 if (tower.appliedStatus) {
                     if (enemy.statuses.has(tower.appliedStatus)) {
-                        continue; // skup if enemy already has status
+                        continue; // skip if enemy already has status
                     }
                 }
 

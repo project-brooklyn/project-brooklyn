@@ -31,7 +31,7 @@ export default class SlowTower extends Tower {
 
     createProjectile = (path, target, _enemies) => {
         // create a dummy projectile, which is never rendered or used
-        // it applied the slow status and dies immediately
+        // it applies the slow status and dies immediately
         const dummyProjectile = new Projectile(...this.position, path);
 
         dummyProjectile.target = target

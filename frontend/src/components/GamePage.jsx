@@ -10,6 +10,7 @@ import { HtmlUI } from "./ui/HtmlUI";
 import ScorePhaseModal from "./ui/ScorePhaseModal";
 import LoseModal from "./ui/LoseModal";
 import WinModal from "./ui/WinModal";
+import { Howl, Howler } from 'howler';
 
 const NAME = "GamePage";
 
@@ -42,10 +43,20 @@ const GamePage = ({ gameMap, devMode = true }) => {
         }
     }, [game.devGui, showDevGui])
 
+    const startMusicAndHideModal = () => {
+        Howler.volume(0.5);
+        const sound = new Howl({
+            src: ['audio/funkysuspense.mp3']
+        });
+        sound.play();
+
+        setShowWelcomeModal(false)
+    }
+
     return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
         {showWelcomeModal &&
             <WelcomeModal
-                hideModal={() => setShowWelcomeModal(false)}
+                hideModal={startMusicAndHideModal}
                 setGame={setGame}
             />
         }

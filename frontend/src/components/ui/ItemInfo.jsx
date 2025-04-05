@@ -42,13 +42,13 @@ const TerraformInfo = ({ name }) => {
 }
 
 const TowerInfo = ({ tower }) => {
-    const { name, price, damage, cooldown, minRange, maxRange, buffs, description } = tower
+    const { name, price, damage, cooldown, minRange, maxRange, description } = tower
     return <div>
         <h5>Selected Tower</h5>
         <ul>
             <li>Type: {name}</li>
             <li>Price: {price}</li>
-            <li>Damage: {buffs.has(BUFFED) ? damage * 2 : damage}</li>
+            <li>Damage: {tower.hasBuff(BUFFED) ? damage * 2 : damage}</li>
             <li>Cooldown: {cooldown}</li>
             {minRange
                 ? <li>Range: {minRange} - {maxRange}</li>

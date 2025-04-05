@@ -97,7 +97,7 @@ export default class Game {
     }
 
     getAllTowers = () => {
-        return Array.from(this.gameMap.towers.values().filter(t => !!t));
+        return Array.from(this.gameMap.towers.values());
     }
 
     getTower = (x, y) => this.gameMap.getTower(x, y)
@@ -314,12 +314,13 @@ export default class Game {
 
     applyBuffs = () => {
         for (const tower of this.getAllTowers()) {
-            tower.buffs.clear();
+            tower.clearBuffs();
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
-            for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
+            for (const otherTower of this.getAllTowers()) {
+                if (!otherTower.canBuff(BUFFED)) continue;
                 if ((buffTower.getProjectilePath(otherTower.position, this.gameMap))) {
-                    otherTower.buffs.add(BUFFED);
+                    otherTower.applyBuff(BUFFED);
                 }
             }
         }

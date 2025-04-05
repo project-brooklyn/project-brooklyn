@@ -15,11 +15,27 @@ export default class Castle extends Entity {
         this.height = 0;
         this.status = Status.PERMANENT;
         this.description = "This is your castle. Prevent the enemies from reaching it!"
-        this.buffs = new Set();
     }
 
     takeDamage = (damage) => {
         this.hp -= damage;
         this.hp = Math.max(0, round(this.hp));
+    }
+
+    // Provide buff interface expected for towers
+    applyBuff(_buff) { }
+
+    removeBuff(_buff) { }
+
+    hasBuff(_buff) { }
+
+    getBuffs() {
+        return null;
+    }
+
+    clearBuffs() { }
+
+    canBuff(_buff) {
+        return false;
     }
 }

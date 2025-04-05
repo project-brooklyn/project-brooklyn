@@ -20,4 +20,8 @@ export default class BuffTower extends Tower {
     getProjectilePath = (target, _gameMap, _travelTime) => {
         return getAdjacentTilePath(this, target);
     }
+
+    canBuff(_buff) {
+        return false;
+    }
 }

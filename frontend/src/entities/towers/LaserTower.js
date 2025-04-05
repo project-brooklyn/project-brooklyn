@@ -34,8 +34,8 @@ export default class LaserTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, _enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Laser(...this.position, path);
+        return new Laser(...this.position, path, target, this.damage);
     }
 }

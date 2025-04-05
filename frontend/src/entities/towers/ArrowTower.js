@@ -34,8 +34,8 @@ export default class ArrowTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, _enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Arrow(...this.position, path);
+        return new Arrow(...this.position, path, target, this.damage);
     }
 }

@@ -8,9 +8,9 @@ export default class RockTower extends Tower {
     constructor(x, y, z, status) {
         super(x, y, z, status);
         this.name = 'rockTower';
-        this.cooldown = 50;
+        this.cooldown = 80;
         this.currentCooldown = 0;
-        this.damage = 20;
+        this.damage = 40;
         this.price = RockTower.price;
         this.minRange = 2.5;
         this.maxRange = 6;
@@ -32,8 +32,8 @@ export default class RockTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Rock(...this.position, path);
+        return new Rock(...this.position, path, target, this.damage, enemies);
     }
 }

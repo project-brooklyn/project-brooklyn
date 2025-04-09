@@ -17,7 +17,7 @@ export default class ArrowTower extends Tower {
         this.minRange = 1.5;
         this.maxRange = 4;
         this.height = 3.5;
-        this.description = "Shoots arrows in a straight line.";
+        this.description = "Shoots slow arrows in a straight line.";
     }
 
     getTravelTime = (target) => {

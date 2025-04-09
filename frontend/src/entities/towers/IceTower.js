@@ -20,6 +20,7 @@ export default class IceTower extends Tower {
         this.maxRange = 6;
         this.height = 3;
         this.appliedStatus = FROZEN;
+        this.description = "Launches a ball of ice, freezing enemies in an area for a short time.";
     }
 
     getTravelTime = (target) => {

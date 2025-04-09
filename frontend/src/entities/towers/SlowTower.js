@@ -20,6 +20,7 @@ export default class SlowTower extends Tower {
         this.height = 1;
         this.canAttackMultiple = true;
         this.appliedStatus = SLOWED;
+        this.description = "Slows down enemies that pass over this tower.";
     }
 
     getTravelTime = () => 1;

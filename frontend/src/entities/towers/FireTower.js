@@ -21,6 +21,7 @@ export default class FireTower extends Tower {
         this.maxRange = 2.5;
         this.height = 3;
         this.appliedStatus = BURNED;
+        this.description = "Burns enemies, causing damage over time.";
     }
 
     getTravelTime = (target) => {

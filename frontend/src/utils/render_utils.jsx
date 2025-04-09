@@ -8,11 +8,13 @@ export const tileConfig = {
 export const DEFAULT_SCALE = 0.01;
 
 export const modelFiles = {
+    alligator: './basic/alligator.glb',
     arrow: './basic/arrow.glb',
     arrowTower: './basic/ballista_tower.glb',
     buffTower: './basic/buff_tower.glb',
     castle: './basic/house.glb',
     cow: './basic/spherical_cow.glb',
+    cockroach: './basic/cockroach.glb',
     dollar: './basic/dollar.glb',
     fireTower: './basic/flame_tower.glb',
     flag: './basic/flag.glb',
@@ -22,8 +24,10 @@ export const modelFiles = {
     lamb: './basic/lamb.glb',
     laserTower: './basic/laser_tower.glb',
     moneyTower: './basic/money_tower.glb',
+    mouse: './basic/mouse.glb',
     placeholder: './placeholder.glb',
     portal: './basic/portal.glb',
+    rabbit: './basic/rabbit.glb',
     repairTower: './basic/repair_tower.glb',
     rock: './basic/cannonball.glb',
     rockTower: './basic/cannon_tower.glb',

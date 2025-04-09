@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import { Test0, TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
+import { TwinPeaks } from './pages/TestPages.jsx';
 import { AuthProvider } from './AuthProvider.jsx';
 
 const router = createBrowserRouter([
@@ -46,7 +47,11 @@ const router = createBrowserRouter([
     {
         path: '/teste',
         element: <TestE />,
-    }
+    },
+    {
+        path: '/twinpeaks',
+        element: <TwinPeaks />,
+    },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

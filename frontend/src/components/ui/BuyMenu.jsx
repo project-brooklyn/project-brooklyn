@@ -59,6 +59,7 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
             return;
         }
 
+        if (!purchasingItem.targetPosition) return;
         const { x, y, z } = purchasingItem.targetPosition;
         if (!isTop(gameMap, x, y, z) || isOccupied(game, x, y, z)) {
             setErrorMessage("Invalid location!");

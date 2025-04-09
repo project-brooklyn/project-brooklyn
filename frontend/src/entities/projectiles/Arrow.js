@@ -3,7 +3,7 @@ import Projectile from "./Projectile";
 import { convertToRenderCoordinates } from "../../utils/render_utils";
 
 export default class Arrow extends Projectile {
-    constructor (x, y, z, path) {
+    constructor(x, y, z, path, target, damage) {
         // Determine rotation based on the start and end of path.
         // We assume that models have a default orientation facing
         // forward along the positive y-axis. See GDD for more details.
@@ -22,6 +22,9 @@ export default class Arrow extends Projectile {
         }
 
         super(x, y, z, quaternion, path);
+
         this.name = "arrow";
+        this.target = target;
+        this.damage = damage;
     }
 }

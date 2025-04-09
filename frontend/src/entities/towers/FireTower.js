@@ -3,7 +3,9 @@ import Tower from "./Tower";
 import Flame from "../projectiles/Flame";
 import { BURNED } from "../statuses";
 
-const FLAME_SPEED = 0.05;
+const FLAME_SPEED = 0.1;
+// status towers should have travelTime << cooldown
+// to avoid multiple attacks on the same target
 
 export default class FireTower extends Tower {
     static price = 100;
@@ -35,8 +37,12 @@ export default class FireTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Flame(...this.position, path);
+        return new Flame(...this.position, path, target, enemies);
+    }
+
+    canBuff(_buff) {
+        return false;
     }
 }

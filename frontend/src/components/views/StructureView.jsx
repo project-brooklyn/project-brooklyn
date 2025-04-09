@@ -5,8 +5,11 @@ import { useLoader } from "@react-three/fiber";
 import HpView from "./HpView";
 import { StatusView } from "./StatusView";
 
+const NO_BUFFS = new Set();
+
 const StructureRender = (assets, structure) => {
-    const { scale, name, hp, maxHp, offset, rotation, buffs, height } = structure;
+    const { scale, name, hp, maxHp, offset, rotation, height } = structure;
+    const buffs = structure.getBuffs() || NO_BUFFS;
     const coordinates = convertToRenderCoordinates(structure, offset);
 
     const modelFile = modelFiles[name] || modelFiles.placeholder;

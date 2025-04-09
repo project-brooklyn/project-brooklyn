@@ -1,8 +1,13 @@
+import * as THREE from "three";
 import { Cone } from '@react-three/drei';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { convertToRenderCoordinates, modelFiles } from "../../utils/render_utils";
 import { useLoader } from "@react-three/fiber";
 import { Status } from "../../entities/towers/Tower";
+
+const INDICATOR_MATERIAL = new THREE.MeshBasicMaterial({
+    color: "red",
+})
 
 export default function SelectedTowerView({ selectedTower }) {
     const { scale, name, offset, status } = selectedTower;
@@ -44,10 +49,10 @@ const SelectedTowerIndicatorView = ({ coordinates }) => {
 
     return <Cone
         args={[RADIUS, HEIGHT, RADIAL_SEGMENTS]}
+        material={INDICATOR_MATERIAL}
         position={[coordinates.x, coordinates.y + 1.25, coordinates.z]}
         rotation={[0, 0, Math.PI]}
     >
-        <meshBasicMaterial color="red" />
     </Cone>
 
 }

@@ -5,10 +5,8 @@ export default class Guy extends Enemy {
     static MAX_HP = 100;
     static NAME = "guy";
 
-    constructor (x, y, z, scale) {
-        super(x, y, z, scale);
+    constructor(x, y, z, game, scale) {
+        super(x, y, z, game, Guy.MAX_HP, scale);
         this.name = Guy.NAME;
-        this.maxHp = Guy.MAX_HP;
-        this.hp = this.maxHp;
     }
 }

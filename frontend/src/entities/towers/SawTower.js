@@ -18,6 +18,7 @@ export default class SawTower extends Tower {
         this.minRange = 0;
         this.maxRange = 1;
         this.height = 3;
+        this.description = "Deploys saw blades laterally, damaging adjacent enemies at similar heights.";
     }
 
     getTravelTime = () => 1;

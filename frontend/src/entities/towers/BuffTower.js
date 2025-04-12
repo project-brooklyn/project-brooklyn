@@ -15,6 +15,7 @@ export default class BuffTower extends Tower {
         this.maxRange = 1;
         this.height = 5;
         this.appliedStatus = BUFFED;
+        this.description = "Increases the damage of towers on adjacent tiles.";
     }
 
     getProjectilePath = (target, _gameMap, _travelTime) => {

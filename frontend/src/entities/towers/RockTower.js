@@ -15,7 +15,7 @@ export default class RockTower extends Tower {
         this.minRange = 2.5;
         this.maxRange = 6;
         this.height = 4;
-        this.canAttackMultiple = false; // splash damage not implemented, this is for saw/spike towers
+        this.description = "Launches a rock at enemies, dealing damage in an area on impact.";
     }
 
     getTravelTime = (target) => {

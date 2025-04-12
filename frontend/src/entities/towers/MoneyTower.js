@@ -17,6 +17,7 @@ export default class MoneyTower extends Tower {
         this.currentCooldown = 0;
         this.price = MoneyTower.price;
         this.height = 3;
+        this.description = `Generates ${GOLD_PER_LEVEL} gold at the beginning of each level.`;
     }
 
     getTravelTime = () => {

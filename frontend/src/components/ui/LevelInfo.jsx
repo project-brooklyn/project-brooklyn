@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const LevelInfo = ({game}) => {
+export const LevelInfo = ({ game }) => {
     const { enemyInfo } = game;
     const { enemy, count, delay, remaining } = enemyInfo;
 
@@ -17,6 +17,7 @@ export const LevelInfo = ({game}) => {
         <p>{`${game.enemies.filter(e => !!e.hp).length} enemies still alive.`}</p>
         <p>{`${remaining} enemies yet to spawn.`}</p>
         <p>{`Enemy: ${enemy.NAME.charAt(0).toUpperCase() + enemy.NAME.slice(1)}, Health: ${enemy.MAX_HP}, Speed: ${enemy.SPEED}`}</p>
+        <p>{enemy.DESCRIPTION}</p>
         <p>{`Castle HP: ${game.castle.hp}/${game.castle.maxHp}`}</p>
     </div>
 }

@@ -103,9 +103,6 @@ export const getLinearTravelTime = (start, end, speed) => {
     return Math.floor(dist / speed);
 }
 
-const PARENT_TOWER_RADIUS = 1;
-const PATH_END_TOLERANCE = 0.5;
-
 export const getStraightPath = (tower, end, gameMap, travelTime) => {
     const { x, y, z, minRange, maxRange } = tower;
     const start = [x, y, z + tower.height]; // shoot from top of tower, not ground
@@ -129,14 +126,18 @@ export const getStraightPath = (tower, end, gameMap, travelTime) => {
         const [dx, dy, dz] = scaledVector;
 
         const nextPosition = [x + dx, y + dy, z + dz];
-        if (pythagorean(start, nextPosition) > PARENT_TOWER_RADIUS && !isAboveObstacles(...nextPosition, gameMap, true)) {
-            return null;
+        const isInOriginTile = isSameCell(tower, nextPosition);
+        // ignore origin tower in checking for obstacles
+        // stop projectile on hitting obstacle (terrain or other tower)
+        if (!isAboveObstacles(...nextPosition, gameMap, !isInOriginTile)) {
+            break;
         }
         path.push(nextPosition);
     }
 
     // check if path hits ground within tolerance of target
-    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return null;
+    const STRAIGHT_PATH_END_TOLERANCE = 0.5;
+    if (pythagorean(path.at(-1), end) > STRAIGHT_PATH_END_TOLERANCE) return null;
     return path;
 }
 
@@ -180,17 +181,24 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     const angleAroundZ = Math.atan2(end[1] - start[1], end[0] - start[0]);
 
     const path = [start];
-    while (isAboveObstacles(...path.at(-1), gameMap)) {
-        const [x, y, z] = path.at(-1);
-        const t = (path.length - 1) * timeInterval;
-        const dx = initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.cos(angleAroundZ) * timeInterval;
-        const dy = initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.sin(angleAroundZ) * timeInterval;
-        const dz = (initialVelocity * Math.sin(ANGLE_TO_HORIZONTAL) * timeInterval) + (GRAVITATIONAL_ACCELERATION * t * timeInterval);
-        path.push([x + dx, y + dy, z + dz]);
+    for (let t = 0; t < travelTime; t += timeInterval) {
+        const lastPosition = path.at(-1);
+        const isInOriginTile = isSameCell(tower, path.at(-1));
+        // ignore origin tower in checking for obstacles
+        // stop projectile on hitting obstacle (terrain or other tower)
+        if (!isAboveObstacles(...lastPosition, gameMap, !isInOriginTile)) {
+            break;
+        }
+
+        const x = start[0] + (initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.cos(angleAroundZ) * t);
+        const y = start[1] + (initialVelocity * Math.cos(ANGLE_TO_HORIZONTAL) * Math.sin(angleAroundZ) * t);
+        const z = start[2] + (initialVelocity * Math.sin(ANGLE_TO_HORIZONTAL) * t) + (0.5 * GRAVITATIONAL_ACCELERATION * t * t);
+        path.push([x, y, z]);
     }
 
     // check if path hits ground within tolerance of target
-    if (pythagorean(path.at(-1), end) > PATH_END_TOLERANCE) return null;
+    const PARABOLIC_PATH_END_TOLERANCE = 1.5;
+    if (pythagorean(path.at(-1), end) > PARABOLIC_PATH_END_TOLERANCE) return null;
     return path;
 }
 

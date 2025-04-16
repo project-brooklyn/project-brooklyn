@@ -183,7 +183,7 @@ export const getParabolicPath = (tower, end, gameMap, travelTime) => {
     const path = [start];
     for (let t = 0; t < travelTime; t += timeInterval) {
         const lastPosition = path.at(-1);
-        const isInOriginTile = isSameCell(tower, path.at(-1));
+        const isInOriginTile = isSameCell(tower, lastPosition);
         // ignore origin tower in checking for obstacles
         // stop projectile on hitting obstacle (terrain or other tower)
         if (!isAboveObstacles(...lastPosition, gameMap, !isInOriginTile)) {

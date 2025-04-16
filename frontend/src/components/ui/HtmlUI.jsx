@@ -5,6 +5,7 @@ import { LevelInfo } from "./LevelInfo";
 import { SellMenu } from "./SellMenu";
 import { UndoMenu } from "./UndoMenu";
 import { ItemInfo } from "./ItemInfo";
+import { Box, Stack } from "@mui/material";
 
 export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
     const [level, setLevel] = useState(game.level);
@@ -19,34 +20,39 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
 
     const handleClick = () => game.setPhase(DEFEND);
 
-    return <div className="w-25 flex-grow-1 border border-2 border-danger m-2 d-flex flex-column overflow-scroll">
-        <div className="d-flex justify-content-between">
-            <span>{`Level: ${level}`}</span>
-            <span>{`Gold: ${gold}`}</span>
-            <span>{`Phase: ${phase.toUpperCase()}`}</span>
-        </div>
-        {game.enableTowerLimits && <div className="d-flex justify-content-around">
-            <span>{`Towers: ${game.getTowerCount()}`}</span>
-            <span>{`Tower Limit: ${game.towerLimit}`}</span>
-        </div>}
+    return <Box sx={{ width: "25vw", p: 2 }} >
+        <Stack spacing={2}>
+            <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+                <span>{`Level: ${level}`}</span>
+                <span>{`Gold: ${gold}`}</span>
+                <span>{`Phase: ${phase.toUpperCase()}`}</span>
+            </Stack>
+            {
+                game.enableTowerLimits && <Stack>
+                    <span>{`Towers: ${game.getTowerCount()}`}</span>
+                    <span>{`Tower Limit: ${game.towerLimit}`}</span>
+                </Stack>
+            }
 
-        <div className="my-4">
-            {phase === BUILD && <>
-                <div className="h-100 overflow-auto border border-2 border-info">
+            {phase === BUILD &&
+                <Stack>
                     <h5>Buy/Sell Menu</h5>
                     <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
                     <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
                     <UndoMenu game={game} />
-                </div >
-            </>}
-            {phase === DEFEND && <>
-                <LevelInfo game={game} />
-                <ItemInfo item={selectedTower} />
-            </>}
-        </div>
+                </Stack>
+            }
+            {phase === DEFEND &&
+                <Stack>
+                    <LevelInfo game={game} />
+                    <ItemInfo item={selectedTower} />
+                </Stack>
+            }
 
-        {phase === BUILD && <div className="d-flex justify-content-center mt-auto mb-4">
-            <button onClick={handleClick}>START NEXT LEVEL</button>
-        </div>}
-    </div>
+            {phase === BUILD && <Stack>
+                <button onClick={handleClick}>START NEXT LEVEL</button>
+            </Stack>
+            }
+        </Stack>
+    </Box >
 }

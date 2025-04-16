@@ -105,54 +105,56 @@ export const BuyMenu = ({ game, selectedTower, setSelectedTower }) => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [purchasingItem])
 
-    return <div onMouseEnter={clear}>
+    return <div>
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-        <ul className="list-unstyled">
-            {Array.from(TOWERS.entries())
-                .filter(game.enableBlueprints ? ([key, _]) => game.blueprints.has(key) : () => true)
-                .map(([towerKey, { price }]) => {
-                    return <li key={towerKey} className="mb-2">
+        <div onMouseEnter={clear}>
+            <ul className="list-unstyled">
+                {Array.from(TOWERS.entries())
+                    .filter(game.enableBlueprints ? ([key, _]) => game.blueprints.has(key) : () => true)
+                    .map(([towerKey, { price }]) => {
+                        return <li key={towerKey} className="mb-2">
+                            <label role='button'>
+                                <input
+                                    type="checkbox"
+                                    checked={purchasingItem?.name === towerKey}
+                                    onChange={() => {
+                                        clear();
+                                        if (purchasingItem?.name !== towerKey) {
+                                            setPurchasingItem({
+                                                name: towerKey,
+                                                targetPosition: null,
+                                            });
+                                        }
+                                    }}
+                                    className="mx-2"
+                                />
+                                {towerKey}: {price}
+                            </label>
+                        </li>
+                    })}
+                {Array.from(TERRAFORMS.entries()).map(([terraformKey, { label, price }]) => {
+                    return <li key={terraformKey} className="mb-2 cursor-pointer">
                         <label role='button'>
                             <input
                                 type="checkbox"
-                                checked={purchasingItem?.name === towerKey}
+                                checked={purchasingItem?.name === terraformKey}
                                 onChange={() => {
                                     clear();
-                                    if (purchasingItem?.name !== towerKey) {
+                                    if (purchasingItem?.name !== terraformKey) {
                                         setPurchasingItem({
-                                            name: towerKey,
+                                            name: terraformKey,
                                             targetPosition: null,
                                         });
                                     }
                                 }}
                                 className="mx-2"
                             />
-                            {towerKey}: {price}
+                            {label}: {price}
                         </label>
                     </li>
                 })}
-            {Array.from(TERRAFORMS.entries()).map(([terraformKey, { label, price }]) => {
-                return <li key={terraformKey} className="mb-2 cursor-pointer">
-                    <label role='button'>
-                        <input
-                            type="checkbox"
-                            checked={purchasingItem?.name === terraformKey}
-                            onChange={() => {
-                                clear();
-                                if (purchasingItem?.name !== terraformKey) {
-                                    setPurchasingItem({
-                                        name: terraformKey,
-                                        targetPosition: null,
-                                    });
-                                }
-                            }}
-                            className="mx-2"
-                        />
-                        {label}: {price}
-                    </label>
-                </li>
-            })}
-        </ul>
+            </ul>
+        </div>
         {purchasingItem
             ? <ItemInfo item={purchasingItem} isPurchased={false} />
             : selectedTower && <ItemInfo item={selectedTower} />

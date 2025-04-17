@@ -1,5 +1,4 @@
 import { Canvas } from "@react-three/fiber";
-import Stats from 'three/examples/jsm/libs/stats.module';
 // import { useAuth } from "../AuthContext";
 import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
@@ -30,13 +29,6 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState("");
     const [showDevGui, _setShowDevGui] = useState(devMode);
-
-    useEffect(() => {
-        const statsDomElement = createStatsGui();
-        return () => {
-            statsDomElement.remove();
-        }
-    }, []);
 
     useEffect(() => {
         game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
@@ -118,14 +110,6 @@ const GamePage = ({ gameMap, devMode = true }) => {
             </Typography>
         </Box >
     )
-}
-
-const createStatsGui = () => {
-    const stats = new Stats();
-    stats.showPanel(0);
-    stats.domElement.style.top = "64px";
-    document.body.appendChild(stats.domElement);
-    return stats.domElement;
 }
 
 const TopBar = ({ user, logout }) => {

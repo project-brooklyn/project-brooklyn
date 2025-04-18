@@ -11,6 +11,7 @@ import ProjectileView from "./views/ProjectileView";
 import PathView from "./views/PathView";
 import SelectedTowerView from "./views/SelectedTowerView";
 import { RangeIndicatorView } from "./views/RangeIndicatorView";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 
 
 export default function GameDisplay({ game, assets, selectedTower }) {
@@ -24,10 +25,21 @@ export default function GameDisplay({ game, assets, selectedTower }) {
     const [ready, setReady] = useState(false);
 
     const [ticks, setTicks] = useState(0);
+    const [stats, _setStats] = useState(new Stats());
 
     const orbitControls = useRef();
     const skybox = useRef();
     const shadowCamera = useRef();
+
+    useEffect(() => {
+        stats.showPanel(0);
+        stats.domElement.style.top = "64px";
+        document.body.appendChild(stats.domElement);
+
+        return () => {
+            stats.domElement.remove();
+        }
+    }, []);
 
     useEffect(() => {
         setReady(true);
@@ -78,6 +90,7 @@ export default function GameDisplay({ game, assets, selectedTower }) {
 
     useFrame((_state, _delta, _xrFrame) => {
         game.tick();
+        stats.update();
 
         setTicks(ticks + 1); // this is a hack to make the canvas re-render
         // Without this, `GameDisplay` will not re-render during the DEFEND phase. (The game calculations do still occur though.)

@@ -12,8 +12,8 @@ export const SellMenu = ({ game, selectedTower, setSelectedTower }) => {
     }
 
     // renders nothing for null selectedTower, planning, and permanent towers
-    return <div className="d-flex justify-content-center">
-        {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower for {selectedTower.price/2}</button>}
+    return <div>
+        {selectedTower?.status === TowerStatus.BUILT && <button onClick={sellTower}>Sell Tower for {selectedTower.price / 2}</button>}
         {selectedTower?.status === TowerStatus.PENDING && <button disabled>Can&apos;t Sell Pending Tower</button>}
     </div>
 }

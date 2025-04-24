@@ -19,6 +19,11 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Stack from "@mui/material/Stack";
+import Fab from "@mui/material/Fab";
+import AddIcon from '@mui/icons-material/Add';
+import Container from "@mui/material/Container";
+import Modal from "@mui/material/Modal";
+import BuyModal from "./ui/BuyModal";
 
 const NAME = "GamePage";
 
@@ -138,8 +143,22 @@ const TopBar = ({ user, logout }) => {
     </div>)
 }
 
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
+
 const GameContainer = ({ game }) => {
     const [selectedTower, setSelectedTower] = useState(null);
+    const [showBuyModal, setShowBuyModal] = useState(false);
     const { mouseInput } = game;
 
     useEffect(() => {
@@ -169,11 +188,19 @@ const GameContainer = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return (
+    return (<>
         <Stack direction="row" spacing={2} height="100%">
-            <Canvas shadows >
-                <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
-            </Canvas>
+            <Stack width="100%">
+                <Canvas shadows >
+                    <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
+                </Canvas>
+
+                <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
+                    <Fab variant="extended" color="primary" onClick={() => setShowBuyModal(true)}>
+                        <AddIcon sx={{ mr: 1 }} /> Buy
+                    </Fab>
+                </Container>
+            </Stack>
             <HtmlUI
                 game={game}
                 phase={game.phase}
@@ -181,6 +208,8 @@ const GameContainer = ({ game }) => {
                 setSelectedTower={setSelectedTower}
             />
         </Stack>
+        <BuyModal open={showBuyModal} setOpen={setShowBuyModal} />
+    </>
     )
 }
 

@@ -1,6 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 // import { useAuth } from "../AuthContext";
 import Game, { BUILD, DEFEND, SCORE, WIN, LOSE } from "../Game";
+import { TOWERS } from "../entities/buildables";
+import { Status as TowerStatus } from "../entities/towers/Tower";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -20,8 +22,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Stack from "@mui/material/Stack";
 import Fab from "@mui/material/Fab";
-// import AddIcon from '@mui/icons-material/Add';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Container from "@mui/material/Container";
 import BuyModal from "./ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
@@ -77,6 +79,8 @@ const GamePage = ({ gameMap, devMode = true }) => {
 
         setShowWelcomeModal(false)
     }
+
+    const disableSellButton = !selectedTower || selectedTower.status !== TowerStatus.BUILT;
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -139,14 +143,26 @@ const GamePage = ({ gameMap, devMode = true }) => {
             </Stack>
 
             <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
-                <Fab
-                    variant="extended"
-                    color="primary"
-                    disabled={showGameModal !== BUILD}
-                    onClick={() => setShowBuyModal(true)}
-                >
-                    <ShoppingCartIcon sx={{ mr: 1 }} /> Buy
-                </Fab>
+                <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
+                    <Fab
+                        aria-label="buy-button"
+                        variant="extended"
+                        color="primary"
+                        disabled={showGameModal !== BUILD}
+                        onClick={() => setShowBuyModal(true)}
+                    >
+                        <ShoppingCartIcon sx={{ mr: 1 }} /> Buy
+                    </Fab>
+                    <Fab
+                        aria-label="sell-button"
+                        variant="extended"
+                        color="error"
+                        disabled={disableSellButton}
+                        onClick={() => { sellTower(game, selectedTower, setSelectedTower) }}
+                    >
+                        <DeleteIcon sx={{ mr: 1 }} /> Sell {selectedTower?.price && `($${selectedTower?.price / 2})`}
+                    </Fab>
+                </Stack>
             </Container>
 
             <BuyModal
@@ -162,6 +178,15 @@ const GamePage = ({ gameMap, devMode = true }) => {
             </Typography>
         </Box >
     )
+}
+
+const sellTower = (game, selectedTower, setSelectedTower) => {
+    game.removeTower(selectedTower.x, selectedTower.y);
+
+    const t = TOWERS.get(selectedTower.name);
+    game.gold += 0.5 * t.price;
+    game.setPath();
+    setSelectedTower(null);
 }
 
 const TopBar = ({ user, logout }) => {

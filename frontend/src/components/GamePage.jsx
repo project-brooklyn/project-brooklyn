@@ -32,11 +32,12 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 const NAME = "GamePage";
+const BUY_KEY = "b";
 
 const GamePage = ({ gameMap, devMode = true }) => {
     // const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
-    const { undoManager } = game;
+    const { keyboardInput, undoManager } = game;
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState(game.phase);
@@ -56,6 +57,13 @@ const GamePage = ({ gameMap, devMode = true }) => {
         game.addPhaseListener(DEFEND, () => setShowGameModal(DEFEND))
         game.addPhaseListener(WIN, () => setShowGameModal(WIN))
         game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
+
+        keyboardInput.addKeyDownCallback(BUY_KEY, NAME, () => {
+            if (game.phase === BUILD) {
+                setShowBuyModal(true);
+            }
+        })
+
         return () => {
             game.removeAllPhaseListeners(BUILD);
             game.removeAllPhaseListeners(DEFEND);
@@ -63,7 +71,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             game.removeAllPhaseListeners(WIN);
             game.removeAllPhaseListeners(LOSE);
         }
-    }, [game])
+    }, [game, keyboardInput])
 
     useEffect(() => {
         if (showDevGui) {
@@ -154,7 +162,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                         disabled={showGameModal !== BUILD}
                         onClick={() => setShowBuyModal(true)}
                     >
-                        <ShoppingCartIcon sx={{ mr: 1 }} /> Buy
+                        <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)
                     </Fab>
                     <Fab
                         aria-label="sell-button"

@@ -37,7 +37,7 @@ export const HtmlUI = ({ game, selectedTower, setSelectedTower }) => {
             {phase === BUILD &&
                 <Stack>
                     <h5>Buy/Sell Menu</h5>
-                    <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                    {/* <BuyMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} /> */}
                     <SellMenu game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
                     <UndoMenu game={game} />
                 </Stack>

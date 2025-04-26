@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 // import { useAuth } from "../AuthContext";
-import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
+import Game, { BUILD, DEFEND, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -20,10 +20,12 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Stack from "@mui/material/Stack";
 import Fab from "@mui/material/Fab";
-import AddIcon from '@mui/icons-material/Add';
+// import AddIcon from '@mui/icons-material/Add';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Container from "@mui/material/Container";
-import Modal from "@mui/material/Modal";
 import BuyModal from "./ui/BuyModal";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const NAME = "GamePage";
 
@@ -32,17 +34,27 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [game, setGame] = useState(() => new Game(new gameMap()));
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
-    const [showGameModal, setShowGameModal] = useState("");
+    const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
 
+    const [selectedTower, setSelectedTower] = useState(null);
+    const [showBuyModal, setShowBuyModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const handleErrorClose = () => {
+        setErrorMessage(null);
+    }
+
     useEffect(() => {
-        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
         game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
+        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
+        game.addPhaseListener(DEFEND, () => setShowGameModal(DEFEND))
         game.addPhaseListener(WIN, () => setShowGameModal(WIN))
         game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
         return () => {
-            game.removeAllPhaseListeners(SCORE);
             game.removeAllPhaseListeners(BUILD);
+            game.removeAllPhaseListeners(DEFEND);
+            game.removeAllPhaseListeners(SCORE);
             game.removeAllPhaseListeners(WIN);
             game.removeAllPhaseListeners(LOSE);
         }
@@ -86,6 +98,22 @@ const GamePage = ({ gameMap, devMode = true }) => {
                 </Toolbar>
             </AppBar>
 
+            <Snackbar
+                open={Boolean(errorMessage)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={3000}
+                onClose={handleErrorClose}
+            >
+                <Alert
+                    onClose={handleErrorClose}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+
             {showWelcomeModal &&
                 <WelcomeModal
                     hideModal={startMusicAndHideModal}
@@ -107,8 +135,27 @@ const GamePage = ({ gameMap, devMode = true }) => {
             }
 
             <Stack sx={{ height: "95vh" }} >
-                <GameContainer game={game} />
+                <GameContainer game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
             </Stack>
+
+            <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
+                <Fab
+                    variant="extended"
+                    color="primary"
+                    disabled={showGameModal !== BUILD}
+                    onClick={() => setShowBuyModal(true)}
+                >
+                    <ShoppingCartIcon sx={{ mr: 1 }} /> Buy
+                </Fab>
+            </Container>
+
+            <BuyModal
+                open={showBuyModal}
+                setOpen={setShowBuyModal}
+                game={game}
+                setSelectedTower={setSelectedTower}
+                setErrorMessage={setErrorMessage}
+            />
 
             <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
                 © 2025, BK Studios
@@ -143,22 +190,7 @@ const TopBar = ({ user, logout }) => {
     </div>)
 }
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
-
-
-const GameContainer = ({ game }) => {
-    const [selectedTower, setSelectedTower] = useState(null);
-    const [showBuyModal, setShowBuyModal] = useState(false);
+const GameContainer = ({ game, selectedTower, setSelectedTower }) => {
     const { mouseInput } = game;
 
     useEffect(() => {
@@ -178,7 +210,7 @@ const GameContainer = ({ game }) => {
             if (!tower) return;
 
             setSelectedTower(current => {
-                // if the tower is currentlyselected, deselect it
+                // if the tower is currently selected, deselect it
                 // otherwise, select the tower
                 return tower === current ? null : tower;
             });
@@ -194,12 +226,6 @@ const GameContainer = ({ game }) => {
                 <Canvas shadows >
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
-
-                <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
-                    <Fab variant="extended" color="primary" onClick={() => setShowBuyModal(true)}>
-                        <AddIcon sx={{ mr: 1 }} /> Buy
-                    </Fab>
-                </Container>
             </Stack>
             <HtmlUI
                 game={game}
@@ -208,7 +234,6 @@ const GameContainer = ({ game }) => {
                 setSelectedTower={setSelectedTower}
             />
         </Stack>
-        <BuyModal open={showBuyModal} setOpen={setShowBuyModal} />
     </>
     )
 }

@@ -161,13 +161,15 @@ export default function BuyModal({ open, setOpen, game, setSelectedTower, setErr
 
                 <Stack direction="row" spacing={2} sx={{ mt: 2, flexGrow: 1 }}>
                     <List dense={true}>
-                        {Array.from(TOWERS.entries()).map(([name, { price }]) => {
-                            return <ListItem key={name}>
-                                <ListItemButton onClick={() => { setItem(name) }}>
-                                    <ListItemText primary={name} secondary={`Price: ${price}`} />
-                                </ListItemButton>
-                            </ListItem>
-                        })}
+                        {Array.from(TOWERS.entries())
+                            .filter(game.enableBlueprints ? ([key, _]) => game.blueprints.has(key) : () => true)
+                            .map(([name, { price }]) => {
+                                return <ListItem key={name}>
+                                    <ListItemButton onClick={() => { setItem(name) }}>
+                                        <ListItemText primary={name} secondary={`Price: ${price}`} />
+                                    </ListItemButton>
+                                </ListItem>
+                            })}
                         {Array.from(TERRAFORMS.entries()).map(([name, { label, price }]) => {
                             return <ListItem key={name}>
                                 <ListItemButton onClick={() => { setItem(name) }}>

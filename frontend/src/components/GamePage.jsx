@@ -24,6 +24,8 @@ import Stack from "@mui/material/Stack";
 import Fab from "@mui/material/Fab";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 import Container from "@mui/material/Container";
 import BuyModal from "./ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
@@ -34,6 +36,7 @@ const NAME = "GamePage";
 const GamePage = ({ gameMap, devMode = true }) => {
     // const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
+    const { undoManager } = game;
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState(game.phase);
@@ -161,6 +164,31 @@ const GamePage = ({ gameMap, devMode = true }) => {
                         onClick={() => { sellTower(game, selectedTower, setSelectedTower) }}
                     >
                         <DeleteIcon sx={{ mr: 1 }} /> Sell {selectedTower?.price && `($${selectedTower?.price / 2})`}
+                    </Fab>
+                    <Fab
+                        aria-label="undo-button"
+                        variant="extended"
+                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
+                        onClick={undoManager.undo}
+                    >
+                        <UndoIcon sx={{ mr: 1 }} /> Undo
+                    </Fab>
+                    <Fab
+                        aria-label="redo-button"
+                        variant="extended"
+                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
+                        onClick={undoManager.redo}
+                    >
+                        <RedoIcon sx={{ mr: 1 }} /> Redo
+                    </Fab>
+                    <Fab
+                        aria-label="start-button"
+                        variant="extended"
+                        color="info"
+                        disabled={showGameModal !== BUILD}
+                        onClick={() => game.setPhase(DEFEND)}
+                    >
+                        Start Next Level
                     </Fab>
                 </Stack>
             </Container>

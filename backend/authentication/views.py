@@ -12,13 +12,12 @@ class TestView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        print(request)
         username = request.data.get('username')
         password = request.data.get('password')
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
+            # login(request, user) # handled in frontend
             token, created = Token.objects.get_or_create(user=user)
             serialized_user = {
                 'id': user.id,
@@ -31,7 +30,7 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     def post(self, request):
-        logout(request)
+        # logout(request) # handled in frontend
         return Response({'detail': 'Successfully logged out'})
     
 class SignUpView(APIView):

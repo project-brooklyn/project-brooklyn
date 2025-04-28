@@ -19,6 +19,7 @@ export default class Game {
     constructor(gameMap) {
         this.level = 1;
         this.phase = BUILD;
+        this.createdAt = Date.now().toString();
 
         this.gameMap = gameMap;
         this.gameMapOverrides = new Map();
@@ -343,6 +344,7 @@ export default class Game {
 
     toJSON = () => {
         return {
+            createdAt: this.createdAt,
             gameMap: this.gameMap.toJSON(),
             level: this.level,
             gold: this.gold,
@@ -354,7 +356,7 @@ export default class Game {
         try {
             const decodedString = atob(hashedString);
             const json = JSON.parse(decodedString);
-            const { gameMap, level, gold, castleHP } = json;
+            const { gameMap, level, gold, castleHP, createdAt } = json;
 
             if (!gameMap || !level || gold === null || !castleHP) {
                 throw new Error('Invalid game data');
@@ -364,6 +366,7 @@ export default class Game {
             newGame.level = level;
             newGame.gold = gold;
             newGame.castle.hp = castleHP;
+            newGame.createdAt = createdAt || Date.now().toString();
 
             return newGame;
         } catch (error) {

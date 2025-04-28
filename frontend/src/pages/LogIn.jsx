@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 
 const LogIn = () => {
@@ -11,8 +11,10 @@ const LogIn = () => {
     const [error, setError] = useState('');
     const { user, login, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
-    useEffect(() => {if (user) logout()}, [user, logout]);
+    useEffect(() => { if (user) logout() }, [user, logout]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,7 +23,7 @@ const LogIn = () => {
             [name]: value,
         }));
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -34,7 +36,7 @@ const LogIn = () => {
             // handle user in session
 
             login(user);
-            navigate('/');
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.response.data.error);
         }
@@ -45,7 +47,7 @@ const LogIn = () => {
             <h2>Login</h2>
             <br />
             <label>
-                Username: 
+                Username:
                 <input
                     type="username"
                     name="username"
@@ -55,7 +57,7 @@ const LogIn = () => {
             </label>
             <br />
             <label>
-                Password: 
+                Password:
                 <input
                     type="password"
                     name="password"

@@ -11,6 +11,8 @@ export default class IceTower extends Tower {
         super(x, y, z, status);
         this.name = 'iceTower';
         this.cooldown = 150;
+        // status towers should have travelTime << cooldown
+        // to avoid multiple attacks on the same target
         this.currentCooldown = 0;
         this.damage = 0;
         this.price = IceTower.price;
@@ -18,6 +20,7 @@ export default class IceTower extends Tower {
         this.maxRange = 6;
         this.height = 3;
         this.appliedStatus = FROZEN;
+        this.description = "Launches a ball of ice, freezing enemies in an area for a short time.";
     }
 
     getTravelTime = (target) => {
@@ -34,8 +37,12 @@ export default class IceTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Snowball(...this.position, path);
+        return new Snowball(...this.position, path, target, enemies);
+    }
+
+    canBuff(_buff) {
+        return false;
     }
 }

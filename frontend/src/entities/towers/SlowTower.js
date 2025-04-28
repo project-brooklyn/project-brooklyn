@@ -1,6 +1,7 @@
 import Tower from "./Tower";
 import { isSameCell } from "../../utils/game_utils";
 import { SLOWED } from "../statuses";
+import Projectile from "../projectiles/Projectile";
 
 const SCALE = 0.01;
 
@@ -19,6 +20,7 @@ export default class SlowTower extends Tower {
         this.height = 1;
         this.canAttackMultiple = true;
         this.appliedStatus = SLOWED;
+        this.description = "Slows down enemies that pass over this tower.";
     }
 
     getTravelTime = () => 1;
@@ -28,8 +30,22 @@ export default class SlowTower extends Tower {
         return [this.position, target.position];
     }
 
-    createProjectile = (_path) => {
-        // current iteration has no cooldown, otherwise cooldown would be set here
-        return null
+    createProjectile = (_path, target, _enemies) => {
+        // create a dummy projectile, which is never rendered or used
+        // it applies the slow status and dies immediately
+        const dummyProjectile = new Projectile();
+
+        dummyProjectile.path = [];
+        dummyProjectile.target = target
+        dummyProjectile.appliedStatus = this.appliedStatus;
+        dummyProjectile.instantEffect = true;
+
+        dummyProjectile.effectFunction();
+        dummyProjectile.hp = 0;
+        return dummyProjectile;
+    }
+
+    canBuff(_buff) {
+        return false;
     }
 }

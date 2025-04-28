@@ -5,6 +5,7 @@ import { getUpwardPath } from "../../utils/game_utils";
 const SCALE = 0.02;
 const WRENCH_SPEED = 0.04;
 const WRENCH_STEPS = 50;
+const REPAIR_PER_LEVEL = 100;
 
 export default class RepairTower extends Tower {
     static price = 100;
@@ -16,6 +17,7 @@ export default class RepairTower extends Tower {
         this.currentCooldown = 0;
         this.price = RepairTower.price;
         this.height = 3;
+        this.description = `Repairs the castle by ${REPAIR_PER_LEVEL} HP at the beginning of each level.`;
     }
 
     getTravelTime = () => {
@@ -31,7 +33,6 @@ export default class RepairTower extends Tower {
     }
 
     upkeep = (game) => {
-        game.castle.hp = Math.min(game.castle.hp + 100, game.castle.maxHp);
+        game.castle.hp = Math.min(game.castle.hp + REPAIR_PER_LEVEL, game.castle.maxHp);
     }
-
 }

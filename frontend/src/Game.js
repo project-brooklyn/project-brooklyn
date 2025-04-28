@@ -59,6 +59,8 @@ export default class Game {
         this.configureCameraControls();
 
         this.devGui = new GUI({ title: "Debug Menu" });
+        this.devGui.close();
+
         this.phaseListeners = {
             [BUILD]: [],
             [DEFEND]: [
@@ -97,7 +99,7 @@ export default class Game {
     }
 
     getAllTowers = () => {
-        return Array.from(this.gameMap.towers.values().filter(t => !!t));
+        return Array.from(this.gameMap.towers.values());
     }
 
     getTower = (x, y) => this.gameMap.getTower(x, y)
@@ -123,7 +125,7 @@ export default class Game {
     }
 
     spawnEnemy = (enemy) => {
-        const newEnemy = new enemy(...this.steps[0]);
+        const newEnemy = new enemy(...this.steps[0], this);
         this.enemies.push(newEnemy);
         this.animationFunctions.push(newEnemy.getMoveFunction(this.steps));
     }
@@ -214,9 +216,7 @@ export default class Game {
         for (let enemy of this.enemies) {
             for (let status of enemy.statuses) {
                 const damage = statusFunctions[status](enemy);
-                if (damage) {
-                    this.damage_dealt += damage;
-                }
+                this.damage_dealt += damage;
             }
         }
     }
@@ -258,27 +258,17 @@ export default class Game {
                 const path = tower.getProjectilePath(futurePosition, this.gameMap, travelTime);
                 if (!path) continue; // skip if tower can't hit enemy
 
-                if (tower.appliedStatus) { // handle status towers
+                if (tower.appliedStatus) {
                     if (enemy.statuses.has(tower.appliedStatus)) {
-                        continue;
+                        continue; // skip if enemy already has status
                     }
-                    enemy.statuses.add(tower.appliedStatus);
                 }
 
-                // TODO: this is instant damage, convert to when projectile hits?
-                if (tower.damage) {
-                    let damage = tower.buffs.has(BUFFED) ? tower.damage * 2 : tower.damage;
-                    damage = Math.min(enemy.hp, damage)
-
-                    this.damage_dealt += damage
-                    enemy.hp = Math.max(enemy.hp - damage, 0)
-                }
-
-                const projectile = tower.createProjectile(path);
+                const projectile = tower.createProjectile(path, enemy, this.enemies);
                 this.addProjectile(projectile);
 
                 tower.currentCooldown = tower.cooldown;
-                if (!tower.canAttackMultiple) break;
+                break; // only attack one enemy per cycle
             }
         }
     }
@@ -307,6 +297,7 @@ export default class Game {
             this.enemies = [];
             this.enemyInfo = {};
             this.projectiles = [];
+            this.animationFunctions = [];
             this.level++;
 
             if (!this.castle.hp) {
@@ -325,12 +316,13 @@ export default class Game {
 
     applyBuffs = () => {
         for (const tower of this.getAllTowers()) {
-            tower.buffs.clear();
+            tower.clearBuffs();
         }
         for (const buffTower of this.getAllTowers().filter(t => t?.name === 'buffTower')) {
-            for (const otherTower of this.getAllTowers().filter(t => t.name !== 'buffTower')) {
+            for (const otherTower of this.getAllTowers()) {
+                if (!otherTower.canBuff(BUFFED)) continue;
                 if ((buffTower.getProjectilePath(otherTower.position, this.gameMap))) {
-                    otherTower.buffs.add(BUFFED);
+                    otherTower.applyBuff(BUFFED);
                 }
             }
         }

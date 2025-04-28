@@ -18,7 +18,7 @@ export default class SpikeTower extends Tower {
         this.minRange = 0;
         this.maxRange = 0;
         this.height = 1;
-        this.canAttackMultiple = true;
+        this.description = "Uses protruding spikes to damage enemies on top of this tower.";
     }
 
     getTravelTime = () => 1;
@@ -28,8 +28,7 @@ export default class SpikeTower extends Tower {
         return Array(SPIKE_TICK_DURATION).fill(this.position);
     }
 
-    createProjectile = (path) => {
-        this.currentCooldown = this.cooldown;
-        return new Spikes(...this.position, path);
+    createProjectile = (path, target, enemies) => {
+        return new Spikes(...this.position, path, target, this.damage, enemies);
     }
 }

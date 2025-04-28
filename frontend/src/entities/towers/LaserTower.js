@@ -17,7 +17,7 @@ export default class LaserTower extends Tower {
         this.minRange = 2.5;
         this.maxRange = 10;
         this.height = 4.5;
-        this.description = "Fires a rapid laser beam.";
+        this.description = "Fires a fast laser beam in a straight line.";
     }
 
     getTravelTime = (target) => {
@@ -34,8 +34,8 @@ export default class LaserTower extends Tower {
         return path;
     }
 
-    createProjectile = (path) => {
+    createProjectile = (path, target, _enemies) => {
         this.rotateTowardsTarget(path.at(-1));
-        return new Laser(...this.position, path);
+        return new Laser(...this.position, path, target, this.damage);
     }
 }

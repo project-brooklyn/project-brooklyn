@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import Projectile from "./Projectile";
 import { convertToRenderCoordinates } from '../../utils/render_utils';
+import { BURNED } from '../statuses';
 
 export default class Flame extends Projectile {
-    constructor (x, y, z, path) {
+    constructor(x, y, z, path, target, enemies) {
         const quaternion = new THREE.Quaternion();
         if (path && path.length >= 2) {
             const start = new THREE.Vector3().fromArray(path.at(0));
@@ -18,6 +19,10 @@ export default class Flame extends Projectile {
             quaternion.setFromUnitVectors(renderY, renderV);
         }
         super(x, y, z, quaternion, path);
+
         this.name = "flame";
+        this.target = target;
+        this.enemies = enemies;
+        this.appliedStatus = BURNED;
     }
 }

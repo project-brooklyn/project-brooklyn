@@ -1,6 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Stats } from '@react-three/drei';
-import { useAuth } from "../AuthContext";
+// import { useAuth } from "../AuthContext";
 import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
@@ -10,11 +9,21 @@ import { HtmlUI } from "./ui/HtmlUI";
 import ScorePhaseModal from "./ui/ScorePhaseModal";
 import LoseModal from "./ui/LoseModal";
 import WinModal from "./ui/WinModal";
+import { Howl, Howler } from 'howler';
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Stack from "@mui/material/Stack";
 
 const NAME = "GamePage";
 
 const GamePage = ({ gameMap, devMode = true }) => {
-    const { user, logout } = useAuth();
+    // const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
@@ -42,29 +51,65 @@ const GamePage = ({ gameMap, devMode = true }) => {
         }
     }, [game.devGui, showDevGui])
 
-    return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
-        {showWelcomeModal &&
-            <WelcomeModal
-                hideModal={() => setShowWelcomeModal(false)}
-                setGame={setGame}
-            />
-        }
-        {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
-        {(showGameModal === WIN) &&
-            <WinModal
-                game={game}
-                onHide={() => { setShowGameModal("") }}
-            />
-        }
-        {(showGameModal === LOSE) &&
-            <LoseModal
-                game={game}
-                onHide={() => { setShowGameModal("") }}
-            />
-        }
-        <TopBar user={user} logout={logout} />
-        <GameContainer game={game} />
-    </div>)
+    const startMusicAndHideModal = () => {
+        Howler.volume(0.5);
+        const sound = new Howl({
+            src: ['audio/funkysuspense.mp3']
+        });
+        sound.play();
+
+        setShowWelcomeModal(false)
+    }
+
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        Project Brooklyn: A tower defense game
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+
+            {showWelcomeModal &&
+                <WelcomeModal
+                    hideModal={startMusicAndHideModal}
+                    setGame={setGame}
+                />
+            }
+            {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
+            {(showGameModal === WIN) &&
+                <WinModal
+                    game={game}
+                    onHide={() => { setShowGameModal("") }}
+                />
+            }
+            {(showGameModal === LOSE) &&
+                <LoseModal
+                    game={game}
+                    onHide={() => { setShowGameModal("") }}
+                />
+            }
+
+            <Stack sx={{ height: "95vh" }} >
+                <GameContainer game={game} />
+            </Stack>
+
+            <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
+                © 2025, BK Studios
+            </Typography>
+        </Box >
+    )
 }
 
 const TopBar = ({ user, logout }) => {
@@ -124,23 +169,19 @@ const GameContainer = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning z-1">
-        <div className="d-flex w-100 h-100">
-            <div className="w-75 border border-2 border-primary m-2">
-                <Stats showPanel={0} />
-                <Canvas shadows >
-                    <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
-                </Canvas>
-            </div>
+    return (
+        <Stack direction="row" spacing={2} height="100%">
+            <Canvas shadows >
+                <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
+            </Canvas>
             <HtmlUI
                 game={game}
                 phase={game.phase}
                 selectedTower={selectedTower}
                 setSelectedTower={setSelectedTower}
             />
-        </div>
-        <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
-    </div>
+        </Stack>
+    )
 }
 
 export default GamePage;

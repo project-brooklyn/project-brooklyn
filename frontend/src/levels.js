@@ -1,6 +1,10 @@
+import Alligator from "./entities/enemies/Alligator";
+import Cockroach from "./entities/enemies/Cockroach";
+import Cow from "./entities/enemies/Cow";
 import Guy from "./entities/enemies/Guy";
 import Lamb from "./entities/enemies/Lamb";
-import Cow from "./entities/enemies/Cow";
+import Mouse from "./entities/enemies/Mouse";
+import Rabbit from "./entities/enemies/Rabbit";
 
 export const levels = [
     {
@@ -17,32 +21,32 @@ export const levels = [
     },
     {
         enemy: Lamb,
-        count: 20,
-        delay: 10,
+        count: 10,
+        delay: 12,
         gold: 100,
     },
     {
-        enemy: Guy,
-        count: 20,
-        delay: 25,
+        enemy: Alligator,
+        count: 5,
+        delay: 125,
         gold: 100,
     },
     {
-        enemy: Guy,
+        enemy: Mouse,
         count: 30,
-        delay: 25,
+        delay: 20,
         gold: 100,
     },
     {
-        enemy: Guy,
-        count: 40,
-        delay: 25,
+        enemy: Rabbit,
+        count: 30,
+        delay: 20,
         gold: 100,
     },
     {
-        enemy: Guy,
+        enemy: Cockroach,
         count: 50,
-        delay: 25,
+        delay: 20,
         gold: 100,
     },
     {
@@ -67,12 +71,6 @@ export const levels = [
         enemy: Guy,
         count: 75,
         delay: 10,
-        gold: 100,
-    },
-    {
-        enemy: Guy,
-        count: 100,
-        delay: 7.5,
         gold: 100,
     },
 ];

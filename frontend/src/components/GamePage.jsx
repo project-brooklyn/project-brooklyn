@@ -91,7 +91,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
         setShowWelcomeModal(false)
     }
 
-    const disableSellButton = !selectedTower || selectedTower.status !== TowerStatus.BUILT;
+    const disableSellButton = (showGameModal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
 
     return (
         <Box sx={{ flexGrow: 1 }}>

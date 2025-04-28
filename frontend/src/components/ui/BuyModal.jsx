@@ -160,7 +160,7 @@ export default function BuyModal({ open, setOpen, game, setSelectedTower, setErr
                 </Typography>
 
                 <Stack direction="row" spacing={2} sx={{ mt: 2, flexGrow: 1 }}>
-                    <List dense={true}>
+                    <List dense={true} sx={{ width: '100%', maxWidth: 150, maxHeight: "60vh", overflow: 'auto' }}>
                         {Array.from(TOWERS.entries())
                             .filter(game.enableBlueprints ? ([key, _]) => game.blueprints.has(key) : () => true)
                             .map(([name, { price }]) => {

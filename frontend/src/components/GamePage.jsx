@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
+import Game, { BUILD, SCORE, WIN, LOSE, DEFEND } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";

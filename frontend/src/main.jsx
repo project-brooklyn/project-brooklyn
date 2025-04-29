@@ -14,7 +14,6 @@ import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import { Test0, TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
 import { TwinPeaks } from './pages/TestPages.jsx';
-import { AuthProvider } from './AuthProvider.jsx';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme.js';
 
@@ -63,8 +62,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
-        <AuthProvider>
-            <RouterProvider router={router} />
-        </AuthProvider>
+        <RouterProvider router={router} />
     </ThemeProvider>
 )

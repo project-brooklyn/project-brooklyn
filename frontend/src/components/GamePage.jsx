@@ -1,6 +1,4 @@
 import { Canvas } from "@react-three/fiber";
-import { Link } from "react-router-dom";
-import { useAuth } from "../AuthContext";
 import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
@@ -28,6 +26,7 @@ import Container from "@mui/material/Container";
 import BuyModal from "./ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { jwtDecode } from 'jwt-decode';
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
@@ -39,6 +38,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
+    const [userId, setUserId] = useState(null);
 
     const [selectedTower, setSelectedTower] = useState(null);
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -78,6 +78,16 @@ const GamePage = ({ gameMap, devMode = true }) => {
         }
     }, [game.devGui, showDevGui])
 
+    useEffect(() => {
+        const token = localStorage.getItem('project-bk-token');
+        if (token) {
+            const decoded = jwtDecode(token);
+            console.log(decoded); // Example: { userId: 'abc123', iat: ..., exp: ... }
+            setUserId(decoded.userId);
+        }
+    }, []);
+
+
     const startMusicAndHideModal = () => {
         Howler.volume(0.5);
         const sound = new Howl({
@@ -106,15 +116,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Project Brooklyn: A tower defense game
                     </Typography>
-                    {
-                        user
-                            ? <Button color="inherit" onClick={logout}>Logout</Button>
-                            : <Link
-                                to="/login"
-                                state={{ from: { pathname: location.pathname, search: location.search } }}                            >
-                                Login
-                            </Link>
-                    }
+                    {userId && <p>Your User ID: {userId}</p>}
                 </Toolbar>
             </AppBar>
 

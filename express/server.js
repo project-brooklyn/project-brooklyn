@@ -9,6 +9,13 @@ dotenv.config();
 
 // Initialize the app
 const app = express();
+const cors = require('cors');
+
+// Allow requests from React frontend
+app.use(cors({
+    origin: 'http://localhost:5173', // TODO: Change to your frontend URL
+}));
+
 
 app.use(express.json());
 app.use('/api', authRoutes);

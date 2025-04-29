@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const LogIn = () => {
     const [formData, setFormData] = useState({
-        username: '',
+        email: '',
         password: '',
     });
-    const [error, setError] = useState('');
-    const { user, login, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || '/';
 
-    useEffect(() => { if (user) logout() }, [user, logout]);
+    useEffect(() => {
+        localStorage.removeItem('project-bk-token');
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,17 +25,18 @@ const LogIn = () => {
         e.preventDefault();
 
         // this will be changed to use .env
-        const baseUrl = 'http://localhost:8000';
+        const baseUrl = "http://localhost:5000";
 
         try {
             const res = await axios.post(baseUrl + '/api/login/', formData);
-            const user = res.data.user;
-            // handle user in session
+            const { token } = res.data;
 
-            login(user);
-            navigate(from, { replace: true });
+            localStorage.setItem('project-bk-token', token);
+            console.log('Login successful:', token);
+
+            navigate('/');
         } catch (err) {
-            setError(err.response.data.error);
+            console.error(err);
         }
     };
 
@@ -47,11 +45,11 @@ const LogIn = () => {
             <h2>Login</h2>
             <br />
             <label>
-                Username:
+                Email:
                 <input
-                    type="username"
-                    name="username"
-                    value={formData.username}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                 />
             </label>
@@ -67,7 +65,6 @@ const LogIn = () => {
             </label>
             <br />
             <button type="submit">Login</button>
-            {error || ''}
         </form>
     );
 };

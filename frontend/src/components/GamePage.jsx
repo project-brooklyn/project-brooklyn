@@ -1,7 +1,8 @@
 import { Canvas } from "@react-three/fiber";
-import { Stats } from '@react-three/drei';
-import { useAuth } from "../AuthContext";
-import Game, { BUILD, SCORE, WIN, LOSE } from "../Game";
+// import { useAuth } from "../AuthContext";
+import Game, { BUILD, DEFEND, SCORE, WIN, LOSE } from "../Game";
+import { TOWERS } from "../entities/buildables";
+import { Status as TowerStatus } from "../entities/towers/Tower";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -12,28 +13,65 @@ import LoseModal from "./ui/LoseModal";
 import WinModal from "./ui/WinModal";
 import { Howl, Howler } from 'howler';
 
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Stack from "@mui/material/Stack";
+import Fab from "@mui/material/Fab";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
+import Container from "@mui/material/Container";
+import BuyModal from "./ui/BuyModal";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 const NAME = "GamePage";
+const BUY_KEY = "b";
 
 const GamePage = ({ gameMap, devMode = true }) => {
-    const { user, logout } = useAuth();
+    // const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
+    const { keyboardInput, undoManager } = game;
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
-    const [showGameModal, setShowGameModal] = useState("");
+    const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
 
+    const [selectedTower, setSelectedTower] = useState(null);
+    const [showBuyModal, setShowBuyModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const handleErrorClose = () => {
+        setErrorMessage(null);
+    }
+
     useEffect(() => {
-        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
         game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
+        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
+        game.addPhaseListener(DEFEND, () => setShowGameModal(DEFEND))
         game.addPhaseListener(WIN, () => setShowGameModal(WIN))
         game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
+
+        keyboardInput.addKeyDownCallback(BUY_KEY, NAME, () => {
+            if (game.phase === BUILD) {
+                setShowBuyModal(true);
+            }
+        })
+
         return () => {
-            game.removeAllPhaseListeners(SCORE);
             game.removeAllPhaseListeners(BUILD);
+            game.removeAllPhaseListeners(DEFEND);
+            game.removeAllPhaseListeners(SCORE);
             game.removeAllPhaseListeners(WIN);
             game.removeAllPhaseListeners(LOSE);
         }
-    }, [game])
+    }, [game, keyboardInput])
 
     useEffect(() => {
         if (showDevGui) {
@@ -53,29 +91,138 @@ const GamePage = ({ gameMap, devMode = true }) => {
         setShowWelcomeModal(false)
     }
 
-    return (<div className="d-flex flex-column bg-secondary vh-100 border border-2 border-success">
-        {showWelcomeModal &&
-            <WelcomeModal
-                hideModal={startMusicAndHideModal}
-                setGame={setGame}
-            />
-        }
-        {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
-        {(showGameModal === WIN) &&
-            <WinModal
+    const disableSellButton = (showGameModal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
+
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        Project Brooklyn: A tower defense game
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+
+            <Snackbar
+                open={Boolean(errorMessage)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={3000}
+                onClose={handleErrorClose}
+            >
+                <Alert
+                    onClose={handleErrorClose}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+
+            {showWelcomeModal &&
+                <WelcomeModal
+                    hideModal={startMusicAndHideModal}
+                    setGame={setGame}
+                />
+            }
+            {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
+            {(showGameModal === WIN) &&
+                <WinModal
+                    game={game}
+                    onHide={() => { setShowGameModal("") }}
+                />
+            }
+            {(showGameModal === LOSE) &&
+                <LoseModal
+                    game={game}
+                    onHide={() => { setShowGameModal("") }}
+                />
+            }
+
+            <Stack sx={{ height: "95vh" }} >
+                <GameContainer game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+            </Stack>
+
+            <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
+                <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
+                    <Fab
+                        aria-label="buy-button"
+                        variant="extended"
+                        color="primary"
+                        disabled={showGameModal !== BUILD}
+                        onClick={() => setShowBuyModal(true)}
+                    >
+                        <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)
+                    </Fab>
+                    <Fab
+                        aria-label="sell-button"
+                        variant="extended"
+                        color="error"
+                        disabled={disableSellButton}
+                        onClick={() => { sellTower(game, selectedTower, setSelectedTower) }}
+                    >
+                        <DeleteIcon sx={{ mr: 1 }} /> Sell {selectedTower?.price && `($${selectedTower?.price / 2})`}
+                    </Fab>
+                    <Fab
+                        aria-label="undo-button"
+                        variant="extended"
+                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
+                        onClick={undoManager.undo}
+                    >
+                        <UndoIcon sx={{ mr: 1 }} /> Undo
+                    </Fab>
+                    <Fab
+                        aria-label="redo-button"
+                        variant="extended"
+                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
+                        onClick={undoManager.redo}
+                    >
+                        <RedoIcon sx={{ mr: 1 }} /> Redo
+                    </Fab>
+                    <Fab
+                        aria-label="start-button"
+                        variant="extended"
+                        color="info"
+                        disabled={showGameModal !== BUILD}
+                        onClick={() => game.setPhase(DEFEND)}
+                    >
+                        Start Next Level
+                    </Fab>
+                </Stack>
+            </Container>
+
+            <BuyModal
+                open={showBuyModal}
+                setOpen={setShowBuyModal}
                 game={game}
-                onHide={() => { setShowGameModal("") }}
+                setSelectedTower={setSelectedTower}
+                setErrorMessage={setErrorMessage}
             />
-        }
-        {(showGameModal === LOSE) &&
-            <LoseModal
-                game={game}
-                onHide={() => { setShowGameModal("") }}
-            />
-        }
-        <TopBar user={user} logout={logout} />
-        <GameContainer game={game} />
-    </div>)
+
+            <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
+                © 2025, BK Studios
+            </Typography>
+        </Box >
+    )
+}
+
+const sellTower = (game, selectedTower, setSelectedTower) => {
+    game.removeTower(selectedTower.x, selectedTower.y);
+
+    const t = TOWERS.get(selectedTower.name);
+    game.gold += 0.5 * t.price;
+    game.setPath();
+    setSelectedTower(null);
 }
 
 const TopBar = ({ user, logout }) => {
@@ -104,8 +251,7 @@ const TopBar = ({ user, logout }) => {
     </div>)
 }
 
-const GameContainer = ({ game }) => {
-    const [selectedTower, setSelectedTower] = useState(null);
+const GameContainer = ({ game, selectedTower, setSelectedTower }) => {
     const { mouseInput } = game;
 
     useEffect(() => {
@@ -125,7 +271,7 @@ const GameContainer = ({ game }) => {
             if (!tower) return;
 
             setSelectedTower(current => {
-                // if the tower is currentlyselected, deselect it
+                // if the tower is currently selected, deselect it
                 // otherwise, select the tower
                 return tower === current ? null : tower;
             });
@@ -135,23 +281,22 @@ const GameContainer = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return <div className="d-flex flex-column align-items-center h-100 border border-2 border-warning z-1">
-        <div className="d-flex w-100 h-100">
-            <div className="w-75 border border-2 border-primary m-2">
-                <Stats showPanel={0} />
+    return (<>
+        <Stack direction="row" spacing={2} height="100%">
+            <Stack width="100%">
                 <Canvas shadows >
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
-            </div>
+            </Stack>
             <HtmlUI
                 game={game}
                 phase={game.phase}
                 selectedTower={selectedTower}
                 setSelectedTower={setSelectedTower}
             />
-        </div>
-        <h6 className="position-absolute bottom-0 w-100 text-center">© 2024, BK Studios.</h6>
-    </div>
+        </Stack>
+    </>
+    )
 }
 
 export default GamePage;

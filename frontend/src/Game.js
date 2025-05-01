@@ -59,6 +59,8 @@ export default class Game {
         this.configureCameraControls();
 
         this.devGui = new GUI({ title: "Debug Menu" });
+        this.devGui.close();
+
         this.phaseListeners = {
             [BUILD]: [],
             [DEFEND]: [

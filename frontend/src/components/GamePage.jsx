@@ -26,7 +26,11 @@ import Container from "@mui/material/Container";
 import BuyModal from "./ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Drawer from '@mui/material/Drawer';
+import { List, ListItem, ListItemText } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+import { TOWERS } from "../entities/buildables";
+import { Status as TowerStatus } from "../entities/towers/Tower";
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
@@ -39,6 +43,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
     const [userId, setUserId] = useState(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [selectedTower, setSelectedTower] = useState(null);
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -101,7 +106,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="static" >
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -109,6 +114,9 @@ const GamePage = ({ gameMap, devMode = true }) => {
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 2 }}
+                        onClick={() => {
+                            setDrawerOpen(!drawerOpen);
+                        }}
                     >
                         <MenuIcon />
                     </IconButton>
@@ -118,6 +126,20 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     {userId && <p>Your User ID: {userId}</p>}
                 </Toolbar>
             </AppBar>
+            <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+            >
+                <List sx={{ marginTop: "100px" }}>
+                    <ListItem button component="a" href="/login">
+                        <ListItemText primary="Log In" />
+                    </ListItem>
+                    <ListItem button component="a" href="/signup">
+                        <ListItemText primary="Sign Up" />
+                    </ListItem>
+                </List>
+            </Drawer>
 
             <Snackbar
                 open={Boolean(errorMessage)}

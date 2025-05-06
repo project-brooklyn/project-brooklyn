@@ -1,46 +1,45 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
         username: '',
+        email: '',
         password: '',
     });
-    const [usernameError, setUsernameError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const { user, login, logout } = useAuth();
-    const navigate = useNavigate();
 
-    useEffect(() => {if (user) logout()}, [user, logout]);
-    
+    const navigate = useNavigate();
+    useEffect(() => {
+        localStorage.removeItem('project-bk-token');
+    }, []);
+
+
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     }
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // this will be changed to use .env
-        const baseUrl = 'http://localhost:8000';
+        const baseUrl = 'http://localhost:5000';
 
         try {
-            const res1 = await axios.post(baseUrl + '/api/signup/', formData);
-            if (res1.status===201) {
+            const res1 = await axios.post(baseUrl + '/api/register/', formData);
+            if (res1.status === 201) {
                 const res2 = await axios.post(baseUrl + '/api/login/', formData);
-                const user = res2.data.user;
+                const { token } = res2.data;
 
-                login(user);
+                localStorage.setItem('project-bk-token', token);
                 navigate('/');
             }
         } catch (err) {
-            setUsernameError(err.response.data.username);
-            setPasswordError(err.response.data.password);
+            console.error(err);
         }
 
     }
@@ -50,25 +49,33 @@ const SignUp = () => {
             <h2>Sign Up</h2>
             <br />
             <label>
-                Username: 
+                Username:
                 <input
-                    type="username"
+                    type="text"
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
                 />
-                {usernameError || ''}
             </label>
             <br />
             <label>
-                Password: 
+                Email:
+                <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                />
+            </label>
+            <br />
+            <label>
+                Password:
                 <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                 />
-                {passwordError || ''}
             </label>
             <br />
             <button type="submit">Sign Up</button>

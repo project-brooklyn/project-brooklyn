@@ -1,8 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-// import { useAuth } from "../AuthContext";
-import Game, { BUILD, DEFEND, SCORE, WIN, LOSE } from "../Game";
-import { TOWERS } from "../entities/buildables";
-import { Status as TowerStatus } from "../entities/towers/Tower";
+import Game, { BUILD, SCORE, WIN, LOSE, DEFEND } from "../Game";
 import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
@@ -17,7 +14,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Stack from "@mui/material/Stack";
@@ -30,18 +26,19 @@ import Container from "@mui/material/Container";
 import BuyModal from "./ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { jwtDecode } from 'jwt-decode';
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
 
 const GamePage = ({ gameMap, devMode = true }) => {
-    // const { user, logout } = useAuth();
     const [game, setGame] = useState(() => new Game(new gameMap()));
     const { keyboardInput, undoManager } = game;
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
+    const [userId, setUserId] = useState(null);
 
     const [selectedTower, setSelectedTower] = useState(null);
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -81,6 +78,15 @@ const GamePage = ({ gameMap, devMode = true }) => {
         }
     }, [game.devGui, showDevGui])
 
+    useEffect(() => {
+        const token = localStorage.getItem('project-bk-token');
+        if (token) {
+            const decoded = jwtDecode(token);
+            setUserId(decoded.userId);
+        }
+    }, []);
+
+
     const startMusicAndHideModal = () => {
         Howler.volume(0.5);
         const sound = new Howl({
@@ -109,7 +115,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Project Brooklyn: A tower defense game
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    {userId && <p>Your User ID: {userId}</p>}
                 </Toolbar>
             </AppBar>
 
@@ -223,32 +229,6 @@ const sellTower = (game, selectedTower, setSelectedTower) => {
     game.gold += 0.5 * t.price;
     game.setPath();
     setSelectedTower(null);
-}
-
-const TopBar = ({ user, logout }) => {
-    return (<div className="d-flex justify-content-around">
-        <div className="">
-            <h1>Project Brooklyn</h1>
-            <h2>A tower defense game</h2>
-        </div>
-        <div className="d-flex flex-column justify-content-center align-items-center">
-            <div>
-                {user ? <p>You are logged in as {user.username}</p> : <p>You are not logged in</p>}
-            </div>
-            <div>
-                {user
-                    ? <p className="text-primary" onClick={logout}>
-                        Log Out
-                    </p>
-                    : <p>
-                        <a href="/signup">Sign Up</a>
-                        {" | "}
-                        <a href="/login">Log In</a>
-                    </p>
-                }
-            </div>
-        </div>
-    </div>)
 }
 
 const GameContainer = ({ game, selectedTower, setSelectedTower }) => {

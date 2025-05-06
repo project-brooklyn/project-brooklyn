@@ -32,7 +32,6 @@ const LogIn = () => {
             const { token } = res.data;
 
             localStorage.setItem('project-bk-token', token);
-            console.log('Login successful:', token);
 
             navigate('/');
         } catch (err) {

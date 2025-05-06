@@ -82,7 +82,6 @@ const GamePage = ({ gameMap, devMode = true }) => {
         const token = localStorage.getItem('project-bk-token');
         if (token) {
             const decoded = jwtDecode(token);
-            console.log(decoded); // Example: { userId: 'abc123', iat: ..., exp: ... }
             setUserId(decoded.userId);
         }
     }, []);

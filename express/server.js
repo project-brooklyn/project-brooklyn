@@ -13,7 +13,8 @@ const cors = require('cors');
 
 // Allow requests from React frontend
 app.use(cors({
-    origin: 'http://localhost:5173', // TODO: Change to your frontend URL
+    origin: process.env.FRONTEND_URI || 'http://localhost:5173',
+    credentials: true,
 }));
 
 

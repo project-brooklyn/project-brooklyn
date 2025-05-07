@@ -26,8 +26,7 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // this will be changed to use .env
-        const baseUrl = 'http://localhost:5000';
+        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
 
         try {
             const res1 = await axios.post(baseUrl + '/api/register/', formData);

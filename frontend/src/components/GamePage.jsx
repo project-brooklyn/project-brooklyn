@@ -132,10 +132,10 @@ const GamePage = ({ gameMap, devMode = true }) => {
                 onClose={() => setDrawerOpen(false)}
             >
                 <List sx={{ marginTop: "100px" }}>
-                    <ListItem button component="a" href="/login">
+                    <ListItem component="a" href="/login">
                         <ListItemText primary="Log In" />
                     </ListItem>
-                    <ListItem button component="a" href="/signup">
+                    <ListItem component="a" href="/signup">
                         <ListItemText primary="Sign Up" />
                     </ListItem>
                 </List>

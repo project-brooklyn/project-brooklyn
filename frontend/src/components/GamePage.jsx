@@ -31,6 +31,7 @@ import { List, ListItem, ListItemText } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { TOWERS } from "../entities/buildables";
 import { Status as TowerStatus } from "../entities/towers/Tower";
+import axios from "axios";
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
@@ -42,7 +43,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
     const [showGameModal, setShowGameModal] = useState(game.phase);
     const [showDevGui, _setShowDevGui] = useState(devMode);
-    const [userId, setUserId] = useState(null);
+    const [username, setUsername] = useState(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [selectedTower, setSelectedTower] = useState(null);
@@ -84,11 +85,17 @@ const GamePage = ({ gameMap, devMode = true }) => {
     }, [game.devGui, showDevGui])
 
     useEffect(() => {
-        const token = localStorage.getItem('project-bk-token');
-        if (token) {
-            const decoded = jwtDecode(token);
-            setUserId(decoded.userId);
+        const getUser = async () => {
+            const token = localStorage.getItem('project-bk-token');
+            if (token) {
+                const decoded = jwtDecode(token);
+                const { userId } = decoded;
+                const user = await axios.get(import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000' + '/api/user/' + userId);
+                setUsername(user.data.username);
+            }
         }
+
+        getUser();
     }, []);
 
 
@@ -123,7 +130,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Project Brooklyn: A tower defense game
                     </Typography>
-                    {userId && <p>Your User ID: {userId}</p>}
+                    {username && <p>Hello {username}!</p>}
                 </Toolbar>
             </AppBar>
             <Drawer

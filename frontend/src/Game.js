@@ -345,6 +345,7 @@ export default class Game {
     toJSON = () => {
         return {
             createdAt: this.createdAt,
+            updatedAt: Date.now().toString(),
             gameMap: this.gameMap.toJSON(),
             level: this.level,
             gold: this.gold,

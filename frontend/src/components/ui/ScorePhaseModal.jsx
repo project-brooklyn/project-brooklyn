@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { BUILD } from "../../Game";
 import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 function ScorePhaseModal({ game }) {
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
+    const [userId, setUserId] = useState(null);
+    const [saved, setSaved] = useState(false);
+
     const handleClick = () => game.setPhase(BUILD);
 
     const CASTLE_HEAL = 200;
@@ -35,6 +40,14 @@ function ScorePhaseModal({ game }) {
     const [rewards, setRewards] = useState(BASE_REWARDS);
 
     useEffect(() => {
+        const token = localStorage.getItem('project-bk-token');
+        if (token) {
+            const decoded = jwtDecode(token);
+            setUserId(decoded.userId);
+        }
+    }, []);
+
+    useEffect(() => {
         setRewardsChosen([]);
         const newRewards = [...BASE_REWARDS];
         for (let i = 0; i < BLUEPRINT_REWARDS; i++) {
@@ -53,11 +66,25 @@ function ScorePhaseModal({ game }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game.level])
 
-    const getJSON = () => {
+    const saveToClipboard = () => {
         const json = JSON.stringify(game.toJSON());
         navigator.clipboard.writeText(btoa(json));
         console.log('Copied game data to clipboard:\n', json); // TODO: remove after implementing load game
         setCopied(true);
+    }
+
+    const saveToCloud = async () => {
+        if (!userId || saved) return;
+        const json = JSON.stringify(game.toJSON());
+        const data = btoa(json);
+
+        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
+        await axios.post(baseUrl + '/api/games/', {
+            userId,
+            data,
+        });
+
+        setSaved(true);
     }
 
     return <Modal
@@ -79,7 +106,8 @@ function ScorePhaseModal({ game }) {
                 rewardsChosen.length >= REWARD_LIMIT
                     ? <>
                         <button onClick={handleClick}>Next Level</button>
-                        <button onClick={getJSON}>{copied ? 'Game Data Copied' : 'Copy Game Data to Clipboard'}</button>
+                        <button onClick={saveToClipboard}>{copied ? 'Game Data Copied' : 'Copy Game Data to Clipboard'}</button>
+                        {userId && <button onClick={saveToCloud} disabled={saved}>{saved ? 'Game Saved' : 'Save to Cloud'}</button>}
                     </>
                     : <>
                         <h5>Choose Reward</h5>

@@ -28,6 +28,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Drawer from '@mui/material/Drawer';
 import { List, ListItem, ListItemText } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { jwtDecode } from 'jwt-decode';
 import { TOWERS } from "../entities/buildables";
 import { Status as TowerStatus } from "../entities/towers/Tower";
@@ -35,6 +36,12 @@ import axios from "axios";
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
+
+const HudTopDiv = styled('div')(({ theme }) => ({
+    ...theme.typography.button,
+    color: "white",
+    fontSize: "medium",
+}));
 
 const GamePage = ({ gameMap, devMode = true }) => {
     const [game, setGame] = useState(() => new Game(new gameMap()));
@@ -184,8 +191,16 @@ const GamePage = ({ gameMap, devMode = true }) => {
                 />
             }
 
+            <Container sx={{ position: "absolute", top: "75px", textAlign: "center", zIndex: "1" }}>
+                <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+                    <HudTopDiv>{`Level: ${game.level}`}</HudTopDiv>
+                    <HudTopDiv>{`Gold: ${game.gold}`}</HudTopDiv>
+                    <HudTopDiv>{`Phase: ${game.phase.toUpperCase()}`}</HudTopDiv>
+                </Stack>
+            </Container>
+
             <Stack sx={{ height: "95vh" }} >
-                <GameContainer game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
+                <GameContainer key={game} game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
             </Stack>
 
             <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>

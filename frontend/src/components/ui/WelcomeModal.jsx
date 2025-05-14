@@ -54,6 +54,33 @@ function WelcomeModal({ hideModal, setGame }) {
         }
     }
 
+    const NoSavesRow = <tr>
+        <td colSpan="6" align="center">No cloud saves found.</td>
+    </tr>
+
+    const CloudSaveRow = ({ game }) => {
+        const gameData = JSON.parse(atob(game.data));
+        const { createdAt, updatedAt, level, gold, castleHP } = gameData;
+
+        return (<tr key={game._id}>
+            <td>{level}</td>
+            <td>{gold}</td>
+            <td>{castleHP}</td>
+            <td>{new Date(parseInt(createdAt)).toLocaleString()}</td>
+            <td>{new Date(parseInt(updatedAt)).toLocaleString()}</td>
+            <td>
+                <Button
+                    onClick={() => {
+                        setGame(Game.from(game.data));
+                        hideModal();
+                    }}
+                >
+                    Load Game
+                </Button>
+            </td>
+        </tr>)
+    }
+
     return (
         <Modal
             show={true}
@@ -84,30 +111,7 @@ function WelcomeModal({ hideModal, setGame }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {cloudGames.length ? cloudGames.map((game) => {
-                            const gameData = JSON.parse(atob(game.data));
-                            const { createdAt, updatedAt, level, gold, castleHP } = gameData;
-
-                            return (<tr key={game._id}>
-                                <td>{level}</td>
-                                <td>{gold}</td>
-                                <td>{castleHP}</td>
-                                <td>{new Date(parseInt(createdAt)).toLocaleString()}</td>
-                                <td>{new Date(parseInt(updatedAt)).toLocaleString()}</td>
-                                <td>
-                                    <Button
-                                        onClick={() => {
-                                            setGame(Game.from(game.data));
-                                            hideModal();
-                                        }}
-                                    >
-                                        Load Game
-                                    </Button>
-                                </td>
-                            </tr>)
-                        }) : <tr>
-                            <td colSpan="6" align="center">No cloud saves found.</td>
-                        </tr>}
+                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow key={game._id} game={game} />) : NoSavesRow}
                     </tbody>
                 </table>)}
                 {errorMessage && <p className="text-danger">{errorMessage}</p>}

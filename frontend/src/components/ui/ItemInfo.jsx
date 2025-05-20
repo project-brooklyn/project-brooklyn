@@ -22,7 +22,6 @@ export const ItemInfo = ({ item, isPurchased = true }) => {
 
 const NullInfo = () => {
     return <div>
-        <h5>Selected Tower</h5>
         <p>No tower selected</p>
     </div>
 }
@@ -30,7 +29,6 @@ const NullInfo = () => {
 const TerraformInfo = ({ name }) => {
     const terraform = TERRAFORMS.get(name);
     return <div>
-        <h5>Selected Item</h5>
         <p>Type: {terraform.label} Terrain</p>
         <p>Price: {terraform.price}</p>
         {
@@ -44,7 +42,6 @@ const TerraformInfo = ({ name }) => {
 const TowerInfo = ({ tower }) => {
     const { name, price, damage, cooldown, minRange, maxRange, description } = tower
     return <div>
-        <h5>Selected Tower</h5>
         <ul>
             <li>Type: {name}</li>
             <li>Price: {price}</li>
@@ -61,7 +58,6 @@ const TowerInfo = ({ tower }) => {
 const PermanentTowerInfo = ({ tower }) => {
     const { name, hp, description } = tower;
     return <div>
-        <h5>Selected Tower</h5>
         <ul>
             <li>Type: {name}</li>
             {hp < Infinity ? <li>HP: {hp}</li> : null}

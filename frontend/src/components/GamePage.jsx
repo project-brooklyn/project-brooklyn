@@ -4,7 +4,7 @@ import GameDisplay from "../components/GameDisplay";
 import assets from "../components/assets";
 import WelcomeModal from "./ui/WelcomeModal";
 import { useEffect, useState } from "react";
-import { HtmlUI } from "./ui/HtmlUI";
+import { SideHUD } from "./ui/SideHUD";
 import ScorePhaseModal from "./ui/ScorePhaseModal";
 import LoseModal from "./ui/LoseModal";
 import WinModal from "./ui/WinModal";
@@ -312,11 +312,9 @@ const GameContainer = ({ game, selectedTower, setSelectedTower }) => {
                     <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
                 </Canvas>
             </Stack>
-            <HtmlUI
+            <SideHUD
                 game={game}
-                phase={game.phase}
                 selectedTower={selectedTower}
-                setSelectedTower={setSelectedTower}
             />
         </Stack>
     </>

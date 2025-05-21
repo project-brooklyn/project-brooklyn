@@ -9,6 +9,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useGameContext } from "../GameContext";
 
 const ItemInfoAccordion = (tower) => {
     return (
@@ -27,7 +28,8 @@ const ItemInfoAccordion = (tower) => {
     )
 }
 
-export const SideHUD = ({ game, selectedTower }) => {
+export const SideHUD = ({ selectedTower }) => {
+    const game = useGameContext();
     const showItemInfo = [BUILD, DEFEND].includes(game.phase);
     const showLevelInfo = [DEFEND].includes(game.phase);
 
@@ -42,7 +44,7 @@ export const SideHUD = ({ game, selectedTower }) => {
                         </Stack>
                     }
 
-                    {showLevelInfo && <LevelInfo game={game} />}
+                    {showLevelInfo && <LevelInfo />}
                     {showItemInfo && ItemInfoAccordion(selectedTower)}
                 </Stack>
             </CardContent>

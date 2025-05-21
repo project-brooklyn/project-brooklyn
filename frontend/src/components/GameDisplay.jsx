@@ -12,9 +12,11 @@ import PathView from "./views/PathView";
 import SelectedTowerView from "./views/SelectedTowerView";
 import { RangeIndicatorView } from "./views/RangeIndicatorView";
 import Stats from "three/examples/jsm/libs/stats.module.js";
+import { useGameContext } from "./GameContext";
 
 
-export default function GameDisplay({ game, assets, selectedTower }) {
+export default function GameDisplay({ assets, selectedTower }) {
+    const game = useGameContext();
     const { gameMap, cameraTarget } = game;
     const { width, depth, height } = gameMap;
     const { gl, scene } = useThree();

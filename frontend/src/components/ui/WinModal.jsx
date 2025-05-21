@@ -1,7 +1,9 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { useGameContext } from '../GameContext';
 
-function WinModal({ game, onHide }) {
+function WinModal({ onHide }) {
+    const game = useGameContext();
     return (
         <Modal
             show={true}

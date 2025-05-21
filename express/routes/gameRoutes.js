@@ -7,7 +7,7 @@ const router = express.Router();
 // Save a new game
 router.post("/", async (req, res) => {
     try {
-        const { userId, data } = req.body;
+        const { userId, data, createdAt } = req.body;
 
         if (!userId || !data) {
             return res.status(400).json({ message: "userId and data are required" });
@@ -21,6 +21,7 @@ router.post("/", async (req, res) => {
         const game = await Game.create({
             user: userId,
             data,
+            createdAt,
         });
 
         res.status(201).json(game);

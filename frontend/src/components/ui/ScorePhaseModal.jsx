@@ -4,8 +4,10 @@ import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { useGameContext } from "../GameContext";
 
-function ScorePhaseModal({ game }) {
+function ScorePhaseModal() {
+    const game = useGameContext();
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
     const [userId, setUserId] = useState(null);

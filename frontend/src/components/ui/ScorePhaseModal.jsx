@@ -4,12 +4,14 @@ import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { deleteSave } from "../../utils/api_utils";
 
 function ScorePhaseModal({ game }) {
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
     const [userId, setUserId] = useState(null);
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     const handleClick = () => game.setPhase(BUILD);
 
@@ -75,16 +77,24 @@ function ScorePhaseModal({ game }) {
 
     const saveToCloud = async () => {
         if (!userId || saved) return;
+        setSaving(true);
         const json = JSON.stringify(game.toJSON());
         const data = btoa(json);
 
         const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
+
+        // delete previous save
+        await deleteSave(userId, game.createdAt);
+
+        // save new game
         await axios.post(baseUrl + '/api/games/', {
             userId,
             data,
+            createdAt: game.createdAt,
         });
 
         setSaved(true);
+        setSaving(false);
     }
 
     return <Modal
@@ -107,7 +117,7 @@ function ScorePhaseModal({ game }) {
                     ? <>
                         <button onClick={handleClick}>Next Level</button>
                         <button onClick={saveToClipboard}>{copied ? 'Game Data Copied' : 'Copy Game Data to Clipboard'}</button>
-                        {userId && <button onClick={saveToCloud} disabled={saved}>{saved ? 'Game Saved' : 'Save to Cloud'}</button>}
+                        {userId && <button onClick={saveToCloud} disabled={saving || saved}>{saving ? 'Saving Game...' : saved ? 'Game Saved' : 'Save to Cloud'}</button>}
                     </>
                     : <>
                         <h5>Choose Reward</h5>

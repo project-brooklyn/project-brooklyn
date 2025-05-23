@@ -43,7 +43,7 @@ router.delete("/", async (req, res) => {
             createdAt,
         });
         if (!game) {
-            return res.status(404).json({ message: "Game not found" });
+            return res.status(204).json({ message: "No saved game to delete" });
         }
         res.status(200).json({ message: "Game deleted successfully" });
     } catch (err) {

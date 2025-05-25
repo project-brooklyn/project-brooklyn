@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const deleteSave = async (userId, createdAt) => {
-    if (!userId) return;
+    if (!userId || !createdAt) return;
     try {
         return await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/games/`, {
             data: {

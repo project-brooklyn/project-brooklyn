@@ -367,7 +367,7 @@ export default class Game {
             newGame.level = level;
             newGame.gold = gold;
             newGame.castle.hp = castleHP;
-            newGame.createdAt = createdAt || Date.now().toString();
+            newGame.createdAt = createdAt;
 
             return newGame;
         } catch (error) {

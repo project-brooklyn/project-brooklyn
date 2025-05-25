@@ -33,6 +33,7 @@ import { jwtDecode } from 'jwt-decode';
 import { TOWERS } from "../entities/buildables";
 import { Status as TowerStatus } from "../entities/towers/Tower";
 import axios from "axios";
+import { deleteSave } from "../utils/api_utils";
 import { GameProvider } from "./GameProvider";
 import { useGameContext } from "./GameContext";
 
@@ -63,12 +64,23 @@ const GamePage = ({ gameMap, devMode = true }) => {
         setErrorMessage(null);
     }
 
+    const deleteCurrentGame = async () => {
+        const token = localStorage.getItem('project-bk-token');
+        if (token) {
+            const decoded = jwtDecode(token);
+            const { userId } = decoded;
+            await deleteSave(userId, game.createdAt);
+        }
+    }
+
     useEffect(() => {
         game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
         game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
         game.addPhaseListener(DEFEND, () => setShowGameModal(DEFEND))
         game.addPhaseListener(WIN, () => setShowGameModal(WIN))
         game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
+        game.addPhaseListener(WIN, deleteCurrentGame)
+        game.addPhaseListener(LOSE, deleteCurrentGame)
 
         keyboardInput.addKeyDownCallback(BUY_KEY, NAME, () => {
             if (game.phase === BUILD) {
@@ -99,7 +111,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             if (token) {
                 const decoded = jwtDecode(token);
                 const { userId } = decoded;
-                const user = await axios.get(import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000' + '/api/user/' + userId);
+                const user = await axios.get((import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + '/api/user/' + userId);
                 setUsername(user.data.username);
             }
         }

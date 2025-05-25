@@ -4,6 +4,7 @@ import Game from '../../Game';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { useGameContext } from '../GameContext';
 
 function WelcomeModal({ hideModal, setGame }) {
     const [errorMessage, setErrorMessage] = useState('');
@@ -58,7 +59,8 @@ function WelcomeModal({ hideModal, setGame }) {
         <td colSpan="6" align="center">No cloud saves found.</td>
     </tr>
 
-    const CloudSaveRow = ({ game }) => {
+    const CloudSaveRow = () => {
+        const game = useGameContext();
         const gameData = JSON.parse(atob(game.data));
         const { createdAt, updatedAt, level, gold, castleHP } = gameData;
 
@@ -111,7 +113,7 @@ function WelcomeModal({ hideModal, setGame }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow key={game._id} game={game} />) : NoSavesRow}
+                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow key={game._id} />) : NoSavesRow}
                     </tbody>
                 </table>)}
                 {errorMessage && <p className="text-danger">{errorMessage}</p>}

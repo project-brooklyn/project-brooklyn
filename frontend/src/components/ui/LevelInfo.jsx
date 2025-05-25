@@ -4,8 +4,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useGameContext } from "../GameContext";
 
-export const LevelInfo = ({ game }) => {
+export const LevelInfo = () => {
+    const game = useGameContext();
     const { enemyInfo } = game;
     const { enemy, count, delay, remaining } = enemyInfo;
 

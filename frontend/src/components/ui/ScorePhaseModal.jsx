@@ -76,7 +76,7 @@ function ScorePhaseModal({ game }) {
     }
 
     const saveToCloud = async () => {
-        if (!userId || saved) return;
+        if (!userId || saved || saving) return;
         setSaving(true);
         const json = JSON.stringify(game.toJSON());
         const data = btoa(json);

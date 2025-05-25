@@ -34,6 +34,8 @@ import { TOWERS } from "../entities/buildables";
 import { Status as TowerStatus } from "../entities/towers/Tower";
 import axios from "axios";
 import { deleteSave } from "../utils/api_utils";
+import { GameProvider } from "./GameProvider";
+import { useGameContext } from "./GameContext";
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
@@ -117,6 +119,9 @@ const GamePage = ({ gameMap, devMode = true }) => {
         getUser();
     }, []);
 
+    const hideGameModel = () => {
+        setShowGameModal("");
+    }
 
     const startMusicAndHideModal = () => {
         Howler.volume(0.5);
@@ -131,150 +136,141 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const disableSellButton = (showGameModal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" >
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => {
-                            setDrawerOpen(!drawerOpen);
-                        }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Project Brooklyn: A tower defense game
-                    </Typography>
-                    {username && <p>Hello {username}!</p>}
-                </Toolbar>
-            </AppBar>
-            <Drawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-            >
-                <List sx={{ marginTop: "100px" }}>
-                    <ListItem component="a" href="/login">
-                        <ListItemText primary="Log In" />
-                    </ListItem>
-                    <ListItem component="a" href="/signup">
-                        <ListItemText primary="Sign Up" />
-                    </ListItem>
-                </List>
-            </Drawer>
-
-            <Snackbar
-                open={Boolean(errorMessage)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                autoHideDuration={3000}
-                onClose={handleErrorClose}
-            >
-                <Alert
-                    onClose={handleErrorClose}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
+        <GameProvider game={game} >
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static" >
+                    <Toolbar>
+                        <IconButton
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                            onClick={() => {
+                                setDrawerOpen(!drawerOpen);
+                            }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            Project Brooklyn: A tower defense game
+                        </Typography>
+                        {username && <p>Hello {username}!</p>}
+                    </Toolbar>
+                </AppBar>
+                <Drawer
+                    anchor="left"
+                    open={drawerOpen}
+                    onClose={() => setDrawerOpen(false)}
                 >
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
+                    <List sx={{ marginTop: "100px" }}>
+                        <ListItem component="a" href="/login">
+                            <ListItemText primary="Log In" />
+                        </ListItem>
+                        <ListItem component="a" href="/signup">
+                            <ListItemText primary="Sign Up" />
+                        </ListItem>
+                    </List>
+                </Drawer>
 
-            {showWelcomeModal &&
-                <WelcomeModal
-                    hideModal={startMusicAndHideModal}
-                    setGame={setGame}
-                />
-            }
-            {(showGameModal === SCORE) && <ScorePhaseModal game={game} />}
-            {(showGameModal === WIN) &&
-                <WinModal
-                    game={game}
-                    onHide={() => { setShowGameModal("") }}
-                />
-            }
-            {(showGameModal === LOSE) &&
-                <LoseModal
-                    game={game}
-                    onHide={() => { setShowGameModal("") }}
-                />
-            }
+                <Snackbar
+                    open={Boolean(errorMessage)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    autoHideDuration={3000}
+                    onClose={handleErrorClose}
+                >
+                    <Alert
+                        onClose={handleErrorClose}
+                        severity="error"
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
 
-            <Container sx={{ position: "absolute", top: "75px", textAlign: "center", zIndex: "1" }}>
-                <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                    <HudTopDiv>{`Level: ${game.level}`}</HudTopDiv>
-                    <HudTopDiv>{`Gold: ${game.gold}`}</HudTopDiv>
-                    <HudTopDiv>{`Phase: ${game.phase.toUpperCase()}`}</HudTopDiv>
+                {showWelcomeModal &&
+                    <WelcomeModal
+                        hideModal={startMusicAndHideModal}
+                        setGame={setGame}
+                    />
+                }
+                {(showGameModal === SCORE) && <ScorePhaseModal />}
+                {(showGameModal === WIN) && <WinModal onHide={hideGameModel} />}
+                {(showGameModal === LOSE) && <LoseModal onHide={hideGameModel} />}
+
+                <Container sx={{ position: "absolute", top: "75px", textAlign: "center", zIndex: "1" }}>
+                    <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+                        <HudTopDiv>{`Level: ${game.level}`}</HudTopDiv>
+                        <HudTopDiv>{`Gold: ${game.gold}`}</HudTopDiv>
+                        <HudTopDiv>{`Phase: ${game.phase.toUpperCase()}`}</HudTopDiv>
+                    </Stack>
+                </Container>
+
+                <Stack sx={{ height: "95vh" }} >
+                    <GameContainer key={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
                 </Stack>
-            </Container>
 
-            <Stack sx={{ height: "95vh" }} >
-                <GameContainer key={game} game={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-            </Stack>
+                <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
+                    <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
+                        <Fab
+                            aria-label="buy-button"
+                            variant="extended"
+                            color="primary"
+                            disabled={showGameModal !== BUILD}
+                            onClick={() => setShowBuyModal(true)}
+                        >
+                            <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)
+                        </Fab>
+                        <Fab
+                            aria-label="sell-button"
+                            variant="extended"
+                            color="error"
+                            disabled={disableSellButton}
+                            onClick={() => { sellTower(game, selectedTower, setSelectedTower) }}
+                        >
+                            <DeleteIcon sx={{ mr: 1 }} /> Sell {selectedTower?.price && `($${selectedTower?.price / 2})`}
+                        </Fab>
+                        <Fab
+                            aria-label="undo-button"
+                            variant="extended"
+                            disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
+                            onClick={undoManager.undo}
+                        >
+                            <UndoIcon sx={{ mr: 1 }} /> Undo
+                        </Fab>
+                        <Fab
+                            aria-label="redo-button"
+                            variant="extended"
+                            disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
+                            onClick={undoManager.redo}
+                        >
+                            <RedoIcon sx={{ mr: 1 }} /> Redo
+                        </Fab>
+                        <Fab
+                            aria-label="start-button"
+                            variant="extended"
+                            color="info"
+                            disabled={showGameModal !== BUILD}
+                            onClick={() => game.setPhase(DEFEND)}
+                        >
+                            Start Next Level
+                        </Fab>
+                    </Stack>
+                </Container>
 
-            <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
-                <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
-                    <Fab
-                        aria-label="buy-button"
-                        variant="extended"
-                        color="primary"
-                        disabled={showGameModal !== BUILD}
-                        onClick={() => setShowBuyModal(true)}
-                    >
-                        <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)
-                    </Fab>
-                    <Fab
-                        aria-label="sell-button"
-                        variant="extended"
-                        color="error"
-                        disabled={disableSellButton}
-                        onClick={() => { sellTower(game, selectedTower, setSelectedTower) }}
-                    >
-                        <DeleteIcon sx={{ mr: 1 }} /> Sell {selectedTower?.price && `($${selectedTower?.price / 2})`}
-                    </Fab>
-                    <Fab
-                        aria-label="undo-button"
-                        variant="extended"
-                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
-                        onClick={undoManager.undo}
-                    >
-                        <UndoIcon sx={{ mr: 1 }} /> Undo
-                    </Fab>
-                    <Fab
-                        aria-label="redo-button"
-                        variant="extended"
-                        disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
-                        onClick={undoManager.redo}
-                    >
-                        <RedoIcon sx={{ mr: 1 }} /> Redo
-                    </Fab>
-                    <Fab
-                        aria-label="start-button"
-                        variant="extended"
-                        color="info"
-                        disabled={showGameModal !== BUILD}
-                        onClick={() => game.setPhase(DEFEND)}
-                    >
-                        Start Next Level
-                    </Fab>
-                </Stack>
-            </Container>
+                <BuyModal
+                    open={showBuyModal}
+                    setOpen={setShowBuyModal}
+                    setSelectedTower={setSelectedTower}
+                    setErrorMessage={setErrorMessage}
+                />
 
-            <BuyModal
-                open={showBuyModal}
-                setOpen={setShowBuyModal}
-                game={game}
-                setSelectedTower={setSelectedTower}
-                setErrorMessage={setErrorMessage}
-            />
-
-            <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
-                © 2025, BK Studios
-            </Typography>
-        </Box >
+                <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
+                    © 2025, BK Studios
+                </Typography>
+            </Box >
+        </GameProvider>
     )
 }
 
@@ -287,7 +283,8 @@ const sellTower = (game, selectedTower, setSelectedTower) => {
     setSelectedTower(null);
 }
 
-const GameContainer = ({ game, selectedTower, setSelectedTower }) => {
+const GameContainer = ({ selectedTower, setSelectedTower }) => {
+    const game = useGameContext();
     const { mouseInput } = game;
 
     useEffect(() => {
@@ -321,13 +318,10 @@ const GameContainer = ({ game, selectedTower, setSelectedTower }) => {
         <Stack direction="row" spacing={2} height="100%">
             <Stack width="100%">
                 <Canvas shadows >
-                    <GameDisplay game={game} assets={assets} selectedTower={selectedTower} />
+                    <GameDisplay assets={assets} selectedTower={selectedTower} />
                 </Canvas>
             </Stack>
-            <SideHUD
-                game={game}
-                selectedTower={selectedTower}
-            />
+            <SideHUD selectedTower={selectedTower} />
         </Stack>
     </>
     )

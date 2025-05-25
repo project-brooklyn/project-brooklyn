@@ -16,6 +16,7 @@ import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
 import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
 import { ItemInfo } from "./ItemInfo";
+import { useGameContext } from "../GameContext";
 
 const NAME = "BuyModal";
 const CANCEL_KEY = "Escape";
@@ -32,7 +33,8 @@ const style = {
     p: 4,
 };
 
-export default function BuyModal({ open, setOpen, game, setSelectedTower, setErrorMessage }) {
+export default function BuyModal({ open, setOpen, setSelectedTower, setErrorMessage }) {
+    const game = useGameContext();
     const { gameMap, keyboardInput, mouseInput } = game;
 
     const [purchasingItem, setPurchasingItem] = useState(null);

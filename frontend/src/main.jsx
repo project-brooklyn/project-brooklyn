@@ -12,7 +12,7 @@ import '@fontsource/roboto/700.css';
 import HomePage from './pages/HomePage.jsx';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import { Test0, TestA, TestB, TestC, TestD, TestE } from './pages/TestPages.jsx';
+import { Big, Random, Rectangle, ZigZag, Flat, Maze } from './pages/TestPages.jsx';
 import { TwinPeaks } from './pages/TestPages.jsx';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme.js';
@@ -32,27 +32,31 @@ const router = createBrowserRouter([
     },
     {
         path: '/test0',
-        element: <Test0 />,
+        element: <Flat />,
     },
     {
-        path: '/testa',
-        element: <TestA />,
+        path: '/flat',
+        element: <Flat />,
     },
     {
-        path: '/testb',
-        element: <TestB />,
+        path: '/random',
+        element: <Random />,
     },
     {
-        path: '/testc',
-        element: <TestC />,
+        path: '/zigzag',
+        element: <ZigZag />,
     },
     {
-        path: '/testd',
-        element: <TestD />,
+        path: '/maze',
+        element: <Maze />,
     },
     {
-        path: '/teste',
-        element: <TestE />,
+        path: '/rectangle',
+        element: <Rectangle />,
+    },
+    {
+        path: '/big',
+        element: <Big />,
     },
     {
         path: '/twinpeaks',

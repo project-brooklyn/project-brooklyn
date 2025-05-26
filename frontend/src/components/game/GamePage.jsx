@@ -28,8 +28,7 @@ import { styled } from '@mui/material/styles';
 import { jwtDecode } from 'jwt-decode';
 import { TOWERS } from "../../entities/buildables";
 import { Status as TowerStatus } from "../../entities/towers/Tower";
-import axios from "axios";
-import { deleteSave } from "../../utils/api_utils";
+import { deleteSave, getUsername } from "../../utils/api_utils";
 import { GameProvider } from "./GameProvider";
 import GameContainer from "./GameContainer";
 import { useGameContext } from "./GameContext";
@@ -154,16 +153,11 @@ const TopBar = ({ errorMessage, setErrorMessage, devMode }) => {
         }
     }, [game.devGui, showDevGui])
 
-    const [username, setUsername] = useState(null);
+    const [username, setUsername] = useState('');
     useEffect(() => {
         const getUser = async () => {
-            const token = localStorage.getItem('project-bk-token');
-            if (token) {
-                const decoded = jwtDecode(token);
-                const { userId } = decoded;
-                const user = await axios.get((import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + '/api/user/' + userId);
-                setUsername(user.data.username);
-            }
+            const username = await getUsername();
+            setUsername(username);
         }
 
         getUser();
@@ -187,7 +181,7 @@ const TopBar = ({ errorMessage, setErrorMessage, devMode }) => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     Project Brooklyn: A tower defense game
                 </Typography>
-                {username && <p>Hello {username}!</p>}
+                {<p>Hello {username || 'Guest'}!</p>}
             </Toolbar>
         </AppBar>
         <Drawer

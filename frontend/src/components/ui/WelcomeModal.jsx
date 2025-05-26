@@ -2,9 +2,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Game from '../../Game';
 import { useEffect, useState } from 'react';
+import { getSavedGames } from '../../utils/api_utils';
 import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
-import { useGameContext } from '../game/GameContext';
 
 function WelcomeModal({ show, hideModal, setGame }) {
     const [errorMessage, setErrorMessage] = useState('');
@@ -22,12 +21,11 @@ function WelcomeModal({ show, hideModal, setGame }) {
     }, []);
 
     const showCloudSaves = async () => {
-        if (!userId || loading) return;
+        if (loading) return;
         setLoading(true);
-        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
         try {
-            const games = await axios.get(baseUrl + '/api/games/' + userId);
-            setCloudGames(games.data);
+            const games = await getSavedGames();
+            setCloudGames(games);
         } catch (err) {
             console.error('Failed to load cloud saves:', err);
             setErrorMessage('Failed to load cloud saves. ' + err.message);
@@ -59,12 +57,11 @@ function WelcomeModal({ show, hideModal, setGame }) {
         <td colSpan="6" align="center">No cloud saves found.</td>
     </tr>
 
-    const CloudSaveRow = () => {
-        const game = useGameContext();
-        const gameData = JSON.parse(atob(game.data));
+    const CloudSaveRow = ({ gameSave }) => {
+        const gameData = JSON.parse(atob(gameSave.data));
         const { createdAt, updatedAt, level, gold, castleHP } = gameData;
 
-        return (<tr key={game._id}>
+        return (<tr key={gameSave._id}>
             <td>{level}</td>
             <td>{gold}</td>
             <td>{castleHP}</td>
@@ -73,7 +70,7 @@ function WelcomeModal({ show, hideModal, setGame }) {
             <td>
                 <Button
                     onClick={() => {
-                        setGame(Game.from(game.data));
+                        setGame(Game.from(gameSave.data));
                         hideModal();
                     }}
                 >
@@ -113,7 +110,7 @@ function WelcomeModal({ show, hideModal, setGame }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow key={game._id} />) : NoSavesRow}
+                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow gameSave={game} key={game._id} />) : NoSavesRow}
                     </tbody>
                 </table>)}
                 {errorMessage && <p className="text-danger">{errorMessage}</p>}

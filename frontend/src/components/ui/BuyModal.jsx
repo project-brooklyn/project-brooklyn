@@ -16,7 +16,7 @@ import { Status as TowerStatus } from "../../entities/towers/Tower";
 import { tileKey } from '/src/map/GameMap.js';
 import { isOccupied, isTop, isBottom } from "../../utils/game_utils";
 import { ItemInfo } from "./ItemInfo";
-import { useGameContext } from "../GameContext";
+import { useGameContext } from "../game/GameContext";
 
 const NAME = "BuyModal";
 const CANCEL_KEY = "Escape";

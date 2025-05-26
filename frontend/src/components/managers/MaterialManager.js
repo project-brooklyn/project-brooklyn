@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { TileType } from "../map/Tile";
+import { TileType } from "../../map/Tile";
 import textures from "./textures";
-import { STATUSES } from "../entities/statuses";
-import { BUFFED } from "../entities/towers/BuffTower";
+import { STATUSES } from "../../entities/statuses";
+import { BUFFED } from "../../entities/towers/BuffTower";
 
 function makeTileMaterial(tileType) {
     return new THREE.MeshLambertMaterial({

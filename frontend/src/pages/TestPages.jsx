@@ -1,4 +1,4 @@
-import GamePage from "../components/GamePage";
+import GamePage from "../components/game/GamePage";
 import FlatMap from "../map/FlatMap";
 import BigMap from "../map/BigMap";
 import MazeMap from "../map/MazeMap";

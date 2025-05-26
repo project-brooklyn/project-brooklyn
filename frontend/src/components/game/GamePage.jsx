@@ -1,13 +1,9 @@
-import { Canvas } from "@react-three/fiber";
-import Game, { BUILD, SCORE, WIN, LOSE, DEFEND } from "../Game";
-import GameDisplay from "../components/GameDisplay";
-import assets from "../components/assets";
-import WelcomeModal from "./ui/WelcomeModal";
+import Game, { BUILD, SCORE, WIN, LOSE, DEFEND } from "../../Game";
+import WelcomeModal from "../ui/WelcomeModal";
 import { useEffect, useState } from "react";
-import { SideHUD } from "./ui/SideHUD";
-import ScorePhaseModal from "./ui/ScorePhaseModal";
-import LoseModal from "./ui/LoseModal";
-import WinModal from "./ui/WinModal";
+import ScorePhaseModal from "../ui/ScorePhaseModal";
+import LoseModal from "../ui/LoseModal";
+import WinModal from "../ui/WinModal";
 import { Howl, Howler } from 'howler';
 
 import AppBar from '@mui/material/AppBar';
@@ -23,19 +19,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import Container from "@mui/material/Container";
-import BuyModal from "./ui/BuyModal";
+import BuyModal from "../ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Drawer from '@mui/material/Drawer';
 import { List, ListItem, ListItemText } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { jwtDecode } from 'jwt-decode';
-import { TOWERS } from "../entities/buildables";
-import { Status as TowerStatus } from "../entities/towers/Tower";
+import { TOWERS } from "../../entities/buildables";
+import { Status as TowerStatus } from "../../entities/towers/Tower";
 import axios from "axios";
-import { deleteSave } from "../utils/api_utils";
+import { deleteSave } from "../../utils/api_utils";
 import { GameProvider } from "./GameProvider";
-import { useGameContext } from "./GameContext";
+import GameContainer from "./GameContainer";
 
 const NAME = "GamePage";
 const BUY_KEY = "b";
@@ -50,18 +46,17 @@ const GamePage = ({ gameMap, devMode = true }) => {
     const [game, setGame] = useState(() => new Game(new gameMap()));
     const { keyboardInput, undoManager } = game;
 
-    const [showWelcomeModal, setShowWelcomeModal] = useState(!devMode);
-    const [showGameModal, setShowGameModal] = useState(game.phase);
-    const [showDevGui, _setShowDevGui] = useState(devMode);
-    const [username, setUsername] = useState(null);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [modal, setModal] = useState(devMode ? "WELCOME" : "");
 
-    const [selectedTower, setSelectedTower] = useState(null);
-    const [showBuyModal, setShowBuyModal] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const hideModal = () => setModal("");
+    const startMusicAndHideModal = () => {
+        Howler.volume(0.5);
+        const sound = new Howl({
+            src: ['audio/funkysuspense.mp3']
+        });
+        sound.play();
 
-    const handleErrorClose = () => {
-        setErrorMessage(null);
+        hideModal();
     }
 
     const deleteCurrentGame = async () => {
@@ -72,19 +67,18 @@ const GamePage = ({ gameMap, devMode = true }) => {
             await deleteSave(userId, game.createdAt);
         }
     }
-
     useEffect(() => {
-        game.addPhaseListener(BUILD, () => setShowGameModal(BUILD))
-        game.addPhaseListener(SCORE, () => setShowGameModal(SCORE))
-        game.addPhaseListener(DEFEND, () => setShowGameModal(DEFEND))
-        game.addPhaseListener(WIN, () => setShowGameModal(WIN))
-        game.addPhaseListener(LOSE, () => setShowGameModal(LOSE))
-        game.addPhaseListener(WIN, deleteCurrentGame)
-        game.addPhaseListener(LOSE, deleteCurrentGame)
+        game.addPhaseListener(BUILD, hideModal);
+        game.addPhaseListener(DEFEND, () => setModal(DEFEND)); // there is no modal for DEFEND, but we set it to show the phase in the HUD
+        game.addPhaseListener(SCORE, () => setModal(SCORE));
+        game.addPhaseListener(WIN, () => setModal(WIN));
+        game.addPhaseListener(LOSE, () => setModal(LOSE));
+        game.addPhaseListener(WIN, deleteCurrentGame);
+        game.addPhaseListener(LOSE, deleteCurrentGame);
 
         keyboardInput.addKeyDownCallback(BUY_KEY, NAME, () => {
             if (game.phase === BUILD) {
-                setShowBuyModal(true);
+                setModal("BUY");
             }
         })
 
@@ -95,8 +89,18 @@ const GamePage = ({ gameMap, devMode = true }) => {
             game.removeAllPhaseListeners(WIN);
             game.removeAllPhaseListeners(LOSE);
         }
-    }, [game, keyboardInput])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [game])
 
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedTower, setSelectedTower] = useState(null);
+
+    const [errorMessage, setErrorMessage] = useState(null);
+    const handleErrorClose = () => {
+        setErrorMessage(null);
+    }
+
+    const [showDevGui, _setShowDevGui] = useState(devMode);
     useEffect(() => {
         if (showDevGui) {
             game.devGui.show();
@@ -105,6 +109,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
         }
     }, [game.devGui, showDevGui])
 
+    const [username, setUsername] = useState(null);
     useEffect(() => {
         const getUser = async () => {
             const token = localStorage.getItem('project-bk-token');
@@ -119,21 +124,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
         getUser();
     }, []);
 
-    const hideGameModel = () => {
-        setShowGameModal("");
-    }
-
-    const startMusicAndHideModal = () => {
-        Howler.volume(0.5);
-        const sound = new Howl({
-            src: ['audio/funkysuspense.mp3']
-        });
-        sound.play();
-
-        setShowWelcomeModal(false)
-    }
-
-    const disableSellButton = (showGameModal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
+    const disableSellButton = (modal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
 
     return (
         <GameProvider game={game} >
@@ -189,15 +180,20 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     </Alert>
                 </Snackbar>
 
-                {showWelcomeModal &&
-                    <WelcomeModal
-                        hideModal={startMusicAndHideModal}
-                        setGame={setGame}
-                    />
-                }
-                {(showGameModal === SCORE) && <ScorePhaseModal />}
-                {(showGameModal === WIN) && <WinModal onHide={hideGameModel} />}
-                {(showGameModal === LOSE) && <LoseModal onHide={hideGameModel} />}
+                <WelcomeModal
+                    show={modal === "WELCOME"}
+                    hideModal={startMusicAndHideModal}
+                    setGame={setGame}
+                />
+                <ScorePhaseModal show={modal === SCORE} />
+                <WinModal onHide={hideModal} show={modal === WIN} />
+                <LoseModal onHide={hideModal} show={modal === LOSE} />
+                <BuyModal
+                    open={modal === "BUY"}
+                    setOpen={hideModal}
+                    setSelectedTower={setSelectedTower}
+                    setErrorMessage={setErrorMessage}
+                />
 
                 <Container sx={{ position: "absolute", top: "75px", textAlign: "center", zIndex: "1" }}>
                     <Stack direction="row" sx={{ justifyContent: "space-between" }}>
@@ -207,9 +203,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                     </Stack>
                 </Container>
 
-                <Stack sx={{ height: "95vh" }} >
-                    <GameContainer key={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
-                </Stack>
+                <GameContainer key={game} selectedTower={selectedTower} setSelectedTower={setSelectedTower} />
 
                 <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
                     <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
@@ -217,8 +211,8 @@ const GamePage = ({ gameMap, devMode = true }) => {
                             aria-label="buy-button"
                             variant="extended"
                             color="primary"
-                            disabled={showGameModal !== BUILD}
-                            onClick={() => setShowBuyModal(true)}
+                            disabled={!!modal && modal !== BUILD}
+                            onClick={() => setModal("BUY")}
                         >
                             <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)
                         </Fab>
@@ -234,7 +228,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                         <Fab
                             aria-label="undo-button"
                             variant="extended"
-                            disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
+                            disabled={game.phase !== BUILD}  // TODO: fix refresh issue (!undoManager.hasUndos())
                             onClick={undoManager.undo}
                         >
                             <UndoIcon sx={{ mr: 1 }} /> Undo
@@ -242,7 +236,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
                         <Fab
                             aria-label="redo-button"
                             variant="extended"
-                            disabled={showGameModal !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
+                            disabled={game.phase !== BUILD}  // TODO: fix refresh issue (!undoManager.hasRedos())
                             onClick={undoManager.redo}
                         >
                             <RedoIcon sx={{ mr: 1 }} /> Redo
@@ -251,20 +245,13 @@ const GamePage = ({ gameMap, devMode = true }) => {
                             aria-label="start-button"
                             variant="extended"
                             color="info"
-                            disabled={showGameModal !== BUILD}
+                            disabled={!!modal || game.phase !== BUILD}
                             onClick={() => game.setPhase(DEFEND)}
                         >
                             Start Next Level
                         </Fab>
                     </Stack>
                 </Container>
-
-                <BuyModal
-                    open={showBuyModal}
-                    setOpen={setShowBuyModal}
-                    setSelectedTower={setSelectedTower}
-                    setErrorMessage={setErrorMessage}
-                />
 
                 <Typography variant="h7" component="div" sx={{ textAlign: "center" }}>
                     © 2025, BK Studios
@@ -281,50 +268,6 @@ const sellTower = (game, selectedTower, setSelectedTower) => {
     game.gold += 0.5 * t.price;
     game.setPath();
     setSelectedTower(null);
-}
-
-const GameContainer = ({ selectedTower, setSelectedTower }) => {
-    const game = useGameContext();
-    const { mouseInput } = game;
-
-    useEffect(() => {
-        if (!game.devGui) return;
-        const gameFolder = game.devGui.addFolder("Game");
-        gameFolder.add(game, "level", 1, 12, 1);
-        gameFolder.add(game.castle, "hp", 1, game.castle.maxHp, 1).name("base hp");
-        gameFolder.close()
-        return () => {
-            gameFolder.destroy();
-        }
-    }, [game])
-
-    useEffect(() => {
-        mouseInput.addClickCallback(NAME, (x, y, _z) => {
-            const tower = game.getTower(x, y);
-            if (!tower) return;
-
-            setSelectedTower(current => {
-                // if the tower is currently selected, deselect it
-                // otherwise, select the tower
-                return tower === current ? null : tower;
-            });
-        })
-
-        return () => mouseInput.removeClickCallback(NAME);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    return (<>
-        <Stack direction="row" spacing={2} height="100%">
-            <Stack width="100%">
-                <Canvas shadows >
-                    <GameDisplay assets={assets} selectedTower={selectedTower} />
-                </Canvas>
-            </Stack>
-            <SideHUD selectedTower={selectedTower} />
-        </Stack>
-    </>
-    )
 }
 
 export default GamePage;

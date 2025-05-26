@@ -4,9 +4,9 @@ import Game from '../../Game';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import { useGameContext } from '../GameContext';
+import { useGameContext } from '../game/GameContext';
 
-function WelcomeModal({ hideModal, setGame }) {
+function WelcomeModal({ show, hideModal, setGame }) {
     const [errorMessage, setErrorMessage] = useState('');
     const [userId, setUserId] = useState(null);
     const [cloudGames, setCloudGames] = useState([]);
@@ -85,7 +85,7 @@ function WelcomeModal({ hideModal, setGame }) {
 
     return (
         <Modal
-            show={true}
+            show={show}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered

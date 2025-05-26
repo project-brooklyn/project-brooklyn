@@ -1,4 +1,4 @@
-import GamePage from "../components/GamePage";
+import GamePage from "../components/game/GamePage";
 import DemoMap from "../map/DemoMap";
 
 const HomePage = () => {

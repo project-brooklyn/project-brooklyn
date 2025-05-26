@@ -5,9 +5,9 @@ import Modal from 'react-bootstrap/Modal';
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { deleteSave } from "../../utils/api_utils";
-import { useGameContext } from "../GameContext";
+import { useGameContext } from "../game/GameContext";
 
-function ScorePhaseModal() {
+function ScorePhaseModal({ show }) {
     const game = useGameContext();
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
@@ -103,7 +103,7 @@ function ScorePhaseModal() {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        show={true}
+        show={show}
     >
         <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">

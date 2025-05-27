@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { login, logout } from '../utils/api_utils';
 
 const LogIn = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        localStorage.removeItem('project-bk-token');
-    }, []);
+    const navigate = useNavigate();
+    useEffect(logout, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,14 +22,8 @@ const LogIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
-
         try {
-            const res = await axios.post(baseUrl + '/api/login/', formData);
-            const { token } = res.data;
-
-            localStorage.setItem('project-bk-token', token);
-
+            await login(formData);
             navigate('/');
         } catch (err) {
             console.error(err);

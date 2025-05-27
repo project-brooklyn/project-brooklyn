@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { login, logout, register } from '../utils/api_utils';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -10,10 +10,7 @@ const SignUp = () => {
     });
 
     const navigate = useNavigate();
-    useEffect(() => {
-        localStorage.removeItem('project-bk-token');
-    }, []);
-
+    useEffect(logout, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,21 +23,15 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
-
         try {
-            const res1 = await axios.post(baseUrl + '/api/register/', formData);
-            if (res1.status === 201) {
-                const res2 = await axios.post(baseUrl + '/api/login/', formData);
-                const { token } = res2.data;
-
-                localStorage.setItem('project-bk-token', token);
+            const registrationResult = await register(formData);
+            if (registrationResult.status === 201) {
+                await login(formData);
                 navigate('/');
             }
         } catch (err) {
             console.error(err);
         }
-
     }
 
     return (

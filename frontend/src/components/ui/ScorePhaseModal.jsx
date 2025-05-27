@@ -3,11 +3,10 @@ import { BUILD } from "../../Game";
 import { TOWERS } from "../../entities/buildables";
 import Modal from 'react-bootstrap/Modal';
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
-import { deleteSave } from "../../utils/api_utils";
-import { useGameContext } from "../GameContext";
+import { deleteSave, saveGame } from "../../utils/api_utils";
+import { useGameContext } from "../game/GameContext";
 
-function ScorePhaseModal() {
+function ScorePhaseModal({ show }) {
     const game = useGameContext();
     const [copied, setCopied] = useState(false);
     const [rewardsChosen, setRewardsChosen] = useState([]);
@@ -73,7 +72,7 @@ function ScorePhaseModal() {
     const saveToClipboard = () => {
         const json = JSON.stringify(game.toJSON());
         navigator.clipboard.writeText(btoa(json));
-        console.log('Copied game data to clipboard:\n', json); // TODO: remove after implementing load game
+        console.log('Copied game data to clipboard:\n', json); // TODO: remove?
         setCopied(true);
     }
 
@@ -83,17 +82,11 @@ function ScorePhaseModal() {
         const json = JSON.stringify(game.toJSON());
         const data = btoa(json);
 
-        const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
-
         // delete previous save
         await deleteSave(userId, game.createdAt);
 
         // save new game
-        await axios.post(baseUrl + '/api/games/', {
-            userId,
-            data,
-            createdAt: game.createdAt,
-        });
+        await saveGame(data, game.createdAt);
 
         setSaved(true);
         setSaving(false);
@@ -103,7 +96,7 @@ function ScorePhaseModal() {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        show={true}
+        show={show}
     >
         <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">

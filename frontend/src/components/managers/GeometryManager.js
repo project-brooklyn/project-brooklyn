@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { tileConfig } from "../utils/render_utils";
+import { tileConfig } from "../../utils/render_utils";
 
 class GeometryManager {
     geometries = new Map();

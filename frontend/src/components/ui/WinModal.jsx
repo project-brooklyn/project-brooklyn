@@ -1,12 +1,12 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useGameContext } from '../GameContext';
+import { useGameContext } from '../game/GameContext';
 
-function WinModal({ onHide }) {
+function WinModal({ show, onHide }) {
     const game = useGameContext();
     return (
         <Modal
-            show={true}
+            show={show}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered

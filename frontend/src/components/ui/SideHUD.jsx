@@ -9,7 +9,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useGameContext } from "../GameContext";
+import { useGameContext } from "../game/GameContext";
 
 const ItemInfoAccordion = (tower) => {
     return (

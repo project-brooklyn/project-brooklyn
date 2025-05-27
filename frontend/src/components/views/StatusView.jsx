@@ -1,6 +1,3 @@
-import * as THREE from 'three'
-import textures from '../textures'
-
 const STATUS_SPACING = 0.1;
 
 export const StatusView = ({ assets, statuses, position, height }) => {

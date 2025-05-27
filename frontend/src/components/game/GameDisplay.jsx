@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 
-import { BUILD } from "../Game";
+import { BUILD } from "../../Game";
 
-import MapView from "./views/MapView";
-import EnemyView from "./views/EnemyView";
-import StructureView from "./views/StructureView";
-import ProjectileView from "./views/ProjectileView";
-import PathView from "./views/PathView";
-import SelectedTowerView from "./views/SelectedTowerView";
-import { RangeIndicatorView } from "./views/RangeIndicatorView";
+import MapView from "../views/MapView";
+import EnemyView from "../views/EnemyView";
+import StructureView from "../views/StructureView";
+import ProjectileView from "../views/ProjectileView";
+import PathView from "../views/PathView";
+import SelectedTowerView from "../views/SelectedTowerView";
+import { RangeIndicatorView } from "../views/RangeIndicatorView";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { useGameContext } from "./GameContext";
 
@@ -41,7 +41,7 @@ export default function GameDisplay({ assets, selectedTower }) {
         return () => {
             stats.domElement.remove();
         }
-    }, []);
+    }, [stats]);
 
     useEffect(() => {
         setReady(true);

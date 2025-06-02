@@ -108,7 +108,7 @@ const GamePage = ({ gameMap, devMode = true }) => {
             <LoseModal onHide={hideModal} show={modal === LOSE} />
             <BuyModal
                 open={modal === "BUY"}
-                setOpen={hideModal}
+                hideModal={hideModal}
                 setSelectedTower={setSelectedTower}
                 setErrorMessage={setErrorMessage}
             />

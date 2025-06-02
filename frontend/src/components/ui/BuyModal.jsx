@@ -33,7 +33,7 @@ const style = {
     p: 4,
 };
 
-export default function BuyModal({ open, setOpen, setSelectedTower, setErrorMessage }) {
+export default function BuyModal({ open, hideModal, setSelectedTower, setErrorMessage }) {
     const game = useGameContext();
     const { gameMap, keyboardInput, mouseInput } = game;
 
@@ -41,11 +41,11 @@ export default function BuyModal({ open, setOpen, setSelectedTower, setErrorMess
 
     const handleClose = () => {
         clear();
-        setOpen(false);
+        hideModal();
     }
 
     const handleSelectButton = () => {
-        setOpen(false);
+        hideModal();
     };
 
     const setItem = (name) => {

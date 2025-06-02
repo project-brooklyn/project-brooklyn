@@ -5,6 +5,7 @@ const baseUrl = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000';
 
 const getUserId = () => {
     const token = localStorage.getItem('project-bk-token');
+    if (!token) return null;
     const decoded = jwtDecode(token);
     return decoded.userId;
 }

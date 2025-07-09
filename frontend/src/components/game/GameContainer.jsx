@@ -13,17 +13,14 @@ const GameContainer = ({ selectedTower, setSelectedTower }) => {
     const { mouseInput } = game;
 
     useEffect(() => {
+        // handle game folder
         if (!game.devGui) return;
         const gameFolder = game.devGui.addFolder("Game");
         gameFolder.add(game, "level", 1, 12, 1);
         gameFolder.add(game.castle, "hp", 1, game.castle.maxHp, 1).name("base hp");
         gameFolder.close()
-        return () => {
-            gameFolder.destroy();
-        }
-    }, [game])
 
-    useEffect(() => {
+        // handle mouse input for selecting towers
         mouseInput.addClickCallback(NAME, (x, y, _z) => {
             const tower = game.getTower(x, y);
             if (!tower) return;
@@ -35,9 +32,11 @@ const GameContainer = ({ selectedTower, setSelectedTower }) => {
             });
         })
 
-        return () => mouseInput.removeClickCallback(NAME);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+        return () => {
+            gameFolder.destroy();
+            mouseInput.removeClickCallback(NAME)
+        }
+    }, [game, mouseInput, setSelectedTower])
 
     return (<Stack sx={{ height: "95vh" }} >
         <Stack direction="row" spacing={2} height="100%">

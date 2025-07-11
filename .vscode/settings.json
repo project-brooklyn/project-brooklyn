@@ -29,4 +29,7 @@
     "typescript.format.insertSpaceAfterSemicolonInForStatements": true,
     "typescript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
     "typescript.format.semicolons": "ignore",
+    "files.watcherExclude": {
+        "**/node_modules/**": true
+    },
 }

@@ -104,10 +104,10 @@ const GamePage = ({ gameMap, devMode = true }) => {
                 setGame={setGame}
             />
             <ScorePhaseModal show={modal === SCORE} />
-            <WinModal onHide={hideModal} show={modal === WIN} />
-            <LoseModal onHide={hideModal} show={modal === LOSE} />
+            <WinModal hideModal={hideModal} show={modal === WIN} />
+            <LoseModal hideModal={hideModal} show={modal === LOSE} />
             <BuyModal
-                open={modal === "BUY"}
+                show={modal === "BUY"}
                 hideModal={hideModal}
                 setSelectedTower={setSelectedTower}
                 setErrorMessage={setErrorMessage}
@@ -229,7 +229,7 @@ const BottomButtons = ({ modal, setModal, selectedTower, setSelectedTower }) => 
         setSelectedTower(null);
     }
 
-    const disableSellButton = (modal !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
+    const disableSellButton = (game.phase !== BUILD) || !selectedTower || (selectedTower.status !== TowerStatus.BUILT);
 
     return <Container sx={{ position: "absolute", bottom: "75px", textAlign: "center" }}>
         <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
@@ -237,7 +237,7 @@ const BottomButtons = ({ modal, setModal, selectedTower, setSelectedTower }) => 
                 aria-label="buy-button"
                 variant="extended"
                 color="primary"
-                disabled={!!modal && modal !== BUILD}
+                disabled={!!modal || game.phase !== BUILD}
                 onClick={() => setModal("BUY")}
             >
                 <ShoppingCartIcon sx={{ mr: 1 }} /> Buy (B)

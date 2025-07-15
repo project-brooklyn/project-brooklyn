@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { BUILD } from "../../Game";
 import { TOWERS } from "../../entities/buildables";
-import Modal from 'react-bootstrap/Modal';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { jwtDecode } from "jwt-decode";
 import { deleteSave, saveGame } from "../../utils/api_utils";
 import { useGameContext } from "../game/GameContext";
@@ -92,43 +97,48 @@ function ScorePhaseModal({ show }) {
         setSaving(false);
     }
 
-    return <Modal
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={show}
-    >
-        <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">
+    return (
+        <Dialog
+            open={show}
+            maxWidth="sm"
+            fullWidth
+        >
+            <DialogTitle>
                 Level Complete!
-            </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <p>Level: {game.level}</p>
-            <p>Gold: {game.gold}</p>
-            <p>Castle HP: {game.castle.hp}</p>
-            {
-                rewardsChosen.length >= REWARD_LIMIT
-                    ? <>
-                        <button onClick={handleClick}>Next Level</button>
-                        <button onClick={saveToClipboard}>{copied ? 'Game Data Copied' : 'Copy Game Data to Clipboard'}</button>
-                        {userId && <button onClick={saveToCloud} disabled={saving || saved}>{saving ? 'Saving Game...' : saved ? 'Game Saved' : 'Save to Cloud'}</button>}
-                    </>
-                    : <>
-                        <h5>Choose Reward</h5>
-                        {
-                            rewards.map((reward, i) => rewardsChosen.includes(i)
-                                ? <button key={i} disabled>{reward.label}</button>
-                                : <button key={i} onClick={() => {
-                                    reward.fn();
-                                    setRewardsChosen(rewardsChosen.concat(i));
-                                }}>{reward.label}</button>
-                            )
-                        }
-                    </>
-            }
-        </Modal.Body>
-    </Modal>
+            </DialogTitle>
+
+            <DialogContent>
+                <DialogContentText>
+                    Level: {game.level}<br />
+                    Gold: {game.gold}<br />
+                    Castle HP: {game.castle.hp}<br />
+                </DialogContentText>
+            </DialogContent>
+
+            <DialogActions>
+                {
+                    rewardsChosen.length >= REWARD_LIMIT
+                        ? <>
+                            <Button variant="outlined" onClick={saveToClipboard}>{copied ? 'Game Data Copied' : 'Copy Game Data to Clipboard'}</Button>
+                            <Button variant="contained" onClick={handleClick}>Next Level</Button>
+                            {userId && <Button variant="contained" onClick={saveToCloud} disabled={saving || saved}>{saving ? 'Saving Game...' : saved ? 'Game Saved' : 'Save to Cloud'}</Button>}
+                        </>
+                        : <>
+                            Choose Reward<br />
+                            {
+                                rewards.map((reward, i) => rewardsChosen.includes(i)
+                                    ? <Button variant="outlined" key={i} disabled>{reward.label}</Button>
+                                    : <Button variant="outlined" key={i} onClick={() => {
+                                        reward.fn();
+                                        setRewardsChosen(rewardsChosen.concat(i));
+                                    }}>{reward.label}</Button>
+                                )
+                            }
+                        </>
+                }
+            </DialogActions>
+        </Dialog>
+    )
 }
 
 export default ScorePhaseModal;

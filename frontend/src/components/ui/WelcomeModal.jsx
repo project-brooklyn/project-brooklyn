@@ -1,5 +1,9 @@
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Game from '../../Game';
 import { useEffect, useState } from 'react';
 import { getSavedGames } from '../../utils/api_utils';
@@ -81,46 +85,46 @@ function WelcomeModal({ show, hideModal, setGame }) {
     }
 
     return (
-        <Modal
-            show={show}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
+        <Dialog
+            open={show}
+            maxWidth="sm"
+            fullWidth
         >
-            <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Mission Briefing
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p align="center">
+            <DialogTitle>
+                Mission Briefing
+            </DialogTitle>
+
+            <DialogContent>
+                <DialogContentText sx={{ textAlign: 'center' }}>
                     Your enemy seeks the quickest path to victory.<br />
                     Alter their trajectory.
                     Bring forth their defeat.
-                </p>
-                {loaded && (<table style={{ borderSpacing: '10px', borderCollapse: 'separate' }}>
-                    <thead>
-                        <tr>
-                            <th>Level</th>
-                            <th>Gold</th>
-                            <th>Castle HP</th>
-                            <th>Game Started</th>
-                            <th>Game Saved</th>
-                            <th>Load Game</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow gameSave={game} key={game._id} />) : NoSavesRow}
-                    </tbody>
-                </table>)}
-                {errorMessage && <p className="text-danger">{errorMessage}</p>}
-            </Modal.Body>
-            <Modal.Footer>
-                {userId && <Button onClick={showCloudSaves} disabled={loading || loaded}>View Cloud Saves</Button>}
-                <Button onClick={loadGameFromClipboard}>Load Game from Clipboard</Button>
-                <Button onClick={hideModal}>New Game</Button>
-            </Modal.Footer>
-        </Modal >
+
+                    {loaded && (<table style={{ borderSpacing: '10px', borderCollapse: 'separate' }}>
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Gold</th>
+                                <th>Castle HP</th>
+                                <th>Game Started</th>
+                                <th>Game Saved</th>
+                                <th>Load Game</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow gameSave={game} key={game._id} />) : NoSavesRow}
+                        </tbody>
+                    </table>)}
+                    {errorMessage && <p className="text-danger">{errorMessage}</p>}
+                </DialogContentText>
+            </DialogContent>
+
+            <DialogActions>
+                {userId && <Button variant="contained" onClick={showCloudSaves} disabled={loading || loaded}>View Cloud Saves</Button>}
+                <Button variant="contained" onClick={loadGameFromClipboard}>Load Game from Clipboard</Button>
+                <Button variant="contained" onClick={hideModal}>New Game</Button>
+            </DialogActions>
+        </Dialog>
     );
 }
 

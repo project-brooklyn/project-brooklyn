@@ -54,16 +54,32 @@ export const getSavedGames = async () => {
 }
 
 export const register = async (formData) => {
-    return await axios.post(baseUrl + '/api/register/', formData);
+    try {
+        const res = await axios.post(baseUrl + '/api/register/', formData);
+        if (res.status === 201) {
+            return { success: true, message: 'Registration successful' };
+        } else {
+            return { success: false, error: res.data.error };
+        }
+    } catch (error) {
+        console.error('Error registering:', error);
+        return { success: false, error: error.response ? error.response.data.error : 'Network error' };
+    }
 }
 
 export const login = async (formData) => {
     try {
         const res = await axios.post(baseUrl + '/api/login/', formData);
-        const { token } = res.data;
-        localStorage.setItem('project-bk-token', token);
+        if (res.status === 200) {
+            const { token } = res.data;
+            localStorage.setItem('project-bk-token', token);
+            return { success: true, token };
+        } else {
+            return { success: false, error: res.data.error };
+        }
     } catch (error) {
         console.error('Error logging in:', error);
+        return { success: false, error: error.response ? error.response.data.error : 'Network error' };
     }
 }
 

@@ -35,7 +35,9 @@ export default function GameDisplay({ assets, selectedTower }) {
 
     useEffect(() => {
         stats.showPanel(0);
-        stats.domElement.style.top = "128px";
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.bottom = '0px';
+        stats.domElement.style.top = '';
         document.body.appendChild(stats.domElement);
 
         return () => {

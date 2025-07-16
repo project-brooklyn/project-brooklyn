@@ -7,6 +7,7 @@ const LogIn = () => {
         email: '',
         password: '',
     });
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
     useEffect(logout, []);
@@ -17,16 +18,31 @@ const LogIn = () => {
             ...prevData,
             [name]: value,
         }));
+        setError('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const { email, password } = formData;
+        if (!email) {
+            setError('Email is required');
+            return;
+        } else if (!password) {
+            setError('Password is required');
+            return;
+        }
+
         try {
-            await login(formData);
-            navigate('/');
+            const { success, error } = await login(formData);
+            if (success) {
+                navigate('/');
+            } else {
+                setError(error);
+            }
         } catch (err) {
             console.error(err);
+            setError('An unknown error occurred. Please try again later.');
         }
     };
 
@@ -55,6 +71,7 @@ const LogIn = () => {
             </label>
             <br />
             <button type="submit">Login</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </form>
     );
 };

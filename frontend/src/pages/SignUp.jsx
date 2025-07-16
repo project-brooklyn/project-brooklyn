@@ -8,6 +8,7 @@ const SignUp = () => {
         email: '',
         password: '',
     });
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
     useEffect(logout, []);
@@ -18,19 +19,38 @@ const SignUp = () => {
             ...prevData,
             [name]: value,
         }));
+        setError('');
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const { username, email, password } = formData;
+        if (!username) {
+            setError('Username is required');
+            return;
+        } else if (!email) {
+            setError('Email is required');
+            return;
+        } else if (!password) {
+            setError('Password is required');
+            return;
+        } else if (password.length < 6) {
+            setError('Password must be at least 6 characters long');
+            return;
+        }
+
         try {
-            const registrationResult = await register(formData);
-            if (registrationResult.status === 201) {
+            const { success, error } = await register(formData);
+            if (success) {
                 await login(formData);
                 navigate('/');
+            } else {
+                setError(error);
             }
         } catch (err) {
             console.error(err);
+            setError('An unknown error occurred. Please try again later.');
         }
     }
 
@@ -69,6 +89,7 @@ const SignUp = () => {
             </label>
             <br />
             <button type="submit">Sign Up</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </form>
     )
 }

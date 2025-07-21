@@ -4,6 +4,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import Game from '../../Game';
 import { useEffect, useState } from 'react';
 import { getSavedGames } from '../../utils/api_utils';
@@ -57,31 +65,31 @@ function WelcomeModal({ show, hideModal, setGame }) {
         }
     }
 
-    const NoSavesRow = <tr>
-        <td colSpan="6" align="center">No cloud saves found.</td>
-    </tr>
+    const NoSavesRow = <TableRow>
+        <TableCell colSpan="6" align="center">No cloud saves found.</TableCell>
+    </TableRow>
 
     const CloudSaveRow = ({ gameSave }) => {
         const gameData = JSON.parse(atob(gameSave.data));
         const { createdAt, updatedAt, level, gold, castleHP } = gameData;
 
-        return (<tr key={gameSave._id}>
-            <td>{level}</td>
-            <td>{gold}</td>
-            <td>{castleHP}</td>
-            <td>{new Date(parseInt(createdAt)).toLocaleString()}</td>
-            <td>{new Date(parseInt(updatedAt)).toLocaleString()}</td>
-            <td>
+        return (<TableRow key={gameSave._id}>
+            <TableCell>{level}</TableCell>
+            <TableCell>{gold}</TableCell>
+            <TableCell>{castleHP}</TableCell>
+            <TableCell>{new Date(parseInt(createdAt)).toLocaleString()}</TableCell>
+            <TableCell>{new Date(parseInt(updatedAt)).toLocaleString()}</TableCell>
+            <TableCell>
                 <Button
                     onClick={() => {
                         setGame(Game.from(gameSave.data));
                         hideModal();
                     }}
                 >
-                    Load Game
+                    <OpenInBrowserIcon />
                 </Button>
-            </td>
-        </tr>)
+            </TableCell>
+        </TableRow>)
     }
 
     return (
@@ -100,21 +108,24 @@ function WelcomeModal({ show, hideModal, setGame }) {
                     Alter their trajectory.
                     Bring forth their defeat.
 
-                    {loaded && (<table style={{ borderSpacing: '10px', borderCollapse: 'separate' }}>
-                        <thead>
-                            <tr>
-                                <th>Level</th>
-                                <th>Gold</th>
-                                <th>Castle HP</th>
-                                <th>Game Started</th>
-                                <th>Game Saved</th>
-                                <th>Load Game</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow gameSave={game} key={game._id} />) : NoSavesRow}
-                        </tbody>
-                    </table>)}
+                    {loaded && (
+                        <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Level</TableCell>
+                                        <TableCell>Gold</TableCell>
+                                        <TableCell>HP</TableCell>
+                                        <TableCell>Game Started</TableCell>
+                                        <TableCell>Game Saved</TableCell>
+                                        <TableCell align="center">Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {cloudGames.length ? cloudGames.map((game) => <CloudSaveRow gameSave={game} key={game._id} />) : NoSavesRow}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>)}
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}
                 </DialogContentText>
             </DialogContent>

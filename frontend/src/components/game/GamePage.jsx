@@ -44,8 +44,8 @@ const HudTopDiv = styled('div')(({ theme }) => ({
     fontSize: "medium",
 }));
 
-const GamePage = ({ gameMap, devMode = true }) => {
-    const [game, setGame] = useState(() => new Game(new gameMap()));
+const GamePage = ({ gameMap, devMode = true, levels }) => {
+    const [game, setGame] = useState(() => new Game(new gameMap(), levels));
     const { keyboardInput } = game;
 
     const [modal, setModal] = useState(devMode ? "" : "WELCOME");

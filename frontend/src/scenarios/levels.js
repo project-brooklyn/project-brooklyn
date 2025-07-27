@@ -1,12 +1,12 @@
-import Alligator from "./entities/enemies/Alligator";
-import Cockroach from "./entities/enemies/Cockroach";
-import Cow from "./entities/enemies/Cow";
-import Guy from "./entities/enemies/Guy";
-import Lamb from "./entities/enemies/Lamb";
-import Mouse from "./entities/enemies/Mouse";
-import Rabbit from "./entities/enemies/Rabbit";
+import Alligator from "../entities/enemies/Alligator";
+import Cockroach from "../entities/enemies/Cockroach";
+import Cow from "../entities/enemies/Cow";
+import Guy from "../entities/enemies/Guy";
+import Lamb from "../entities/enemies/Lamb";
+import Mouse from "../entities/enemies/Mouse";
+import Rabbit from "../entities/enemies/Rabbit";
 
-export const levels = [
+export const defaultLevels = [
     {
         enemy: Guy,
         count: 0,

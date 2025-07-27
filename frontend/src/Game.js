@@ -4,7 +4,7 @@ import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import KeyboardInput from "./components/inputs/KeyboardInput";
 import MouseInput from "./components/inputs/MouseInput";
-import { levels } from "./levels";
+import { defaultLevels } from "./scenarios/levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
@@ -16,7 +16,8 @@ import GameMap from "./map/GameMap";
 export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
-    constructor(gameMap) {
+    constructor(gameMap, levels = defaultLevels) {
+        this.levels = levels;
         this.level = 1;
         this.phase = BUILD;
         this.createdAt = Date.now().toString();
@@ -223,7 +224,7 @@ export default class Game {
     }
 
     handleLevelChange = () => {
-        const level = levels[this.level];
+        const level = this.levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
@@ -306,7 +307,7 @@ export default class Game {
                 return
             }
 
-            if (this.level >= levels.length) {
+            if (this.level >= this.levels.length) {
                 this.setPhase(WIN)
                 return
             }

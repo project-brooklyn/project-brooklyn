@@ -31,14 +31,15 @@ export default class Game {
         this.blueprints = new Set(['arrowTower']);
         this.enableBlueprints = false;
 
+        this.loadMapFromScenario();
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
-            gameMap.width - 1,
-            gameMap.depth - 1,
-            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
+            this.gameMap.width - 1,
+            this.gameMap.depth - 1,
+            this.gameMap.getElevation(this.gameMap.width - 1, this.gameMap.depth - 1)
         );  // Assumes map is rectangular
-        gameMap.addTower(0, 0, this.portal);
-        gameMap.addTower(gameMap.width - 1, gameMap.depth - 1, this.castle);
+        this.gameMap.addTower(0, 0, this.portal);
+        this.gameMap.addTower(this.gameMap.width - 1, this.gameMap.depth - 1, this.castle);
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -64,7 +65,7 @@ export default class Game {
         this.devGui.close();
 
         this.phaseListeners = {
-            [BUILD]: [],
+            [BUILD]: [this.loadMapFromScenario],
             [DEFEND]: [
                 this.commitTowers,
                 this.applyBuffs,
@@ -212,6 +213,14 @@ export default class Game {
         this.handleEnemiesAtCastle();
         this.towersAttack();
         this.checkLevelOver();
+    }
+
+    loadMapFromScenario = () => {
+        const level = this.levels[this.level - 1];
+        const { gameMap } = level;
+        if (gameMap) {
+            this.gameMap = GameMap.from(gameMap);
+        }
     }
 
     handleEnemyStatus = () => {

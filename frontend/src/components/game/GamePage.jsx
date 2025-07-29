@@ -1,9 +1,10 @@
 import Game, { BUILD, SCORE, WIN, LOSE, DEFEND } from "../../Game";
-import WelcomeModal from "../ui/WelcomeModal";
 import { useEffect, useState } from "react";
+import WelcomeModal from "../ui/WelcomeModal";
 import ScorePhaseModal from "../ui/ScorePhaseModal";
 import LoseModal from "../ui/LoseModal";
 import WinModal from "../ui/WinModal";
+import SettingsModal from "../ui/SettingsModal";
 import { Howl, Howler } from 'howler';
 
 import AppBar from '@mui/material/AppBar';
@@ -18,6 +19,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Container from "@mui/material/Container";
 import BuyModal from "../ui/BuyModal";
 import Snackbar from '@mui/material/Snackbar';
@@ -145,6 +147,7 @@ const TopBar = ({ errorMessage, setErrorMessage, devMode }) => {
         setErrorMessage(null);
     }
     const [showDevGui, _setShowDevGui] = useState(devMode);
+    const [showSettings, setShowSettings] = useState(false);
     useEffect(() => {
         if (showDevGui) {
             game.devGui.show();
@@ -181,9 +184,17 @@ const TopBar = ({ errorMessage, setErrorMessage, devMode }) => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     Project Brooklyn: A tower defense game
                 </Typography>
+                <IconButton
+                    size="large"
+                    color="inherit"
+                    onClick={() => setShowSettings(true)}
+                >
+                    <SettingsIcon />
+                </IconButton>
                 {<p>Hello {username || 'Guest'}!</p>}
             </Toolbar>
         </AppBar>
+
         <Drawer
             anchor="left"
             open={drawerOpen}
@@ -198,6 +209,11 @@ const TopBar = ({ errorMessage, setErrorMessage, devMode }) => {
                 </ListItem>
             </List>
         </Drawer>
+
+        <SettingsModal
+            show={showSettings}
+            hideModal={() => setShowSettings(false)}
+        />
 
         <Snackbar
             open={Boolean(errorMessage)}

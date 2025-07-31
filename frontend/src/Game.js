@@ -4,7 +4,7 @@ import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import KeyboardInput from "./components/inputs/KeyboardInput";
 import MouseInput from "./components/inputs/MouseInput";
-import { levels } from "./levels";
+import { defaultLevels } from "./scenarios/levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
@@ -16,7 +16,8 @@ import GameMap from "./map/GameMap";
 export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
-    constructor(gameMap) {
+    constructor(gameMap, levels = defaultLevels) {
+        this.levels = levels;
         this.level = 1;
         this.phase = BUILD;
         this.createdAt = Date.now().toString();
@@ -30,14 +31,15 @@ export default class Game {
         this.blueprints = new Set(['arrowTower']);
         this.enableBlueprints = false;
 
+        this.loadMapFromScenario();
         this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
         this.castle = new Castle(
-            gameMap.width - 1,
-            gameMap.depth - 1,
-            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
+            this.gameMap.width - 1,
+            this.gameMap.depth - 1,
+            this.gameMap.getElevation(this.gameMap.width - 1, this.gameMap.depth - 1)
         );  // Assumes map is rectangular
-        gameMap.addTower(0, 0, this.portal);
-        gameMap.addTower(gameMap.width - 1, gameMap.depth - 1, this.castle);
+        this.gameMap.addTower(0, 0, this.portal);
+        this.gameMap.addTower(this.gameMap.width - 1, this.gameMap.depth - 1, this.castle);
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -63,7 +65,7 @@ export default class Game {
         this.devGui.close();
 
         this.phaseListeners = {
-            [BUILD]: [],
+            [BUILD]: [this.loadMapFromScenario],
             [DEFEND]: [
                 this.commitTowers,
                 this.applyBuffs,
@@ -213,6 +215,14 @@ export default class Game {
         this.checkLevelOver();
     }
 
+    loadMapFromScenario = () => {
+        const level = this.levels[this.level - 1];
+        const { gameMap } = level;
+        if (gameMap) {
+            this.gameMap = GameMap.from(gameMap);
+        }
+    }
+
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
             for (let status of enemy.statuses) {
@@ -223,7 +233,7 @@ export default class Game {
     }
 
     handleLevelChange = () => {
-        const level = levels[this.level];
+        const level = this.levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.gold;
@@ -306,7 +316,7 @@ export default class Game {
                 return
             }
 
-            if (this.level >= levels.length) {
+            if (this.level >= this.levels.length) {
                 this.setPhase(WIN)
                 return
             }

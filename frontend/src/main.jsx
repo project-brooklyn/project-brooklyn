@@ -12,7 +12,7 @@ import '@fontsource/roboto/700.css';
 import HomePage from './pages/HomePage.jsx';
 import LogIn from './pages/LogIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import { Big, Random, Rectangle, ZigZag, Flat, Maze } from './pages/TestPages.jsx';
+import { Big, Random, Rectangle, ZigZag, Flat, Maze, Tutorial } from './pages/TestPages.jsx';
 import { TwinPeaks } from './pages/TestPages.jsx';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme.js';
@@ -62,6 +62,10 @@ const router = createBrowserRouter([
         path: '/twinpeaks',
         element: <TwinPeaks />,
     },
+    {
+        path: '/tutorial',
+        element: <Tutorial />,
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

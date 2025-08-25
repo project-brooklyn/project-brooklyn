@@ -31,15 +31,8 @@ export default class Game {
         this.blueprints = new Set(['arrowTower']);
         this.enableBlueprints = false;
 
+        this.message = null;
         this.loadMapFromScenario();
-        this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
-        this.castle = new Castle(
-            this.gameMap.width - 1,
-            this.gameMap.depth - 1,
-            this.gameMap.getElevation(this.gameMap.width - 1, this.gameMap.depth - 1)
-        );  // Assumes map is rectangular
-        this.gameMap.addTower(0, 0, this.portal);
-        this.gameMap.addTower(this.gameMap.width - 1, this.gameMap.depth - 1, this.castle);
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -50,7 +43,7 @@ export default class Game {
         this.spawnFunction = () => null;
         this.path = [];
         this.steps = [];
-        this.gold = 500;
+        this.gold ||= 500;
         this.goldReward = 0;
 
         this.keyboardInput = new KeyboardInput();
@@ -80,6 +73,19 @@ export default class Game {
 
         this.damage_dealt = 0
         this.damage_taken = 0
+    }
+
+    setupPortalAndCastle = (castleHp) => {
+        this.portal = new Portal(0, 0, this.gameMap.getElevation(0, 0));
+        this.castle = new Castle(
+            this.gameMap.width - 1,
+            this.gameMap.depth - 1,
+            this.gameMap.getElevation(this.gameMap.width - 1, this.gameMap.depth - 1)
+        );  // Assumes map is rectangular
+        this.gameMap.addTower(0, 0, this.portal);
+        this.gameMap.addTower(this.gameMap.width - 1, this.gameMap.depth - 1, this.castle);
+
+        if (castleHp) this.castle.hp = castleHp;
     }
 
     addPhaseListener = (phase, fn) => {
@@ -217,9 +223,19 @@ export default class Game {
 
     loadMapFromScenario = () => {
         const level = this.levels[this.level - 1];
-        const { gameMap } = level;
+        const { gameMap, message, castleHp, gold } = level;
         if (gameMap) {
             this.gameMap = GameMap.from(gameMap);
+        }
+        this.setupPortalAndCastle(castleHp || 0);
+        this.setSteps();
+
+        if (gold) this.gold = gold;
+
+        if (message) {
+            this.message = message;
+        } else {
+            this.message = null;
         }
     }
 
@@ -236,7 +252,7 @@ export default class Game {
         const level = this.levels[this.level];
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
-        this.goldReward = level.gold;
+        this.goldReward = level.goldReward;
     }
 
     commitTowers = () => {

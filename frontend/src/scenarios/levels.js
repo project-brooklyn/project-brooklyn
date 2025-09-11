@@ -8,12 +8,6 @@ import Rabbit from "../entities/enemies/Rabbit";
 
 export const defaultLevels = [
     {
-        enemy: Guy,
-        count: 0,
-        delay: 25,
-        goldReward: 100,
-    },
-    {
         enemy: Cow,
         count: 1,
         delay: 200,

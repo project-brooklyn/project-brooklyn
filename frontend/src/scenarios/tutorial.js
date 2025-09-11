@@ -4,6 +4,37 @@ import Rabbit from "../entities/enemies/Rabbit";
 const tutorial1 = "/images/tutorial1.png";
 const tutorial2 = "/images/tutorial2.png";
 
+const emptyGameMap = {
+    "maxX": 6,
+    "maxY": 6,
+    "maxZ": 2,
+    "towers": [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ],
+    tiles: [
+        [
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+        ],
+        [
+            [null, null, null, null, null, null],
+            [null, null, null, null, null, null],
+            [null, null, null, null, null, null],
+            [null, null, null, null, null, null],
+            [null, null, null, null, null, null],
+            [null, null, null, null, null, null],
+        ]
+    ]
+}
 const testGameMap = {
     "maxX": 10,
     "maxY": 10,
@@ -239,10 +270,10 @@ const testGameMap2 = {
 export const tutorial = [
     {
         enemy: Guy,
-        count: 0,
+        count: 4,
         delay: 25,
         goldReward: 0,
-        gameMap: testGameMap,
+        gameMap: emptyGameMap,
         message: {
             title: "Welcome to the Tutorial",
             text: "This is how messages will be displayed.",
@@ -252,7 +283,7 @@ export const tutorial = [
             ],
         },
         castleHp: 1,
-        gold: 1,
+        gold: 0,
     },
     {
         enemy: Mouse,

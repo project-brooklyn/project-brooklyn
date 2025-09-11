@@ -70,6 +70,7 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
             await deleteSave(userId, game.createdAt);
         }
     }
+
     useEffect(() => {
         game.addPhaseListener(BUILD, () => setModal(game.message ? "MESSAGE" : ''));
         game.addPhaseListener(DEFEND, () => setModal(DEFEND)); // there is no modal for DEFEND, but this shows the phase in the HUD
@@ -94,6 +95,11 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game])
+
+    // Set the game phase to BUILD to show message
+    useEffect(() => {
+        game.setPhase(BUILD);
+    }, [game.message]);
 
     const [selectedTower, setSelectedTower] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);

@@ -19,7 +19,6 @@ export default class Game {
     constructor(gameMap, levels = defaultLevels) {
         this.levels = levels;
         this.level = 1;
-        this.phase = BUILD;
         this.createdAt = Date.now().toString();
 
         this.gameMap = gameMap;
@@ -33,6 +32,7 @@ export default class Game {
 
         this.message = null;
         this.loadMapFromScenario();
+        this.phase = BUILD;
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -222,7 +222,7 @@ export default class Game {
     }
 
     loadMapFromScenario = () => {
-        const level = this.levels[this.level - 1];
+        const level = this.levels[this.level - 1]; // current level is 1-indexed
         const { gameMap, message, castleHp, gold } = level;
         if (gameMap) {
             this.gameMap = GameMap.from(gameMap);
@@ -249,7 +249,7 @@ export default class Game {
     }
 
     handleLevelChange = () => {
-        const level = this.levels[this.level];
+        const level = this.levels[this.level - 1]; // current level is 1-indexed
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
         this.goldReward = level.goldReward;

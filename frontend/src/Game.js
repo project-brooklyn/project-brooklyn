@@ -230,7 +230,7 @@ export default class Game {
         this.setupPortalAndCastle(castleHp || 0);
         this.setSteps();
 
-        if (gold) this.gold = gold;
+        if (gold !== undefined) this.gold = gold;
 
         if (message) {
             this.message = message;

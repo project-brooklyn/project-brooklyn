@@ -332,7 +332,7 @@ export default class Game {
                 return
             }
 
-            if (this.level >= this.levels.length) {
+            if (this.level > this.levels.length) { // current level is 1-indexed
                 this.setPhase(WIN)
                 return
             }

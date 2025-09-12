@@ -5,6 +5,7 @@ import ScorePhaseModal from "../ui/ScorePhaseModal";
 import LoseModal from "../ui/LoseModal";
 import WinModal from "../ui/WinModal";
 import SettingsModal from "../ui/SettingsModal";
+import MessageModal from "../ui/MessageModal";
 import { Howl, Howler } from 'howler';
 
 import AppBar from '@mui/material/AppBar';
@@ -44,8 +45,8 @@ const HudTopDiv = styled('div')(({ theme }) => ({
     fontSize: "medium",
 }));
 
-const GamePage = ({ gameMap, devMode = true }) => {
-    const [game, setGame] = useState(() => new Game(new gameMap()));
+const GamePage = ({ gameMap, devMode = true, levels }) => {
+    const [game, setGame] = useState(() => new Game(new gameMap(), levels));
     const { keyboardInput } = game;
 
     const [modal, setModal] = useState(devMode ? "" : "WELCOME");
@@ -69,8 +70,9 @@ const GamePage = ({ gameMap, devMode = true }) => {
             await deleteSave(userId, game.createdAt);
         }
     }
+
     useEffect(() => {
-        game.addPhaseListener(BUILD, hideModal);
+        game.addPhaseListener(BUILD, () => setModal(game.message ? "MESSAGE" : ''));
         game.addPhaseListener(DEFEND, () => setModal(DEFEND)); // there is no modal for DEFEND, but this shows the phase in the HUD
         game.addPhaseListener(SCORE, () => setModal(SCORE));
         game.addPhaseListener(WIN, () => setModal(WIN));
@@ -94,6 +96,11 @@ const GamePage = ({ gameMap, devMode = true }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [game])
 
+    // Set the game phase to BUILD to show message
+    useEffect(() => {
+        game.setPhase(BUILD);
+    }, [game.message]);
+
     const [selectedTower, setSelectedTower] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
@@ -104,6 +111,10 @@ const GamePage = ({ gameMap, devMode = true }) => {
                 show={modal === "WELCOME"}
                 hideModal={startMusicAndHideModal}
                 setGame={setGame}
+            />
+            <MessageModal
+                show={modal === "MESSAGE"}
+                hideModal={hideModal}
             />
             <ScorePhaseModal show={modal === SCORE} />
             <WinModal hideModal={hideModal} show={modal === WIN} />

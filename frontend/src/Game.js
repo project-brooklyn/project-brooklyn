@@ -4,7 +4,7 @@ import Castle from "./entities/Castle";
 import Portal from "./entities/Portal";
 import KeyboardInput from "./components/inputs/KeyboardInput";
 import MouseInput from "./components/inputs/MouseInput";
-import { levels } from "./levels";
+import { defaultLevels } from "./scenarios/levels";
 import { Status as TowerStatus } from "./entities/towers/Tower";
 import { BUFFED } from "./entities/towers/BuffTower";
 import { statusFunctions } from "./entities/statuses";
@@ -16,9 +16,9 @@ import GameMap from "./map/GameMap";
 export const [BUILD, DEFEND, SCORE, WIN, LOSE] = ['build', 'defend', 'score', 'win', 'lose'];
 
 export default class Game {
-    constructor(gameMap) {
+    constructor(gameMap, levels = defaultLevels) {
+        this.levels = levels;
         this.level = 1;
-        this.phase = BUILD;
         this.createdAt = Date.now().toString();
 
         this.gameMap = gameMap;
@@ -30,14 +30,9 @@ export default class Game {
         this.blueprints = new Set(['arrowTower']);
         this.enableBlueprints = false;
 
-        this.portal = new Portal(0, 0, gameMap.getElevation(0, 0));
-        this.castle = new Castle(
-            gameMap.width - 1,
-            gameMap.depth - 1,
-            gameMap.getElevation(gameMap.width - 1, gameMap.depth - 1)
-        );  // Assumes map is rectangular
-        gameMap.addTower(0, 0, this.portal);
-        gameMap.addTower(gameMap.width - 1, gameMap.depth - 1, this.castle);
+        this.message = null;
+        this.loadMapFromScenario();
+        this.phase = BUILD;
 
         this.enemies = [];
         this.enemyInfo = {};
@@ -48,7 +43,7 @@ export default class Game {
         this.spawnFunction = () => null;
         this.path = [];
         this.steps = [];
-        this.gold = 500;
+        this.gold ||= 500;
         this.goldReward = 0;
 
         this.keyboardInput = new KeyboardInput();
@@ -63,7 +58,7 @@ export default class Game {
         this.devGui.close();
 
         this.phaseListeners = {
-            [BUILD]: [],
+            [BUILD]: [this.loadMapFromScenario],
             [DEFEND]: [
                 this.commitTowers,
                 this.applyBuffs,
@@ -78,6 +73,19 @@ export default class Game {
 
         this.damage_dealt = 0
         this.damage_taken = 0
+    }
+
+    setupPortalAndCastle = (castleHp) => {
+        this.portal = new Portal(0, 0, this.gameMap.getElevation(0, 0));
+        this.castle = new Castle(
+            this.gameMap.width - 1,
+            this.gameMap.depth - 1,
+            this.gameMap.getElevation(this.gameMap.width - 1, this.gameMap.depth - 1)
+        );  // Assumes map is rectangular
+        this.gameMap.addTower(0, 0, this.portal);
+        this.gameMap.addTower(this.gameMap.width - 1, this.gameMap.depth - 1, this.castle);
+
+        if (castleHp) this.castle.hp = castleHp;
     }
 
     addPhaseListener = (phase, fn) => {
@@ -213,6 +221,24 @@ export default class Game {
         this.checkLevelOver();
     }
 
+    loadMapFromScenario = () => {
+        const level = this.levels[this.level - 1]; // current level is 1-indexed
+        const { gameMap, message, castleHp, gold } = level;
+        if (gameMap) {
+            this.gameMap = GameMap.from(gameMap);
+        }
+        this.setupPortalAndCastle(castleHp || 0);
+        this.setSteps();
+
+        if (gold !== undefined) this.gold = gold;
+
+        if (message) {
+            this.message = message;
+        } else {
+            this.message = null;
+        }
+    }
+
     handleEnemyStatus = () => {
         for (let enemy of this.enemies) {
             for (let status of enemy.statuses) {
@@ -223,10 +249,10 @@ export default class Game {
     }
 
     handleLevelChange = () => {
-        const level = levels[this.level];
+        const level = this.levels[this.level - 1]; // current level is 1-indexed
         this.setSteps(level.enemy.SPEED);
         this.setupEnemySpawn(level);
-        this.goldReward = level.gold;
+        this.goldReward = level.goldReward;
     }
 
     commitTowers = () => {
@@ -306,7 +332,7 @@ export default class Game {
                 return
             }
 
-            if (this.level >= levels.length) {
+            if (this.level > this.levels.length) { // current level is 1-indexed
                 this.setPhase(WIN)
                 return
             }

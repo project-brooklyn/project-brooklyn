@@ -1,6 +1,7 @@
 import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Arrow from "../projectiles/Arrow";
 import Tower from "./Tower";
+import { Howl } from 'howler';
 
 const ARROW_SPEED = 0.15;
 
@@ -18,6 +19,10 @@ export default class ArrowTower extends Tower {
         this.maxRange = 4;
         this.height = 3.5;
         this.description = "Shoots slow arrows in a straight line.";
+
+        this.howl = new Howl({
+            src: ['audio/arrow.mp3']
+        });
     }
 
     getTravelTime = (target) => {
@@ -35,6 +40,7 @@ export default class ArrowTower extends Tower {
     }
 
     createProjectile = (path, target, _enemies) => {
+        this.howl?.play();
         this.rotateTowardsTarget(path.at(-1));
         return new Arrow(...this.position, path, target, this.damage);
     }

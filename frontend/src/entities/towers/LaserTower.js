@@ -1,6 +1,7 @@
 import { getLinearTravelTime, getStraightPath } from "../../utils/game_utils";
 import Laser from "../projectiles/Laser";
 import Tower from "./Tower";
+import { Howl } from 'howler';
 
 const LASER_SPEED = 1.0;
 
@@ -18,6 +19,10 @@ export default class LaserTower extends Tower {
         this.maxRange = 10;
         this.height = 4.5;
         this.description = "Fires a fast laser beam in a straight line.";
+
+        this.howl = new Howl({
+            src: ['audio/laser.mp3']
+        });
     }
 
     getTravelTime = (target) => {
@@ -35,6 +40,7 @@ export default class LaserTower extends Tower {
     }
 
     createProjectile = (path, target, _enemies) => {
+        this.howl?.play();
         this.rotateTowardsTarget(path.at(-1));
         return new Laser(...this.position, path, target, this.damage);
     }

@@ -51,4 +51,8 @@ export default class Tower extends Entity {
     canBuff(_buff) {
         return true;
     }
+
+    playSound() {
+        this.howl?.play();
+    }
 }

@@ -291,6 +291,7 @@ export default class Game {
                     }
                 }
 
+                tower.playSound();
                 const projectile = tower.createProjectile(path, enemy, this.enemies);
                 this.addProjectile(projectile);
 

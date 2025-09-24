@@ -11,8 +11,8 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
-import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
+import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeMute from '@mui/icons-material/VolumeMute';
 import VolumeOff from '@mui/icons-material/VolumeOff';
 
@@ -26,15 +26,22 @@ function SettingsModal({ show, hideModal }) {
     useEffect(() => {
         Howler.mute(!musicEnabled);
     }, [musicEnabled]);
+
     useEffect(() => {
         Howler.volume(volume / 100);
     }, [volume]);
 
-    const handleMusicToggle = () => {
+    const toggleMute = () => {
         setMusicEnabled(!musicEnabled);
     };
     const handleVolumeChange = (_event, newValue) => {
         setVolume(newValue);
+    };
+    const incrementVolume = () => {
+        setVolume(Math.min(volume + 10, 100));
+    };
+    const decrementVolume = () => {
+        setVolume(Math.max(volume - 10, 0));
     };
 
     const saveAndCloseModal = () => {
@@ -43,20 +50,8 @@ function SettingsModal({ show, hideModal }) {
         hideModal();
     };
 
-    const incrementVolume = () => {
-        setVolume((prevVolume) => {
-            return Math.min(prevVolume + 10, 100);
-        });
-    };
-
-    const decrementVolume = () => {
-        setVolume((prevVolume) => {
-            return Math.max(prevVolume - 10, 0);
-        });
-    };
-
     return (
-        <Dialog open={show} maxWidth="sm" fullWidth>
+        <Dialog open={show} maxWidth="sm" fullWidth onClose={saveAndCloseModal}>
             <DialogTitle>
                 Settings
             </DialogTitle>
@@ -68,7 +63,7 @@ function SettingsModal({ show, hideModal }) {
                             <Typography variant="h6" component="p" >
                                 Volume
                             </Typography>
-                            <IconButton onClick={handleMusicToggle} style={{ cursor: 'pointer' }}>
+                            <IconButton onClick={toggleMute} style={{ cursor: 'pointer' }}>
                                 {musicEnabled ? <VolumeDown /> : <VolumeOff />}
                             </IconButton>
                         </Stack>

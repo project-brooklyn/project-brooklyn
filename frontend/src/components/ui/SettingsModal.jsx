@@ -34,14 +34,19 @@ function SettingsModal({ show, hideModal }) {
     const toggleMute = () => {
         setMusicEnabled(!musicEnabled);
     };
-    const handleVolumeChange = (_event, newValue) => {
-        setVolume(newValue);
+    const handleVolumeChange = (_event, newVolume) => {
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
     };
     const incrementVolume = () => {
-        setVolume(Math.min(volume + 10, 100));
+        const newVolume = Math.min(volume + 10, 100);
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
     };
     const decrementVolume = () => {
-        setVolume(Math.max(volume - 10, 0));
+        const newVolume = Math.max(volume - 10, 0);
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
     };
 
     const saveAndCloseModal = () => {

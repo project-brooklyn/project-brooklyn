@@ -1,6 +1,9 @@
 import Guy from "../entities/enemies/Guy";
 const how_to_dig_1 = "/images/how_to_dig_1.png";
 const how_to_dig_2 = "/images/how_to_dig_2.png";
+const how_to_fill_1 = "/images/how_to_fill_1.png";
+const how_to_fill_2 = "/images/how_to_fill_2.png";
+const how_to_sell_1 = "/images/how_to_sell_1.png";
 
 const how_to_dig_map = {
     "maxX": 8,
@@ -116,6 +119,63 @@ const how_to_fill_map = {
         ],
     ]
 }
+const how_to_sell_map = {
+    "maxX": 8,
+    "maxY": 8,
+    "maxZ": 4,
+    "towers": [
+        [null, null, null, null, null, null, null, 'laserTower'],
+        ['arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'sawTower', null],
+        [null, null, null, null, null, null, null, null],
+        [null, 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower', 'arrowTower',],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+    ],
+    tiles: [
+        [
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+            ["bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock", "bedrock"],
+        ],
+        [
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+        ],
+        [
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+        ],
+        [
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+        ],
+    ]
+}
 
 export const tutorial = [
     {
@@ -145,10 +205,27 @@ export const tutorial = [
             title: "How to Fill",
             text: "Towers and walls will block the path of enemies, which can force them to spend more time in range of your more powerful towers. Click the Buy Menu and select the Fill tool to plug up the hole in your wall. Note that each tower has many different characteristics. This rock tower fires in an arc over walls, and deals splash damage to nearby enemies, but have a higher minimum range.",
             images: [
-
+                how_to_fill_1,
+                how_to_fill_2,
             ]
         },
         castleHp: 1,
         gold: 30,
+    },
+    {
+        enemy: Guy,
+        count: 50,
+        delay: 15,
+        goldReward: 0,
+        gameMap: how_to_sell_map,
+        message: {
+            title: "Selling Towers",
+            text: "No matter how tall the obstruction, enemies will always be able to climb over to reach the goal. Your towers can also block each other's attacks, and can have a minumum range as well. Sell the laser tower and build some other towers in a place where they can hit the enemy's path.",
+            images: [
+                how_to_sell_1,
+            ],
+        },
+        castleHp: 1,
+        gold: 1000,
     },
 ];

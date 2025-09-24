@@ -6,8 +6,7 @@ import LoseModal from "../ui/LoseModal";
 import WinModal from "../ui/WinModal";
 import SettingsModal from "../ui/SettingsModal";
 import MessageModal from "../ui/MessageModal";
-import { Howl, Howler } from 'howler';
-
+import BackgroundMusic from "./BackgroundMusic";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -53,12 +52,6 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
 
     const hideModal = () => setModal("");
     const startMusicAndHideModal = () => {
-        Howler.volume(0.5);
-        const sound = new Howl({
-            src: ['audio/funkysuspense.mp3']
-        });
-        sound.play();
-
         hideModal();
     }
 
@@ -72,7 +65,15 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
     }
 
     useEffect(() => {
-        game.addPhaseListener(BUILD, () => setModal(modal === "WELCOME" ? "WELCOME" : "MESSAGE" || ""));
+        game.addPhaseListener(BUILD, () => {
+            setModal(prev =>
+                prev === "WELCOME"
+                    ? "WELCOME"
+                    : game.message
+                        ? "MESSAGE"
+                        : ""
+            );
+        });
         game.addPhaseListener(DEFEND, () => setModal(DEFEND)); // there is no modal for DEFEND, but this shows the phase in the HUD
         game.addPhaseListener(SCORE, () => setModal(SCORE));
         game.addPhaseListener(WIN, () => setModal(WIN));
@@ -106,6 +107,7 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
 
     return (
         <GameProvider game={game} >
+            <BackgroundMusic />
             {/* All Modals */}
             <WelcomeModal
                 show={modal === "WELCOME"}

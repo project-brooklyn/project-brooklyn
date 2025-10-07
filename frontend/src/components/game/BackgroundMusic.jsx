@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 const BackgroundMusic = () => {
-    const bgmRef = useRef(null);
+    const bgMusicRef = useRef(null);
     useEffect(() => {
         if (!bgmRef.current) {
             bgmRef.current = new Howl({

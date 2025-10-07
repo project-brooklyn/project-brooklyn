@@ -9,34 +9,19 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
-import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
+import VolumeDown from '@mui/icons-material/VolumeDown';
+import VolumeMute from '@mui/icons-material/VolumeMute';
+import VolumeOff from '@mui/icons-material/VolumeOff';
 
 const MUSIC_ENABLED_KEY = 'musicEnabled';
 const VOLUME_KEY = 'volume';
 
 function SettingsModal({ show, hideModal }) {
-    const [musicEnabled, setMusicEnabled] = useState(true);
-    const [volume, setVolume] = useState(50);
-
-    useEffect(() => {
-        const savedMusicEnabled = localStorage.getItem(MUSIC_ENABLED_KEY);
-        const savedVolume = localStorage.getItem(VOLUME_KEY);
-
-        if (savedMusicEnabled !== null) {
-            const musicEnabledValue = JSON.parse(savedMusicEnabled);
-            setMusicEnabled(musicEnabledValue);
-            Howler.mute(!musicEnabledValue);
-        }
-        if (savedVolume !== null) {
-            const savedVolumeValue = parseInt(savedVolume, 10);
-            setVolume(savedVolumeValue);
-            Howler.volume(savedVolumeValue);
-        }
-    }, []);
+    const [musicEnabled, setMusicEnabled] = useState(['true', null].includes(localStorage.getItem(MUSIC_ENABLED_KEY)));
+    const [volume, setVolume] = useState(localStorage.getItem(VOLUME_KEY) ? parseInt(localStorage.getItem(VOLUME_KEY), 10) : 50);
 
     useEffect(() => {
         Howler.mute(!musicEnabled);
@@ -46,12 +31,22 @@ function SettingsModal({ show, hideModal }) {
         Howler.volume(volume / 100);
     }, [volume]);
 
-    const handleMusicToggle = () => {
+    const toggleMute = () => {
         setMusicEnabled(!musicEnabled);
     };
-
-    const handleVolumeChange = (_event, newValue) => {
-        setVolume(newValue);
+    const handleVolumeChange = (_event, newVolume) => {
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
+    };
+    const incrementVolume = () => {
+        const newVolume = Math.min(volume + 10, 100);
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
+    };
+    const decrementVolume = () => {
+        const newVolume = Math.max(volume - 10, 0);
+        setVolume(newVolume);
+        setMusicEnabled(newVolume > 0);
     };
 
     const saveAndCloseModal = () => {
@@ -60,20 +55,8 @@ function SettingsModal({ show, hideModal }) {
         hideModal();
     };
 
-    const incrementVolume = () => {
-        setVolume((prevVolume) => {
-            return Math.min(prevVolume + 10, 100);
-        });
-    };
-
-    const decrementVolume = () => {
-        setVolume((prevVolume) => {
-            return Math.max(prevVolume - 10, 0);
-        });
-    };
-
     return (
-        <Dialog open={show} maxWidth="sm" fullWidth>
+        <Dialog open={show} maxWidth="sm" fullWidth onClose={saveAndCloseModal}>
             <DialogTitle>
                 Settings
             </DialogTitle>
@@ -81,25 +64,20 @@ function SettingsModal({ show, hideModal }) {
             <DialogContent>
                 <DialogContentText component="div" sx={{ textAlign: 'center' }}>
                     <Stack spacing={3} direction="column" sx={{ alignItems: 'center', mb: 2 }}>
-                        <Typography variant="h6" component="p" >
-                            Audio
-                        </Typography>
-
-                        <Stack spacing={2} direction="row" sx={{ alignItems: 'center', mb: 1, width: '300px' }}>
-                            <Typography variant="h7" component="p" >
-                                Music
+                        <Stack spacing={2} direction="row" sx={{ alignItems: 'center', justifyContent: 'center', mb: 1, width: '300px' }}>
+                            <Typography variant="h6" component="p" >
+                                Volume
                             </Typography>
-                            <Switch checked={musicEnabled} onChange={handleMusicToggle} />
+                            <IconButton onClick={toggleMute} style={{ cursor: 'pointer' }}>
+                                {musicEnabled ? <VolumeDown /> : <VolumeOff />}
+                            </IconButton>
                         </Stack>
 
                         <Stack spacing={2} direction="row" sx={{ alignItems: 'center', mb: 1, width: '300px' }}>
-                            <Typography variant="h7" component="p" >
-                                Volume
-                            </Typography>
                             <IconButton onClick={decrementVolume} disabled={volume <= 0}>
-                                <VolumeDown />
+                                <VolumeMute />
                             </IconButton>
-                            <Slider aria-label="Volume" value={volume} valueLabelDisplay="auto" onChange={handleVolumeChange} />
+                            <Slider aria-label="Volume" value={musicEnabled ? volume : 0} valueLabelDisplay="auto" onChange={handleVolumeChange} />
                             <IconButton onClick={incrementVolume} disabled={volume >= 100}>
                                 <VolumeUp />
                             </IconButton>

@@ -220,7 +220,7 @@ export const tutorial = [
         gameMap: how_to_sell_map,
         message: {
             title: "Selling Towers",
-            text: "No matter how tall the obstruction, enemies will always be able to climb over to reach the goal. Your towers can also block each other's attacks, and can have a minumum range as well. Sell the laser tower and build some other towers in a place where they can hit the enemy's path.",
+            text: "No matter how tall the obstruction, enemies will always be able to climb over to reach the goal. Your towers have a minimum & maximum range, and can also block each other's view. Sell the laser tower and build some other towers in a place where they can target the enemy's path.",
             images: [
                 how_to_sell_1,
             ],

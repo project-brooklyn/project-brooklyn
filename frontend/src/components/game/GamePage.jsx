@@ -66,13 +66,11 @@ const GamePage = ({ gameMap, devMode = true, levels }) => {
 
     useEffect(() => {
         game.addPhaseListener(BUILD, () => {
-            setModal(prev =>
-                prev === "WELCOME"
-                    ? "WELCOME"
-                    : game.message
-                        ? "MESSAGE"
-                        : ""
-            );
+            setModal((prev) => {
+                if (prev === "WELCOME") return "WELCOME";
+                if (game.message) return "MESSAGE";
+                return "";
+            });
         });
         game.addPhaseListener(DEFEND, () => setModal(DEFEND)); // there is no modal for DEFEND, but this shows the phase in the HUD
         game.addPhaseListener(SCORE, () => setModal(SCORE));

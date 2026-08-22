@@ -1,7 +1,7 @@
 # project-brooklyn
 
 ## backend
-run `python3 manage.py runserver` in `/backend`
+run `npm run dev` in `/backend`
 
 ## frontend
 run `npm run dev` in `/frontend`
